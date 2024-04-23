@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#77000000"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tv_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.6"
+        android:text="点击屏幕任意位置记录"
+        android:textColor="#fff"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/gl_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="bt_commit,bt_cancel,et_name,et_time,tv_title"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="添加点击位置"
+        android:textColor="#fff"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@id/et_name"
+        app:layout_constraintStart_toStartOf="@id/et_name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <EditText
+        android:id="@+id/et_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="名称"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/et_time"
+        app:layout_constraintEnd_toEndOf="@id/et_time"
+        app:layout_constraintStart_toStartOf="@id/et_time"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <EditText
+        android:id="@+id/et_time"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="点击间隔时间(单位/毫秒)"
+        android:inputType="number"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/bt_commit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_name" />
+
+    <Button
+        android:id="@+id/bt_commit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="保存"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/bt_cancel"
+        app:layout_constraintStart_toStartOf="@id/et_time"
+        app:layout_constraintTop_toBottomOf="@id/et_time" />
+
+    <Button
+        android:id="@+id/bt_cancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="取消"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@id/bt_commit"
+        app:layout_constraintEnd_toEndOf="@id/et_time"
+        app:layout_constraintStart_toEndOf="@id/bt_commit"
+        app:layout_constraintTop_toTopOf="@id/bt_commit" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
