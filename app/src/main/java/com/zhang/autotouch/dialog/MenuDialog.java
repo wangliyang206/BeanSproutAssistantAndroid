@@ -2,6 +2,7 @@ package com.zhang.autotouch.dialog;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -90,8 +91,11 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
         setOnDismissListener(new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                if (TouchEventManager.getInstance().isPaused()) {
-                    TouchEvent.postContinueAction();
+                // 如果没有设置专属，并且之前为暂停，关闭Dialog时默认继续点赞动作
+                if (TextUtils.isEmpty(TouchEventManager.getInstance().getAppPackageName())) {
+                    if (TouchEventManager.getInstance().isPaused()) {
+                        TouchEvent.postContinueAction();
+                    }
                 }
             }
         });
@@ -101,8 +105,11 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     protected void onStart() {
         super.onStart();
         Log.d("啊实打实", "onStart");
-        //如果正在触控，则暂停
-        TouchEvent.postPauseAction();
+        // 如果没有设置专属，则打开软件时暂停
+        if (TextUtils.isEmpty(TouchEventManager.getInstance().getAppPackageName())) {
+            // 如果正在触控，则暂停
+            TouchEvent.postPauseAction();
+        }
         if (touchPointAdapter != null) {
             List<TouchPoint> touchPoints = SpUtils.getTouchPoints(getContext());
             Log.d("啊实打实", GsonUtils.beanToJson(touchPoints));

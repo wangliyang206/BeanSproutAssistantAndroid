@@ -5,25 +5,36 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.zhang.autotouch.bean.TouchEvent;
 import com.zhang.autotouch.fw_permission.FloatWinPermissionCompat;
 import com.zhang.autotouch.service.AutoTouchService;
 import com.zhang.autotouch.service.FloatingService;
 import com.zhang.autotouch.utils.AccessibilityUtil;
 import com.zhang.autotouch.utils.ToastUtil;
+import com.zhang.autotouch.utils.WindowUtils;
 
 
 @SuppressLint("SetTextI18n")
 public class MainActivity extends AppCompatActivity {
-
-    private TextView tvStart;
     private final String STRING_START = "开始";
     private final String STRING_ACCESS = "无障碍服务";
     private final String STRING_ALERT = "悬浮窗权限";
+    private final String STRING_OPEN = "已开启";
+
+    // 开始
+    private TextView tvStart;
+    // 点赞
+    private CheckBox ckboxFunction;
+    // 弹幕欢迎
+    private CheckBox ckboxBulletchat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +50,12 @@ public class MainActivity extends AppCompatActivity {
                         startService(new Intent(MainActivity.this, FloatingService.class));
                         moveTaskToBack(true);
                         break;
+                    case STRING_OPEN:
+                        ToastUtil.show(getString(R.string.app_name) + "已关闭");
+                        stopService(new Intent(MainActivity.this, FloatingService.class));
+                        TouchEvent.postStopAction();
+                        tvStart.setText(STRING_START);
+                        break;
                     case STRING_ALERT:
                         requestPermissionAndShow();
                         break;
@@ -50,7 +67,45 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        // 初始化Toast
         ToastUtil.init(this);
+
+        RadioGroup radioGroup = findViewById(R.id.ragr_exclusive);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.cb_exclusive_tiktok) {
+                    // 抖音
+                    TouchEventManager.getInstance().setAppPackageName(1);
+                } else if (checkedId == R.id.cb_exclusive_kwai) {
+                    // 快手
+                    TouchEventManager.getInstance().setAppPackageName(2);
+                } else {
+                    // 没有专属
+                    TouchEventManager.getInstance().setAppPackageName(3);
+                }
+            }
+        });
+
+        // 点赞
+        LinearLayout functionLayout = findViewById(R.id.lila_function_layout);
+        ckboxFunction = findViewById(R.id.chk_function_ckbox);
+        functionLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ckboxFunction.setChecked(!ckboxFunction.isChecked());
+            }
+        });
+
+        // 弹幕欢迎
+        LinearLayout bulletchatLayout = findViewById(R.id.lila_bulletchat_layout);
+        ckboxBulletchat = findViewById(R.id.chk_bulletchat_ckbox);
+        bulletchatLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ckboxBulletchat.setChecked(!ckboxBulletchat.isChecked());
+            }
+        });
     }
 
     @Override
@@ -64,7 +119,12 @@ public class MainActivity extends AppCompatActivity {
         boolean hasWinPermission = FloatWinPermissionCompat.getInstance().check(this);
         if (hasAccessibility) {
             if (hasWinPermission) {
-                tvStart.setText(STRING_START);
+                if (WindowUtils.isServiceWork(getApplicationContext(), FloatingService.class.getName())) {
+                    tvStart.setText(STRING_OPEN);
+                } else {
+                    tvStart.setText(STRING_START);
+                }
+
             } else {
                 tvStart.setText(STRING_ALERT);
             }
@@ -72,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
             tvStart.setText(STRING_ACCESS);
         }
     }
+
 
     private void requestAcccessibility() {
         new AlertDialog.Builder(this).setTitle("无障碍服务未开启")

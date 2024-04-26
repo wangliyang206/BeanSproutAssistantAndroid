@@ -7,6 +7,7 @@ import android.graphics.Path;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,9 +31,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.text.DecimalFormat;
 
 /**
- * 无障碍服务-自动点击
+ * 无障碍服务-自动点赞
  *
- * @date 2019/9/6 16:23
+ * @date 2024/4/26 16:23
  */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class AutoTouchService extends AccessibilityService {
@@ -46,7 +47,7 @@ public class AutoTouchService extends AccessibilityService {
     private TextView tvTouchPoint;
     //倒计时
     private float countDownTime;
-    private DecimalFormat floatDf = new DecimalFormat("#0.0");
+    private final DecimalFormat floatDf = new DecimalFormat("#0.0");
     //修改点击文本的倒计时
     private Runnable touchViewRunnable;
 
@@ -96,7 +97,7 @@ public class AutoTouchService extends AccessibilityService {
         }
     }
 
-    private Runnable autoTouchRunnable = new Runnable() {
+    private final Runnable autoTouchRunnable = new Runnable() {
         @Override
         public void run() {
             Log.d(TAG, "onAutoClick: " + "x=" + autoTouchPoint.getX() + " y=" + autoTouchPoint.getY());
@@ -143,6 +144,21 @@ public class AutoTouchService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
+        String packageName = event.getPackageName() == null ? "" : event.getPackageName().toString();
+
+        Log.d("onAccessibilityEvent", "包名：" + packageName);
+        if (!TextUtils.isEmpty(TouchEventManager.getInstance().getAppPackageName())) {
+            // 如果活动APP不是目标APP，则不响应
+            if (packageName.equalsIgnoreCase(TouchEventManager.getInstance().getAppPackageName())) {
+                // 如果是动作暂停状态，则自动开启继续点赞
+                if (TouchEventManager.getInstance().isPaused()) {
+                    TouchEvent.postContinueAction();
+                }
+            } else {
+                // 如果是动作开启状态，则自动停止点赞动作
+                TouchEvent.postPauseAction();
+            }
+        }
     }
 
     @Override

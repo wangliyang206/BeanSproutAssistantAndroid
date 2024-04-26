@@ -2,6 +2,7 @@ package com.zhang.autotouch.utils;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
@@ -18,6 +19,7 @@ import android.view.WindowManager;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import static android.content.Context.WINDOW_SERVICE;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -26,6 +28,26 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
  * 屏幕工具类
  */
 public class WindowUtils {
+    /**
+     *判断某个服务是否正在运行的方法
+     * @param mContext
+     * @param serviceName
+     * @return
+     */
+    public static boolean isServiceWork(Context mContext, String serviceName) {
+        ActivityManager am = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> runningServiceInfos = am.getRunningServices(200);
+        if (runningServiceInfos.size() <= 0) {
+            return false;
+        }
+        for (ActivityManager.RunningServiceInfo serviceInfo : runningServiceInfos) {
+            if (serviceInfo.service.getClassName().equals(serviceName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * 判断是否是透明背景的Activity

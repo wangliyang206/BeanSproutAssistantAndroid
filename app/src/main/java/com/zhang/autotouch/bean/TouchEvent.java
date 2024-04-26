@@ -8,9 +8,13 @@ import org.greenrobot.eventbus.EventBus;
 
 public class TouchEvent {
 
+    // 动作开启
     public static final int ACTION_START = 1;
+    // 动作暂停
     public static final int ACTION_PAUSE = 2;
+    // 动作继续
     public static final int ACTION_CONTINUE = 3;
+    // 动作停止
     public static final int ACTION_STOP = 4;
 
     private int action;
@@ -37,18 +41,30 @@ public class TouchEvent {
         return touchPoint;
     }
 
+    /**
+     * 动作开启
+     */
     public static void postStartAction(TouchPoint touchPoint) {
         postAction(new TouchEvent(ACTION_START, touchPoint));
     }
 
+    /**
+     * 暂停动作
+     */
     public static void postPauseAction() {
         postAction(new TouchEvent(ACTION_PAUSE));
     }
 
+    /**
+     * 动作继续
+     */
     public static void postContinueAction() {
         postAction(new TouchEvent(ACTION_CONTINUE));
     }
 
+    /**
+     * 动作停止
+     */
     public static void postStopAction() {
         postAction(new TouchEvent(ACTION_STOP));
     }
