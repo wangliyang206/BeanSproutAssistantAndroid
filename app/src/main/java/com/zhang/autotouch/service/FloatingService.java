@@ -25,9 +25,21 @@ public class FloatingService extends Service {
     private MenuDialog menuDialog;
     private WindowManager.LayoutParams floatLayoutParams;
 
+    // 是否开启点赞
+    private boolean isFunction;
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            // 处理传递过来的数据
+            isFunction = intent.getBooleanExtra("isFunction", false);
+        }
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -111,6 +123,7 @@ public class FloatingService extends Service {
                 }
             });
         }
+        menuDialog.setFunction(isFunction);
         menuDialog.show();
     }
 

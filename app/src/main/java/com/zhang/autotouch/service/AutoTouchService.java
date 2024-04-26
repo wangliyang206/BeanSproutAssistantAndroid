@@ -110,10 +110,12 @@ public class AutoTouchService extends AccessibilityService {
             path.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY());
             builder.addStroke(new GestureDescription.StrokeDescription(path, 0, 1)).build();
 
-            // 创建第二次点击的Path
-            Path clickPath2 = new Path();
-            clickPath2.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY()); // 点击位置2，通常这里x2,y2与x1,y1有一定的间隔
-            builder.addStroke(new GestureDescription.StrokeDescription(clickPath2, 100, 1)); // 100ms后模拟第二次点击
+            if(autoTouchPoint.isFunction()){
+                // 创建第二次点击的Path
+                Path clickPath2 = new Path();
+                clickPath2.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY()); // 点击位置2，通常这里x2,y2与x1,y1有一定的间隔
+                builder.addStroke(new GestureDescription.StrokeDescription(clickPath2, 100, 1)); // 100ms后模拟第二次点击
+            }
 
             // 创建GestureDescription对象
             GestureDescription gestureDescription = builder.build();

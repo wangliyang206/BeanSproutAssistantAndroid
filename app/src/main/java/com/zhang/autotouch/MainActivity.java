@@ -47,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (tvStart.getText().toString()) {
                     case STRING_START:
                         ToastUtil.show(getString(R.string.app_name) + "已启用");
-                        startService(new Intent(MainActivity.this, FloatingService.class));
+                        Intent mIntent = new Intent(MainActivity.this, FloatingService.class);
+                        mIntent.putExtra("isFunction", ckboxFunction.isChecked());
+                        startService(mIntent);
                         moveTaskToBack(true);
                         break;
                     case STRING_OPEN:

@@ -34,6 +34,9 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     private Listener listener;
     private TouchPointAdapter touchPointAdapter;
 
+    // 是否开启点赞
+    private boolean isFunction;
+
     public MenuDialog(@NonNull Context context) {
         super(context);
     }
@@ -69,6 +72,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                     // 点击一行
                     btStop.setVisibility(View.VISIBLE);
                     dismiss();
+                    touchPoint.setFunction(isFunction);
                     TouchEvent.postStartAction(touchPoint);
                     ToastUtil.show("已开启触控点：" + touchPoint.getName());
 
@@ -152,6 +156,14 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 break;
 
         }
+    }
+
+    public boolean isFunction() {
+        return isFunction;
+    }
+
+    public void setFunction(boolean function) {
+        isFunction = function;
     }
 
     public void setListener(Listener listener) {
