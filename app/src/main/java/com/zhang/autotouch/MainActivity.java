@@ -1,10 +1,8 @@
 package com.zhang.autotouch;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -41,73 +39,57 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tvStart = findViewById(R.id.tv_start);
-        tvStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (tvStart.getText().toString()) {
-                    case STRING_START:
-                        ToastUtil.show(getString(R.string.app_name) + "已启用");
-                        Intent mIntent = new Intent(MainActivity.this, FloatingService.class);
-                        mIntent.putExtra("isFunction", ckboxFunction.isChecked());
-                        startService(mIntent);
-                        moveTaskToBack(true);
-                        break;
-                    case STRING_OPEN:
-                        ToastUtil.show(getString(R.string.app_name) + "已关闭");
-                        stopService(new Intent(MainActivity.this, FloatingService.class));
-                        TouchEvent.postStopAction();
-                        tvStart.setText(STRING_START);
-                        break;
-                    case STRING_ALERT:
-                        requestPermissionAndShow();
-                        break;
-                    case STRING_ACCESS:
-                        requestAcccessibility();
-                        break;
-                    default:
-                        break;
-                }
+        tvStart.setOnClickListener(v -> {
+            switch (tvStart.getText().toString()) {
+                case STRING_START:
+                    ToastUtil.show(getString(R.string.app_name) + "已启用");
+                    Intent mIntent = new Intent(MainActivity.this, FloatingService.class);
+                    mIntent.putExtra("isFunction", ckboxFunction.isChecked());
+                    startService(mIntent);
+                    moveTaskToBack(true);
+                    break;
+                case STRING_OPEN:
+                    ToastUtil.show(getString(R.string.app_name) + "已关闭");
+                    stopService(new Intent(MainActivity.this, FloatingService.class));
+                    TouchEvent.postStopAction();
+                    tvStart.setText(STRING_START);
+                    break;
+                case STRING_ALERT:
+                    requestPermissionAndShow();
+                    break;
+                case STRING_ACCESS:
+                    requestAcccessibility();
+                    break;
+                default:
+                    break;
             }
         });
         // 初始化Toast
         ToastUtil.init(this);
 
         RadioGroup radioGroup = findViewById(R.id.ragr_exclusive);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.cb_exclusive_tiktok) {
-                    // 抖音
-                    TouchEventManager.getInstance().setAppPackageName(1);
-                } else if (checkedId == R.id.cb_exclusive_kwai) {
-                    // 快手
-                    TouchEventManager.getInstance().setAppPackageName(2);
-                } else {
-                    // 没有专属
-                    TouchEventManager.getInstance().setAppPackageName(3);
-                }
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.cb_exclusive_tiktok) {
+                // 抖音
+                TouchEventManager.getInstance().setAppPackageName(1);
+            } else if (checkedId == R.id.cb_exclusive_kwai) {
+                // 快手
+                TouchEventManager.getInstance().setAppPackageName(2);
+            } else {
+                // 没有专属
+                TouchEventManager.getInstance().setAppPackageName(3);
             }
         });
 
         // 点赞
         LinearLayout functionLayout = findViewById(R.id.lila_function_layout);
         ckboxFunction = findViewById(R.id.chk_function_ckbox);
-        functionLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ckboxFunction.setChecked(!ckboxFunction.isChecked());
-            }
-        });
+        functionLayout.setOnClickListener(v -> ckboxFunction.setChecked(!ckboxFunction.isChecked()));
 
         // 弹幕欢迎
         LinearLayout bulletchatLayout = findViewById(R.id.lila_bulletchat_layout);
         ckboxBulletchat = findViewById(R.id.chk_bulletchat_ckbox);
-        bulletchatLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ckboxBulletchat.setChecked(!ckboxBulletchat.isChecked());
-            }
-        });
+        bulletchatLayout.setOnClickListener(v -> ckboxBulletchat.setChecked(!ckboxBulletchat.isChecked()));
     }
 
     @Override
@@ -139,15 +121,12 @@ public class MainActivity extends AppCompatActivity {
     private void requestAcccessibility() {
         new AlertDialog.Builder(this).setTitle("无障碍服务未开启")
                 .setMessage("你的手机没有开启无障碍服务，" + getString(R.string.app_name) + "将无法正常使用")
-                .setPositiveButton("去开启", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // 显示授权界面
-                        try {
-                            AccessibilityUtil.jumpToSetting(MainActivity.this);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                .setPositiveButton("去开启", (dialog, which) -> {
+                    // 显示授权界面
+                    try {
+                        AccessibilityUtil.jumpToSetting(MainActivity.this);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 })
                 .setNegativeButton("取消", null).show();
@@ -159,15 +138,12 @@ public class MainActivity extends AppCompatActivity {
     private void requestPermissionAndShow() {
         new AlertDialog.Builder(this).setTitle("悬浮窗权限未开启")
                 .setMessage(getString(R.string.app_name) + "获得悬浮窗权限，才能正常使用应用")
-                .setPositiveButton("去开启", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // 显示授权界面
-                        try {
-                            FloatWinPermissionCompat.getInstance().apply(MainActivity.this);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                .setPositiveButton("去开启", (dialog, which) -> {
+                    // 显示授权界面
+                    try {
+                        FloatWinPermissionCompat.getInstance().apply(MainActivity.this);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 })
                 .setNegativeButton("取消", null).show();

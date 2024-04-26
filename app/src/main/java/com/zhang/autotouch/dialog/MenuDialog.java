@@ -1,7 +1,6 @@
 package com.zhang.autotouch.dialog;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -65,41 +64,35 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
         btStop.setOnClickListener(this);
         rvPoints = findViewById(R.id.rv);
         touchPointAdapter = new TouchPointAdapter();
-        touchPointAdapter.setOnItemClickListener(new TouchPointAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, TouchPoint touchPoint) {
-                if (view.getId() == R.id.item_touch_point) {
-                    // 点击一行
-                    btStop.setVisibility(View.VISIBLE);
-                    dismiss();
-                    touchPoint.setFunction(isFunction);
-                    TouchEvent.postStartAction(touchPoint);
-                    ToastUtil.show("已开启触控点：" + touchPoint.getName());
+        touchPointAdapter.setOnItemClickListener((view, position, touchPoint) -> {
+            if (view.getId() == R.id.item_touch_point) {
+                // 点击一行
+                btStop.setVisibility(View.VISIBLE);
+                dismiss();
+                touchPoint.setFunction(isFunction);
+                TouchEvent.postStartAction(touchPoint);
+                ToastUtil.show("已开启触控点：" + touchPoint.getName());
 
-                    // 特殊处理，关闭所有，然后单独开启已选择的项
-                    for (TouchPoint info : touchPointAdapter.getTouchPointList()) {
-                        info.setStartClick(false);
-                    }
-                    touchPointAdapter.getTouchPointList().get(position).setStartClick(true);
-                    SpUtils.setTouchPoints(getContext(), touchPointAdapter.getTouchPointList());
-                } else if (view.getId() == R.id.bt_delete) {
-                    if (touchPointAdapter != null) {
-                        touchPointAdapter.onRemove(getContext(), position);
-                    }
+                // 特殊处理，关闭所有，然后单独开启已选择的项
+                for (TouchPoint info : touchPointAdapter.getTouchPointList()) {
+                    info.setStartClick(false);
                 }
-
+                touchPointAdapter.getTouchPointList().get(position).setStartClick(true);
+                SpUtils.setTouchPoints(getContext(), touchPointAdapter.getTouchPointList());
+            } else if (view.getId() == R.id.bt_delete) {
+                if (touchPointAdapter != null) {
+                    touchPointAdapter.onRemove(getContext(), position);
+                }
             }
+
         });
         rvPoints.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPoints.setAdapter(touchPointAdapter);
-        setOnDismissListener(new OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                // 如果没有设置专属，并且之前为暂停，关闭Dialog时默认继续点赞动作
-                if (TextUtils.isEmpty(TouchEventManager.getInstance().getAppPackageName())) {
-                    if (TouchEventManager.getInstance().isPaused()) {
-                        TouchEvent.postContinueAction();
-                    }
+        setOnDismissListener(dialog -> {
+            // 如果没有设置专属，并且之前为暂停，关闭Dialog时默认继续点赞动作
+            if (TextUtils.isEmpty(TouchEventManager.getInstance().getAppPackageName())) {
+                if (TouchEventManager.getInstance().isPaused()) {
+                    TouchEvent.postContinueAction();
                 }
             }
         });
@@ -127,12 +120,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
             case R.id.bt_add:
                 DialogUtils.dismiss(addPointDialog);
                 addPointDialog = new AddPointDialog(getContext());
-                addPointDialog.setOnDismissListener(new OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        MenuDialog.this.show();
-                    }
-                });
+                addPointDialog.setOnDismissListener(dialog -> MenuDialog.this.show());
                 addPointDialog.show();
                 dismiss();
                 break;
