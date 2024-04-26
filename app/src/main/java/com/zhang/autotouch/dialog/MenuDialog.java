@@ -24,6 +24,9 @@ import com.zhang.autotouch.utils.ToastUtil;
 
 import java.util.List;
 
+/**
+ * 菜单弹框
+ */
 public class MenuDialog extends BaseServiceDialog implements View.OnClickListener {
 
     private Button btStop;
