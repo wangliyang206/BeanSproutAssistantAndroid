@@ -9,7 +9,7 @@ import android.util.Log;
 import static android.content.ContentValues.TAG;
 
 /**
- * @author 张坚鸿
+ * @author 赤槿
  * @date 2019/9/6 16:32
  */
 public class AccessibilityUtil {

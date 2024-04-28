@@ -126,13 +126,11 @@ public class AutoTouchService extends AccessibilityService {
                 @Override
                 public void onCompleted(GestureDescription gestureDescription) {
                     super.onCompleted(gestureDescription);
-                    Log.d("AutoTouchService", "滑动结束" + gestureDescription.getStrokeCount());
                 }
 
                 @Override
                 public void onCancelled(GestureDescription gestureDescription) {
                     super.onCancelled(gestureDescription);
-                    Log.d("AutoTouchService", "滑动取消");
                 }
             }, null);
             onAutoClick();
@@ -146,15 +144,24 @@ public class AutoTouchService extends AccessibilityService {
         return autoTouchPoint.getDelay();
     }
 
+    /**
+     * 有关AccessibilityEvent事件的回调函数，系统通过sendAccessibiliyEvent()不断的发送AccessibilityEvent到此处
+     */
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         // 获取当前侦听到的包名
         String packageName = event.getPackageName() == null ? "" : event.getPackageName().toString();
-        Log.d("onAccessibilityEvent", "###包名：" + packageName + "，事件类型=" + event.getEventType());
+//        Log.d("onAccessibilityEvent", "###包名：" + packageName + "，事件类型=" + event.getEventType());
         switch (event.getEventType()) {
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
-                // 窗口已改变
+                // 类型窗口内容已更改
                 onWindowContentChanged(packageName);
+                break;
+            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+                // 类型窗口状态已更改
+                break;
+            case AccessibilityEvent.TYPE_WINDOWS_CHANGED:
+                // 类型窗口已更改
                 break;
         }
     }
@@ -163,6 +170,7 @@ public class AutoTouchService extends AccessibilityService {
      * 窗口内容发生变化(判断是不是切出目标窗口，如果切出，则需要停止点赞动作)
      */
     private void onWindowContentChanged(String packageName) {
+        // 包名不为空，说明外界已经设置了专属。
         if (!TextUtils.isEmpty(TouchEventManager.getInstance().getAppPackageName())) {
             // 如果活动APP不是目标APP，则不响应
             if (packageName.equalsIgnoreCase(TouchEventManager.getInstance().getAppPackageName())) {
@@ -173,8 +181,10 @@ public class AutoTouchService extends AccessibilityService {
                 }
             } else {
                 // 如果是动作开启状态，则自动停止点赞动作
-                Log.d("onWindowContentChanged", "###执行了 动作暂停 事件");
-                TouchEvent.postPauseAction();
+                if (TouchEventManager.getInstance().isTouching()) {
+                    Log.d("onWindowContentChanged", "###执行了 动作暂停 事件");
+                    TouchEvent.postPauseAction();
+                }
             }
         }
     }
@@ -273,19 +283,16 @@ public class AutoTouchService extends AccessibilityService {
             //开启倒计时
             countDownTime = autoTouchPoint.getDelay();
             if (touchViewRunnable == null) {
-                touchViewRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        handler.removeCallbacks(touchViewRunnable);
-                        Log.d("触摸倒计时", countDownTime + "");
-                        if (countDownTime > 0) {
-                            float offset = 0.1f;
-                            tvTouchPoint.setText(floatDf.format(countDownTime));
-                            countDownTime -= offset;
-                            handler.postDelayed(touchViewRunnable, (long) (1000L * offset));
-                        } else {
-                            removeTouchView();
-                        }
+                touchViewRunnable = () -> {
+                    handler.removeCallbacks(touchViewRunnable);
+                    Log.d("触摸倒计时", countDownTime + "");
+                    if (countDownTime > 0) {
+                        float offset = 0.1f;
+                        tvTouchPoint.setText(floatDf.format(countDownTime));
+                        countDownTime -= offset;
+                        handler.postDelayed(touchViewRunnable, (long) (1000L * offset));
+                    } else {
+                        removeTouchView();
                     }
                 };
             }
