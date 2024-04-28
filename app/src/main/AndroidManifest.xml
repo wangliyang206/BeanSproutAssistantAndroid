@@ -3,22 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.wly.beansprout">
 
-    <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
+    <uses-permission
+        android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
         tools:ignore="ProtectedPermissions" />
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <!--android 26 以上需要-->
-    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="${APP_NAME}"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name="com.wly.beansprout.MainActivity"
+        <activity
+            android:name="com.wly.beansprout.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,7 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
         <service
             android:name="com.wly.beansprout.service.AutoTouchService"
             android:exported="true"
@@ -43,8 +45,9 @@
 
         </service>
 
-        <service android:name="com.wly.beansprout.service.FloatingService"
-            android:enabled="true"/>
+        <service
+            android:name="com.wly.beansprout.service.FloatingService"
+            android:enabled="true" />
 
     </application>
 
