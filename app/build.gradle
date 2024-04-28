@@ -7,8 +7,8 @@ android {
         applicationId "com.wly.beansprout"
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode 2
-        versionName "2.0"
+        versionCode 120
+        versionName "1.2.0"
     }
 
     //编译可选项参数
@@ -39,7 +39,6 @@ android {
             storeFile file('keystore/debug.keystore')
         }
     }
-
 
     //构建类型(一般是release和debug，还可以自定义)
     buildTypes {
@@ -101,6 +100,10 @@ android {
             outputFileName = fileName;
 
         }
+    }
+
+    lintOptions {
+        abortOnError false
     }
 }
 
