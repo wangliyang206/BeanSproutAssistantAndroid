@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.zhang.autotouch">
+    package="com.wly.beansprout">
 
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
         tools:ignore="ProtectedPermissions" />
@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".MainActivity"
+        <activity android:name="com.wly.beansprout.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,7 +28,7 @@
         </activity>
         
         <service
-            android:name=".service.AutoTouchService"
+            android:name="com.wly.beansprout.service.AutoTouchService"
             android:exported="true"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
@@ -43,7 +43,7 @@
 
         </service>
 
-        <service android:name=".service.FloatingService"
+        <service android:name="com.wly.beansprout.service.FloatingService"
             android:enabled="true"/>
 
     </application>
