@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">豆芽助手</string>
-    <string name="app_name_debug">Test豆芽助手</string>
+    <string name="app_name">打工鸡</string>
+    <string name="app_name_debug">Test打工鸡</string>
     <string name="hint">开启该权限才能正常使用自动触控功能</string>
 </resources>

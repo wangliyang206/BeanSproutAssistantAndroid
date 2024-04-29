@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout bulletchatLayout = findViewById(R.id.lila_bulletchat_layout);
         ckboxBulletchat = findViewById(R.id.chk_bulletchat_ckbox);
         bulletchatLayout.setOnClickListener(v -> ckboxBulletchat.setChecked(!ckboxBulletchat.isChecked()));
+
     }
 
     @Override
