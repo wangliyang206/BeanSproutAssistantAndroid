@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -12,6 +13,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+
+import androidx.core.content.ContextCompat;
 
 import com.wly.beansprout.R;
 import com.wly.beansprout.bean.Point;
@@ -27,7 +31,7 @@ import java.util.List;
  */
 public class FloatingService extends Service {
     private WindowManager mWindowManager;
-    private View mFloatingView;
+    private ImageView mFloatingView;
     private MenuDialog menuDialog;
     private WindowManager.LayoutParams floatLayoutParams;
 
@@ -124,7 +128,11 @@ public class FloatingService extends Service {
 //                    } else {
 //                        removeViewFromWinddow(mFloatingView);
 //                    }
-                    openWanderingChicken(x, y);
+
+                    // 开启溜达鸡动画
+//                    onStartStrollingChickenAnimation(x, y);
+                    // 开启闪现鸡动画
+                    onStartFlashChickenAnimation(x, y);
                 }
 
                 @Override
@@ -140,15 +148,10 @@ public class FloatingService extends Service {
     /**
      * 开启溜达鸡动画
      */
-    private void openWanderingChicken(int targetX, int targetY) {
+    private void onStartStrollingChickenAnimation(int targetX, int targetY) {
         Log.d("onFloatWindowAttachChange", "targetX=" + targetX + ";targetY=" + targetY);
 
         if (mWindowManager != null) {
-            // 闪现
-//            floatLayoutParams.x = targetX;
-//            floatLayoutParams.y = targetY;
-//            mWindowManager.updateViewLayout(mFloatingView, floatLayoutParams);
-
             // 让鸡一步一步走过去，第一步，拿到鸡的位置
             int startX = (x == 0 && y == 0) ? floatLayoutParams.x : x;
             int startY = (x == 0 && y == 0) ? floatLayoutParams.y : y;
@@ -185,6 +188,44 @@ public class FloatingService extends Service {
                 // 开始移动View
                 handler.postDelayed(moveViewTask, 500);
             }
+        }
+    }
+
+    /**
+     * 开启闪现鸡动画
+     */
+    private void onStartFlashChickenAnimation(int targetX, int targetY) {
+        Log.d("onFloatWindowAttachChange", "targetX=" + targetX + ";targetY=" + targetY);
+
+        if (mWindowManager != null) {
+            // 收缩动画
+            AnimationDrawable shrinkAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.hide_frame_animation);
+            shrinkAnim.stop();
+            shrinkAnim.selectDrawable(0);
+            mFloatingView.setImageDrawable(shrinkAnim);
+            shrinkAnim.start();
+
+            // 使用Handler来在动画结束后执行操作
+            new Handler().postDelayed(() -> {
+                // 这里是动画播放完成后的操作
+                // 例如，你可以重置动画或执行其他任务
+                shrinkAnim.stop(); // 如果需要的话，可以停止动画
+//                    mFloatingView.setImageResource(R.mipmap.icon_wandering_chicken);
+
+                // 闪现
+                floatLayoutParams.x = targetX;
+                floatLayoutParams.y = targetY;
+                mWindowManager.updateViewLayout(mFloatingView, floatLayoutParams);
+
+                // 冒出
+                AnimationDrawable extendAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.show_frame_animation);
+                extendAnim.stop();
+                extendAnim.selectDrawable(0);
+                mFloatingView.setImageDrawable(extendAnim);
+                extendAnim.start();
+
+            }, 375);// 动画的总时长（毫秒）
+
         }
     }
 
