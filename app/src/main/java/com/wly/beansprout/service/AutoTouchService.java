@@ -9,20 +9,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 
-import com.wly.beansprout.R;
 import com.wly.beansprout.TouchEventManager;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.bean.TouchPoint;
-import com.wly.beansprout.utils.DensityUtil;
 import com.wly.beansprout.utils.WindowUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -46,12 +41,9 @@ public class AutoTouchService extends AccessibilityService {
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(Looper.getMainLooper());
     private WindowManager windowManager;
-    private TextView tvTouchPoint;
     //倒计时
     private float countDownTime;
     private final DecimalFormat floatDf = new DecimalFormat("#0.0");
-    //修改点击文本的倒计时
-    private Runnable touchViewRunnable;
 
     @Override
     protected void onServiceConnected() {
@@ -78,12 +70,9 @@ public class AutoTouchService extends AccessibilityService {
                 break;
             case TouchEvent.ACTION_PAUSE:
                 handler.removeCallbacks(autoTouchRunnable);
-                handler.removeCallbacks(touchViewRunnable);
                 break;
             case TouchEvent.ACTION_STOP:
                 handler.removeCallbacks(autoTouchRunnable);
-                handler.removeCallbacks(touchViewRunnable);
-                removeTouchView();
                 autoTouchPoint = null;
                 break;
         }
@@ -95,7 +84,6 @@ public class AutoTouchService extends AccessibilityService {
     private void onAutoClick() {
         if (autoTouchPoint != null) {
             handler.postDelayed(autoTouchRunnable, getDelayTime());
-            showTouchView();
         }
     }
 
@@ -257,52 +245,5 @@ public class AutoTouchService extends AccessibilityService {
     public void onDestroy() {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
-        removeTouchView();
-    }
-
-    /**
-     * 显示倒计时
-     */
-    private void showTouchView() {
-        if (autoTouchPoint != null) {
-            //创建触摸点View
-            if (tvTouchPoint == null) {
-                tvTouchPoint = (TextView) LayoutInflater.from(this).inflate(R.layout.window_touch_point, null);
-            }
-            //显示触摸点View
-            if (windowManager != null && !tvTouchPoint.isAttachedToWindow()) {
-                int width = DensityUtil.dip2px(this, 40);
-                int height = DensityUtil.dip2px(this, 40);
-                WindowManager.LayoutParams params = WindowUtils.newWmParams(width, height);
-                params.gravity = Gravity.START | Gravity.TOP;
-                params.x = autoTouchPoint.getX() - width / 2;
-                params.y = autoTouchPoint.getY() - width;
-                params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-                windowManager.addView(tvTouchPoint, params);
-            }
-            //开启倒计时
-            countDownTime = autoTouchPoint.getDelay();
-            if (touchViewRunnable == null) {
-                touchViewRunnable = () -> {
-                    handler.removeCallbacks(touchViewRunnable);
-                    Log.d("触摸倒计时", countDownTime + "");
-                    if (countDownTime > 0) {
-                        float offset = 0.1f;
-                        tvTouchPoint.setText(floatDf.format(countDownTime));
-                        countDownTime -= offset;
-                        handler.postDelayed(touchViewRunnable, (long) (1000L * offset));
-                    } else {
-                        removeTouchView();
-                    }
-                };
-            }
-            handler.post(touchViewRunnable);
-        }
-    }
-
-    private void removeTouchView() {
-        if (windowManager != null && tvTouchPoint.isAttachedToWindow()) {
-            windowManager.removeView(tvTouchPoint);
-        }
     }
 }

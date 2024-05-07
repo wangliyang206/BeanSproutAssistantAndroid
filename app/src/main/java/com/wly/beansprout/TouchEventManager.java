@@ -2,6 +2,9 @@ package com.wly.beansprout;
 
 import com.wly.beansprout.bean.TouchEvent;
 
+/**
+ * 触摸事件管理器
+ */
 public class TouchEventManager {
     // 快手
     public final String kwai = "com.smile.gifmaker";

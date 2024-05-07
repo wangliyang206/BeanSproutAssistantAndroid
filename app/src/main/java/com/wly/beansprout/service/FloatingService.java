@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import androidx.core.content.ContextCompat;
 
 import com.wly.beansprout.R;
+import com.wly.beansprout.TouchEventManager;
 import com.wly.beansprout.bean.Point;
 import com.wly.beansprout.dialog.MenuDialog;
 import com.wly.beansprout.utils.DensityUtil;
@@ -35,11 +36,14 @@ public class FloatingService extends Service {
     private MenuDialog menuDialog;
     private WindowManager.LayoutParams floatLayoutParams;
 
-    // 是否开启点赞
+    // 是否勾选的点赞功能
     private boolean isFunction;
-    // 不是窗口的X和Y，是mFloatingView的X和Y
+    // 当前窗口的X、Y坐标
     private int x;
     private int y;
+    // 目标窗口的X、Y坐标
+    private int targetX;
+    private int targetY;
     //是否在移动
     private boolean isMoving;
 
@@ -73,43 +77,45 @@ public class FloatingService extends Service {
         addViewToWindow(mFloatingView, floatLayoutParams);
         //FloatingView的拖动事件
         mFloatingView.setClickable(true);
-        mFloatingView.setOnTouchListener(new View.OnTouchListener() {
+        mFloatingView.setOnTouchListener((v, event) -> {
 
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        x = (int) event.getRawX();
-                        y = (int) event.getRawY();
-                        isMoving = false;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:                                                       // 按下动作
+                    x = (int) event.getRawX();
+                    y = (int) event.getRawY();
+                    isMoving = false;
+                    return true;
+                case MotionEvent.ACTION_MOVE:                                                       // 移动动作
+                    int nowX = (int) event.getRawX();
+                    int nowY = (int) event.getRawY();
+                    int moveX = nowX - x;
+                    int moveY = nowY - y;
+                    if (Math.abs(moveX) > 0 || Math.abs(moveY) > 0) {
+                        isMoving = true;
+                        floatLayoutParams.x += moveX;
+                        floatLayoutParams.y += moveY;
+                        //更新View的位置
+                        mWindowManager.updateViewLayout(mFloatingView, floatLayoutParams);
+                        x = nowX;
+                        y = nowY;
                         return true;
-                    case MotionEvent.ACTION_MOVE:
-                        int nowX = (int) event.getRawX();
-                        int nowY = (int) event.getRawY();
-                        int moveX = nowX - x;
-                        int moveY = nowY - y;
-                        if (Math.abs(moveX) > 0 || Math.abs(moveY) > 0) {
-                            isMoving = true;
-                            floatLayoutParams.x += moveX;
-                            floatLayoutParams.y += moveY;
-                            //更新View的位置
-                            mWindowManager.updateViewLayout(mFloatingView, floatLayoutParams);
-                            x = nowX;
-                            y = nowY;
-                            return true;
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:                                                         // 抬起动作
+                    if (isMoving) {
+                        // 移动后抬起的动作
+                        // 如果正在触控中，则开启动画
+                        if (TouchEventManager.getInstance().isTouching()) {
+                            onStartAnimation(targetX, targetY);
                         }
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        if (!isMoving) {
-                            onShowSelectDialog();
-                            return true;
-                        }
-                        break;
-                }
-                return false;
+                    } else {
+                        // 按下后抬起的动作
+                        onShowSelectDialog();
+                        return true;
+                    }
+                    break;
             }
+            return false;
         });
 
     }
@@ -129,10 +135,9 @@ public class FloatingService extends Service {
 //                        removeViewFromWinddow(mFloatingView);
 //                    }
 
-                    // 开启溜达鸡动画
-//                    onStartStrollingChickenAnimation(x, y);
-                    // 开启闪现鸡动画
-                    onStartFlashChickenAnimation(x, y);
+                    targetX = x;
+                    targetY = y;
+                    onStartAnimation(x, y);
                 }
 
                 @Override
@@ -143,6 +148,20 @@ public class FloatingService extends Service {
         }
         menuDialog.setFunction(isFunction);
         menuDialog.show();
+    }
+
+
+    /**
+     * 动画入口
+     */
+    private void onStartAnimation(int x, int y) {
+        // 特殊处理，由于鸡的目标位置容易挡住点击位置，这里需要将鸡的位置向下移10像素
+        y = y + 10;
+
+        // 开启溜达鸡动画
+//        onStartStrollingChickenAnimation(x, y);
+        // 开启闪现鸡动画
+        onStartFlashChickenAnimation(x, y);
     }
 
     /**
@@ -200,8 +219,7 @@ public class FloatingService extends Service {
         if (mWindowManager != null) {
             // 收缩动画
             AnimationDrawable shrinkAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.hide_frame_animation);
-            shrinkAnim.stop();
-            shrinkAnim.selectDrawable(0);
+//            shrinkAnim.selectDrawable(0);
             mFloatingView.setImageDrawable(shrinkAnim);
             shrinkAnim.start();
 
@@ -210,7 +228,8 @@ public class FloatingService extends Service {
                 // 这里是动画播放完成后的操作
                 // 例如，你可以重置动画或执行其他任务
                 shrinkAnim.stop(); // 如果需要的话，可以停止动画
-//                    mFloatingView.setImageResource(R.mipmap.icon_wandering_chicken);
+
+//                mFloatingView.setImageResource(R.mipmap.icon_wandering_chicken);
 
                 // 闪现
                 floatLayoutParams.x = targetX;
@@ -219,8 +238,7 @@ public class FloatingService extends Service {
 
                 // 冒出
                 AnimationDrawable extendAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.show_frame_animation);
-                extendAnim.stop();
-                extendAnim.selectDrawable(0);
+//                extendAnim.selectDrawable(0);
                 mFloatingView.setImageDrawable(extendAnim);
                 extendAnim.start();
 
