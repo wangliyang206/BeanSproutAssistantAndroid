@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -12,9 +14,13 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.wly.beansprout.R;
+import com.wly.beansprout.bean.Point;
 import com.wly.beansprout.dialog.MenuDialog;
 import com.wly.beansprout.utils.DensityUtil;
+import com.wly.beansprout.utils.PathFinder;
 import com.wly.beansprout.utils.WindowUtils;
+
+import java.util.List;
 
 /**
  * 悬浮窗
@@ -27,6 +33,11 @@ public class FloatingService extends Service {
 
     // 是否开启点赞
     private boolean isFunction;
+    // 不是窗口的X和Y，是mFloatingView的X和Y
+    private int x;
+    private int y;
+    //是否在移动
+    private boolean isMoving;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -59,14 +70,11 @@ public class FloatingService extends Service {
         //FloatingView的拖动事件
         mFloatingView.setClickable(true);
         mFloatingView.setOnTouchListener(new View.OnTouchListener() {
-            private int x;
-            private int y;
-            //是否在移动
-            private boolean isMoving;
 
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         x = (int) event.getRawX();
@@ -99,6 +107,7 @@ public class FloatingService extends Service {
                 return false;
             }
         });
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -109,12 +118,13 @@ public class FloatingService extends Service {
             menuDialog = new MenuDialog(this);
             menuDialog.setListener(new MenuDialog.Listener() {
                 @Override
-                public void onFloatWindowAttachChange(boolean attach) {
-                    if (attach) {
-                        addViewToWindow(mFloatingView, floatLayoutParams);
-                    } else {
-                        removeViewFromWinddow(mFloatingView);
-                    }
+                public void onFloatWindowAttachChange(int x, int y) {
+//                    if (attach) {
+//                        addViewToWindow(mFloatingView, floatLayoutParams);
+//                    } else {
+//                        removeViewFromWinddow(mFloatingView);
+//                    }
+                    openWanderingChicken(x, y);
                 }
 
                 @Override
@@ -125,6 +135,57 @@ public class FloatingService extends Service {
         }
         menuDialog.setFunction(isFunction);
         menuDialog.show();
+    }
+
+    /**
+     * 开启溜达鸡动画
+     */
+    private void openWanderingChicken(int targetX, int targetY) {
+        Log.d("onFloatWindowAttachChange", "targetX=" + targetX + ";targetY=" + targetY);
+
+        if (mWindowManager != null) {
+            // 闪现
+//            floatLayoutParams.x = targetX;
+//            floatLayoutParams.y = targetY;
+//            mWindowManager.updateViewLayout(mFloatingView, floatLayoutParams);
+
+            // 让鸡一步一步走过去，第一步，拿到鸡的位置
+            int startX = (x == 0 && y == 0) ? floatLayoutParams.x : x;
+            int startY = (x == 0 && y == 0) ? floatLayoutParams.y : y;
+
+            Log.d("openWanderingChicken", "startX=" + startX + ";startY=" + startY);
+
+            PathFinder mPathFinder = new PathFinder(startX, startY, targetX, targetY);
+            List<Point> list = mPathFinder.getPath();
+            Log.d("openWanderingChicken", "list=" + list.size());
+
+            if (!list.isEmpty()) {
+                // Handler用于发送Runnable或Message到主线程的消息队列
+                final Handler handler = new Handler();
+                // Runnable定义了要执行的任务
+                final Runnable moveViewTask = new Runnable() {
+                    private int num = 0;
+
+                    @Override
+                    public void run() {
+                        // 更新View的位置
+                        if (num < list.size()) {
+                            Point info = list.get(num);
+                            floatLayoutParams.x = info.x;
+                            floatLayoutParams.y = info.y;
+                            mWindowManager.updateViewLayout(mFloatingView, floatLayoutParams);
+                            Log.d("过程", "info.x=" + info.x + ";info.y=" + info.y);
+                            num++;
+
+                            handler.postDelayed(this, 500); // 0.5秒后再次执行
+                        }
+                    }
+                };
+
+                // 开始移动View
+                handler.postDelayed(moveViewTask, 500);
+            }
+        }
     }
 
     @Override

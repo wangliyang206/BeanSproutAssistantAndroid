@@ -73,15 +73,18 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 btStop.setVisibility(View.VISIBLE);
                 dismiss();
                 touchPoint.setFunction(isFunction);
+                // 通知 动作服务，开启点赞功能
                 TouchEvent.postStartAction(touchPoint);
-                ToastUtil.show("已开启触控点：" + touchPoint.getName());
-
                 // 特殊处理，关闭所有，然后单独开启已选择的项
                 for (TouchPoint info : touchPointAdapter.getTouchPointList()) {
                     info.setStartClick(false);
                 }
                 touchPointAdapter.getTouchPointList().get(position).setStartClick(true);
+                // 重新保存到 轻文件
                 SpUtils.setTouchPoints(getContext(), touchPointAdapter.getTouchPointList());
+                if (listener != null) {
+                    listener.onFloatWindowAttachChange(touchPoint.getX(), touchPoint.getY());
+                }
             } else if (view.getId() == R.id.bt_delete) {
                 if (touchPointAdapter != null) {
                     touchPointAdapter.onRemove(getContext(), position);
@@ -165,9 +168,10 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
         /**
          * 悬浮窗显示状态变化
          *
-         * @param attach
+         * @param x 目标X
+         * @param y 目标Y
          */
-        void onFloatWindowAttachChange(boolean attach);
+        void onFloatWindowAttachChange(int x, int y);
 
         /**
          * 关闭辅助
