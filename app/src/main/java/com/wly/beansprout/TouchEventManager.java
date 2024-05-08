@@ -9,7 +9,7 @@ public class TouchEventManager {
     // 快手
     public final String kwai = "com.smile.gifmaker";
     // 抖音
-    public static final String tiktok = "com.ss.android.ugc.aweme";
+    public final String tiktok = "com.ss.android.ugc.aweme";
 
     private static TouchEventManager touchEventManager;
     // 触摸动作

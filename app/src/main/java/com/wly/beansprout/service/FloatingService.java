@@ -38,6 +38,8 @@ public class FloatingService extends Service {
 
     // 是否勾选的点赞功能
     private boolean isFunction;
+    // 闪现动画
+    private boolean isFlashAnim;
     // 当前窗口的X、Y坐标
     private int x;
     private int y;
@@ -57,6 +59,7 @@ public class FloatingService extends Service {
         if (intent != null) {
             // 处理传递过来的数据
             isFunction = intent.getBooleanExtra("isFunction", false);
+            isFlashAnim = intent.getBooleanExtra("isFlashAnim", false);
         }
         return START_NOT_STICKY;
     }
@@ -158,10 +161,14 @@ public class FloatingService extends Service {
         // 特殊处理，由于鸡的目标位置容易挡住点击位置，这里需要将鸡的位置向下移10像素
         y = y + 10;
 
-        // 开启溜达鸡动画
-//        onStartStrollingChickenAnimation(x, y);
-        // 开启闪现鸡动画
-        onStartFlashChickenAnimation(x, y);
+        if (isFlashAnim) {
+            // 开启闪现鸡动画
+            onStartFlashChickenAnimation(x, y);
+        } else {
+            // 开启溜达鸡动画
+            onStartStrollingChickenAnimation(x, y);
+        }
+
     }
 
     /**

@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox ckboxFunction;
     // 弹幕欢迎
     private CheckBox ckboxBulletchat;
+    // 动画
+    private RadioGroup groupAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
                     ToastUtil.show(getString(R.string.app_name) + "已启用");
                     Intent mIntent = new Intent(MainActivity.this, FloatingService.class);
                     mIntent.putExtra("isFunction", ckboxFunction.isChecked());
+                    mIntent.putExtra("isFlashAnim", groupAnimation.getCheckedRadioButtonId() == R.id.cb_animation_flash);
                     startService(mIntent);
                     moveTaskToBack(true);
                     break;
@@ -90,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout bulletchatLayout = findViewById(R.id.lila_bulletchat_layout);
         ckboxBulletchat = findViewById(R.id.chk_bulletchat_ckbox);
         bulletchatLayout.setOnClickListener(v -> ckboxBulletchat.setChecked(!ckboxBulletchat.isChecked()));
+
+        // 动画
+        groupAnimation = findViewById(R.id.ragr_animation);
 
     }
 
