@@ -129,6 +129,7 @@ public class FloatingService extends Service {
         mFloatingView.post(() -> basicAnim.start());
     }
 
+
     @SuppressLint("ClickableViewAccessibility")
     private void onShowSelectDialog() {
         //弹出菜单弹窗
@@ -160,7 +161,10 @@ public class FloatingService extends Service {
                 @Override
                 public void onStopTouch() {
                     // 点击了，停止触控
+                    Log.i("#####FloatingService", "onStopTouch=" + basicAnim.isRunning());
+
                     if (basicAnim != null && !basicAnim.isRunning()) {
+                        mFloatingView.setImageDrawable(basicAnim);
                         basicAnim.start();
                     }
                 }
@@ -249,7 +253,6 @@ public class FloatingService extends Service {
         if (mWindowManager != null) {
             // 收缩动画
             AnimationDrawable shrinkAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.hide_frame_animation);
-//            shrinkAnim.selectDrawable(0);
             mFloatingView.setImageDrawable(shrinkAnim);
             shrinkAnim.start();
 
@@ -268,7 +271,6 @@ public class FloatingService extends Service {
 
                 // 冒出
                 AnimationDrawable extendAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.show_frame_animation);
-//                extendAnim.selectDrawable(0);
                 mFloatingView.setImageDrawable(extendAnim);
                 extendAnim.start();
 
