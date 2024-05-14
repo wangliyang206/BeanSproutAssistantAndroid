@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+  <!-- 原图 -->
+  <item
+      android:drawable="@mipmap/icon_wave_0"
+      android:duration="2000"/>
+
+  <!-- 挥手 -->
+  <item
+      android:drawable="@mipmap/icon_wave_1"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_2"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_3"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_4"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_5"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_6"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_7"
+      android:duration="50"/>
+
+  <!-- 反向挥手 -->
+  <item
+      android:drawable="@mipmap/icon_wave_6"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_5"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_4"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_3"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_2"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_1"
+      android:duration="50"/>
+
+  <!-- 挥手 -->
+  <item
+      android:drawable="@mipmap/icon_wave_1"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_2"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_3"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_4"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_5"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_6"
+      android:duration="50"/>
+  <item
+      android:drawable="@mipmap/icon_wave_7"
+      android:duration="50"/>
+
+  <!-- 回复原图 -->
+  <item
+      android:drawable="@mipmap/icon_wave_0"
+      android:duration="2000"/>
+</animation-list>

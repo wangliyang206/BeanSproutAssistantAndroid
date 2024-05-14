@@ -48,6 +48,8 @@ public class FloatingService extends Service {
     private int targetY;
     //是否在移动
     private boolean isMoving;
+    // 基础动画(眨眼+挥手+头发动)
+    private AnimationDrawable basicAnim;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -121,6 +123,10 @@ public class FloatingService extends Service {
             return false;
         });
 
+        // 开启基本动画(眨眼+挥手+头发动)
+        basicAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.wave_animation);
+        mFloatingView.setImageDrawable(basicAnim);
+        mFloatingView.post(() -> basicAnim.start());
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -130,13 +136,21 @@ public class FloatingService extends Service {
         if (menuDialog == null) {
             menuDialog = new MenuDialog(this);
             menuDialog.setListener(new MenuDialog.Listener() {
+
                 @Override
-                public void onFloatWindowAttachChange(int x, int y) {
+                public void onStartTouch(int x, int y) {
+                    // 点击了，触控动作
 //                    if (attach) {
 //                        addViewToWindow(mFloatingView, floatLayoutParams);
 //                    } else {
 //                        removeViewFromWinddow(mFloatingView);
 //                    }
+
+
+                    // 停止 基础动画
+                    if (basicAnim != null && basicAnim.isRunning()) {
+                        basicAnim.stop();
+                    }
 
                     targetX = x;
                     targetY = y;
@@ -144,7 +158,16 @@ public class FloatingService extends Service {
                 }
 
                 @Override
+                public void onStopTouch() {
+                    // 点击了，停止触控
+                    if (basicAnim != null && !basicAnim.isRunning()) {
+                        basicAnim.start();
+                    }
+                }
+
+                @Override
                 public void onExitService() {
+                    // 退出助手
                     stopSelf();
                 }
             });
@@ -259,6 +282,13 @@ public class FloatingService extends Service {
         super.onDestroy();
         removeViewFromWinddow(mFloatingView);
         hideDialog(menuDialog);
+        if (basicAnim != null) {
+            if (basicAnim.isRunning()) {
+                basicAnim.stop();
+            }
+
+            basicAnim = null;
+        }
     }
 
     private void hideDialog(Dialog dialog) {

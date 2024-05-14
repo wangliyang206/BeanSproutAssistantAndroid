@@ -83,7 +83,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 // 重新保存到 轻文件
                 SpUtils.setTouchPoints(getContext(), touchPointAdapter.getTouchPointList());
                 if (listener != null) {
-                    listener.onFloatWindowAttachChange(touchPoint.getX(), touchPoint.getY());
+                    listener.onStartTouch(touchPoint.getX(), touchPoint.getY());
                 }
             } else if (view.getId() == R.id.bt_delete) {
                 if (touchPointAdapter != null) {
@@ -141,6 +141,9 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 }
                 SpUtils.setTouchPoints(getContext(), touchPointAdapter.getTouchPointList());
                 touchPointAdapter.notifyDataSetChanged();
+                if (listener != null) {
+                    listener.onStopTouch();
+                }
                 break;
             case R.id.bt_exit:
                 TouchEvent.postStopAction();
@@ -166,12 +169,17 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
 
     public interface Listener {
         /**
-         * 悬浮窗显示状态变化
+         * 开始动作
          *
          * @param x 目标X
          * @param y 目标Y
          */
-        void onFloatWindowAttachChange(int x, int y);
+        void onStartTouch(int x, int y);
+
+        /**
+         * 停止触控
+         */
+        void onStopTouch();
 
         /**
          * 关闭辅助
