@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                     ToastUtil.show(getString(R.string.app_name) + "已启用");
                     Intent mIntent = new Intent(MainActivity.this, FloatingService.class);
                     mIntent.putExtra("isFunction", ckboxFunction.isChecked());
-                    mIntent.putExtra("isFlashAnim", groupAnimation.getCheckedRadioButtonId() == R.id.cb_animation_flash);
+                    mIntent.putExtra("chickModel", getChickModel());
                     startService(mIntent);
                     moveTaskToBack(true);
                     break;
@@ -154,5 +154,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton("取消", null).show();
+    }
+
+    /**
+     * 获取小鸡模型
+     */
+    private int getChickModel() {
+        if (groupAnimation.getCheckedRadioButtonId() == R.id.cb_animation_goldenHairedChick) {
+            // 金毛小鸡
+            return 1;
+        } else {
+            // 其它小鸡
+            return 2;
+        }
     }
 }

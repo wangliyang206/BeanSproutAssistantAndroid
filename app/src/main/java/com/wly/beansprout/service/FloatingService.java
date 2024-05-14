@@ -38,8 +38,8 @@ public class FloatingService extends Service {
 
     // 是否勾选的点赞功能
     private boolean isFunction;
-    // 闪现动画
-    private boolean isFlashAnim;
+    // 模型：1代表金毛小鸡；2其它小鸡
+    private int chickModel;
     // 当前窗口的X、Y坐标
     private int x;
     private int y;
@@ -61,7 +61,7 @@ public class FloatingService extends Service {
         if (intent != null) {
             // 处理传递过来的数据
             isFunction = intent.getBooleanExtra("isFunction", false);
-            isFlashAnim = intent.getBooleanExtra("isFlashAnim", false);
+            chickModel = intent.getIntExtra("chickModel", 1);
         }
         return START_NOT_STICKY;
     }
@@ -188,7 +188,7 @@ public class FloatingService extends Service {
         // 特殊处理，由于鸡的目标位置容易挡住点击位置，这里需要将鸡的位置向下移10像素
         y = y + 10;
 
-        if (isFlashAnim) {
+        if (chickModel == 1) {
             // 开启闪现鸡动画
             onStartFlashChickenAnimation(x, y);
         } else {

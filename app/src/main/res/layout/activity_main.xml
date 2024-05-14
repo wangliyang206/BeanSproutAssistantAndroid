@@ -175,11 +175,11 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <!-- 动画 -->
+            <!-- 模型 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="动画："
+                android:text="模型："
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
@@ -193,7 +193,7 @@
                 android:padding="3dp">
 
                 <RadioButton
-                    android:id="@+id/cb_animation_flash"
+                    android:id="@+id/cb_animation_goldenHairedChick"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@null"
@@ -202,12 +202,12 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:tag="1"
-                    android:text="闪现鸡"
+                    android:text="金毛小鸡"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
                 <RadioButton
-                    android:id="@+id/cb_animation_strolling"
+                    android:id="@+id/cb_animation_cuteChicken"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
@@ -216,7 +216,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:tag="2"
-                    android:text="溜达鸡"
+                    android:text="萌萌小鸡"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
