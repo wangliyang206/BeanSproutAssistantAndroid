@@ -274,6 +274,13 @@ public class FloatingService extends Service {
                 mFloatingView.setImageDrawable(extendAnim);
                 extendAnim.start();
 
+                new Handler().postDelayed(() -> {
+                    AnimationDrawable workAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.work_animation);
+                    mFloatingView.setImageDrawable(workAnim);
+                    mFloatingView.post(() -> workAnim.start());
+
+                }, 450);// 动画的总时长（毫秒）
+
             }, 375);// 动画的总时长（毫秒）
 
         }
