@@ -48,7 +48,7 @@ public class FloatingService extends Service {
     private int targetY;
     //是否在移动
     private boolean isMoving;
-    // 基础动画(眨眼+挥手+头发动)
+    // 基础动画(眨眼+挥手)
     private AnimationDrawable basicAnim;
 
     @Override
@@ -123,8 +123,9 @@ public class FloatingService extends Service {
             return false;
         });
 
-        // 开启基本动画(眨眼+挥手+头发动)
-        basicAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.wave_animation);
+
+        // 开启基本动画(眨眼+挥手)
+        basicAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), (chickModel == 1) ? R.drawable.golden_basic_animation : R.drawable.cute_basic_animation);
         mFloatingView.setImageDrawable(basicAnim);
         mFloatingView.post(() -> basicAnim.start());
     }
