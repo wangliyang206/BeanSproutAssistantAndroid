@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private int getChickModel() {
         if (groupAnimation.getCheckedRadioButtonId() == R.id.cb_animation_goldenHairedChick) {
-            // 金毛小鸡
+            // 功德小鸡
             return 1;
         } else {
             // 其它小鸡

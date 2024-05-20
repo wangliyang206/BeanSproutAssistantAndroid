@@ -38,7 +38,7 @@ public class FloatingService extends Service {
 
     // 是否勾选的点赞功能
     private boolean isFunction;
-    // 模型：1代表金毛小鸡；2其它小鸡
+    // 模型：1代表功德小鸡；2其它小鸡
     private int chickModel;
     // 当前窗口的X、Y坐标
     private int x;
