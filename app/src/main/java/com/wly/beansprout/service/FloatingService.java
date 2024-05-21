@@ -210,6 +210,11 @@ public class FloatingService extends Service {
             int startX = (x == 0 && y == 0) ? floatLayoutParams.x : x;
             int startY = (x == 0 && y == 0) ? floatLayoutParams.y : y;
 
+            // 转圈动画
+            AnimationDrawable shrinkAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), (startX > targetX) ? R.drawable.cute_circle_left_animation : R.drawable.cute_circle_right_animation);
+            mFloatingView.setImageDrawable(shrinkAnim);
+            shrinkAnim.start();
+
             Log.d("openWanderingChicken", "startX=" + startX + ";startY=" + startY);
 
             PathFinder mPathFinder = new PathFinder(startX, startY, targetX, targetY);
@@ -235,6 +240,8 @@ public class FloatingService extends Service {
                             num++;
 
                             handler.postDelayed(this, 500); // 0.5秒后再次执行
+                        } else {
+                            mFloatingView.setImageResource(R.mipmap.icon_cute_circle_0);
                         }
                     }
                 };

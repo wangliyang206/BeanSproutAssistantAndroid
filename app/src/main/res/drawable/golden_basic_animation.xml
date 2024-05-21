@@ -7,13 +7,13 @@
       android:duration="2000"/>
   <item
       android:drawable="@mipmap/icon_blink_your_eyes_1"
-      android:duration="500"/>
+      android:duration="300"/>
   <item
       android:drawable="@mipmap/icon_wave_0"
       android:duration="800"/>
   <item
       android:drawable="@mipmap/icon_blink_your_eyes_1"
-      android:duration="500"/>
+      android:duration="300"/>
   <item
       android:drawable="@mipmap/icon_wave_0"
       android:duration="3000"/>
