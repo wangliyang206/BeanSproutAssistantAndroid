@@ -241,7 +241,9 @@ public class FloatingService extends Service {
 
                             handler.postDelayed(this, 500); // 0.5秒后再次执行
                         } else {
-                            mFloatingView.setImageResource(R.mipmap.icon_cute_circle_0);
+                            AnimationDrawable skippingRopeAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.cute_skipping_rope_animation);
+                            mFloatingView.setImageDrawable(skippingRopeAnim);
+                            skippingRopeAnim.start();
                         }
                     }
                 };

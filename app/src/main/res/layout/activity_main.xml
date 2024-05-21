@@ -216,7 +216,7 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:tag="2"
-                    android:text="萌萌小鸡"
+                    android:text="跳绳小鸡"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
