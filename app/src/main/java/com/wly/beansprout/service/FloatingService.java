@@ -63,6 +63,12 @@ public class FloatingService extends Service {
             isFunction = intent.getBooleanExtra("isFunction", false);
             chickModel = intent.getIntExtra("chickModel", 1);
         }
+
+        // 开启基本动画(眨眼+挥手)
+        basicAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), (chickModel == 1) ? R.drawable.golden_basic_animation : R.drawable.cute_basic_animation);
+        mFloatingView.setImageDrawable(basicAnim);
+        mFloatingView.post(() -> basicAnim.start());
+
         return START_NOT_STICKY;
     }
 
@@ -123,11 +129,6 @@ public class FloatingService extends Service {
             return false;
         });
 
-
-        // 开启基本动画(眨眼+挥手)
-        basicAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), (chickModel == 1) ? R.drawable.golden_basic_animation : R.drawable.cute_basic_animation);
-        mFloatingView.setImageDrawable(basicAnim);
-        mFloatingView.post(() -> basicAnim.start());
     }
 
 
