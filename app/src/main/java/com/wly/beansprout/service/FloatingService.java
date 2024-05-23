@@ -77,11 +77,11 @@ public class FloatingService extends Service {
         super.onCreate();
         mFloatingView = creatView(R.layout.layout_window);
         //设置WindowManger布局参数以及相关属性
-        int d = DensityUtil.dip2px(this, 80);
+        int d = DensityUtil.dip2px(this, 100);
         floatLayoutParams = WindowUtils.newWmParams(d, d);
         //初始化位置
         floatLayoutParams.gravity = Gravity.TOP | Gravity.START;
-        floatLayoutParams.x = WindowUtils.getScreenWidth(this) - DensityUtil.dip2px(this, 80);
+        floatLayoutParams.x = WindowUtils.getScreenWidth(this) - DensityUtil.dip2px(this, 100);
         floatLayoutParams.y = WindowUtils.getScreenHeight(this) - DensityUtil.dip2px(this, 200);
         //获取WindowManager对象
         mWindowManager = WindowUtils.getWindowManager(this);
