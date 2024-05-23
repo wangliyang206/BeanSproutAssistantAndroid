@@ -188,7 +188,7 @@ public class FloatingService extends Service {
      */
     private void onStartAnimation(int x, int y) {
         // 特殊处理，由于鸡的目标位置容易挡住点击位置，这里需要将鸡的位置向下移10像素
-        y = y + 10;
+        y = y + 30;
 
         if (chickModel == 1) {
             // 开启闪现鸡动画
