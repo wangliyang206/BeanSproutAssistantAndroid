@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+    <!-- 扭动 -->
+    <item
+        android:drawable="@mipmap/icon_dance_01"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_02"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_03"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_04"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_05"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_06"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_07"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_08"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_09"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_10"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_11"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_12"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_13"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_14"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_15"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_16"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_17"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_18"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_19"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_20"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_21"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_22"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_23"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_24"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_dance_25"
+        android:duration="130" />
+
+    <!-- 眨眼睛 -->
+    <item
+        android:drawable="@mipmap/icon_blink_0"
+        android:duration="2000" />
+    <item
+        android:drawable="@mipmap/icon_blink_1"
+        android:duration="300" />
+    <item
+        android:drawable="@mipmap/icon_blink_0"
+        android:duration="800" />
+    <item
+        android:drawable="@mipmap/icon_blink_1"
+        android:duration="300" />
+    <item
+        android:drawable="@mipmap/icon_blink_0"
+        android:duration="3000" />
+
+</animation-list>

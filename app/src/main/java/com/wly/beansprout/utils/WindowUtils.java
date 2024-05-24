@@ -1,5 +1,8 @@
 package com.wly.beansprout.utils;
 
+import static android.content.Context.WINDOW_SERVICE;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -21,15 +24,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static android.content.Context.WINDOW_SERVICE;
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-
 /**
  * 屏幕工具类
  */
 public class WindowUtils {
+
     /**
-     *判断某个服务是否正在运行的方法
+     * 判断某个服务是否正在运行的方法
+     *
      * @param mContext
      * @param serviceName
      * @return
@@ -51,17 +53,18 @@ public class WindowUtils {
 
     /**
      * 判断是否是透明背景的Activity
+     *
      * @param context
      * @return
      */
-    public static boolean isTranslucentOrFloating(Context context){
+    public static boolean isTranslucentOrFloating(Context context) {
         boolean isTranslucentOrFloating = false;
         try {
-            int [] styleableRes = (int[]) Class.forName("com.android.internal.R$styleable").getField("Window").get(null);
+            int[] styleableRes = (int[]) Class.forName("com.android.internal.R$styleable").getField("Window").get(null);
             final TypedArray ta = context.obtainStyledAttributes(styleableRes);
             Method m = ActivityInfo.class.getMethod("isTranslucentOrFloating", TypedArray.class);
             m.setAccessible(true);
-            isTranslucentOrFloating = (boolean)m.invoke(null, ta);
+            isTranslucentOrFloating = (boolean) m.invoke(null, ta);
             m.setAccessible(false);
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,13 +74,14 @@ public class WindowUtils {
 
     /**
      * 修复8.0以上透明背景Activity指定方向时候闪退的bug
+     *
      * @param activity
      */
-    public static void fixOrientation(Activity activity){
+    public static void fixOrientation(Activity activity) {
         try {
             Field field = Activity.class.getDeclaredField("mActivityInfo");
             field.setAccessible(true);
-            ActivityInfo o = (ActivityInfo)field.get(activity);
+            ActivityInfo o = (ActivityInfo) field.get(activity);
             o.screenOrientation = -1;
             field.setAccessible(false);
         } catch (Exception e) {
@@ -88,19 +92,20 @@ public class WindowUtils {
     /**
      * 获取屏幕宽度
      */
-    public static int getScreenWidth(Context context){
+    public static int getScreenWidth(Context context) {
         return context.getResources().getDisplayMetrics().widthPixels;
     }
 
     /**
      * 获取屏幕高度
      */
-    public static int getScreenHeight(Context context){
+    public static int getScreenHeight(Context context) {
         return context.getResources().getDisplayMetrics().heightPixels;
     }
 
     /**
      * 获取虚拟按键高度
+     *
      * @param context
      * @return
      */
@@ -118,6 +123,7 @@ public class WindowUtils {
 
     /**
      * 检查是否存在虚拟按键栏
+     *
      * @param context
      */
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -160,21 +166,22 @@ public class WindowUtils {
 
     /**
      * 全屏 - 隐藏状态栏和虚拟按键
+     *
      * @param window
      */
     public static void setHideVirtualKey(Window window) {
         //保持布局状态
-        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE|
+        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
                 //布局位于状态栏下方
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
                 //全屏
-                View.SYSTEM_UI_FLAG_FULLSCREEN|
+                View.SYSTEM_UI_FLAG_FULLSCREEN |
                 //隐藏导航栏
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-        if (Build.VERSION.SDK_INT >= 19){
+        if (Build.VERSION.SDK_INT >= 19) {
             uiOptions |= 0x00001000;
-        }else{
+        } else {
             uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
         }
         window.getDecorView().setSystemUiVisibility(uiOptions);
@@ -183,7 +190,9 @@ public class WindowUtils {
     /**
      * 改变屏幕亮度
      */
-    /**	 * 设置页面的透明度	 * @param bgAlpha 1表示不透明	 */
+    /**
+     * 设置页面的透明度	 * @param bgAlpha 1表示不透明
+     */
     public static void setBackgroundAlpha(Activity activity, float bgAlpha) {
         WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
         lp.alpha = bgAlpha;
@@ -213,10 +222,11 @@ public class WindowUtils {
 
     /**
      * 将View全屏
+     *
      * @param context
      * @param view
      */
-    public static void enterFullScreen(Context context, View view){
+    public static void enterFullScreen(Context context, View view) {
         //从原有的View中取出来
         ViewGroup parent = (ViewGroup) view.getParent();
         if (parent != null) {
@@ -229,14 +239,14 @@ public class WindowUtils {
 
         //添加到父布局中
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                MATCH_PARENT,MATCH_PARENT);
-        contentView.addView(view,params);
+                MATCH_PARENT, MATCH_PARENT);
+        contentView.addView(view, params);
     }
 
     /**
      * 将View退出全屏
      */
-    public static void exitFullScreen(Context context, View view){
+    public static void exitFullScreen(Context context, View view) {
         //找到父布局
         ViewGroup contentView = scanForActivity(context)
                 .findViewById(android.R.id.content);
@@ -245,16 +255,16 @@ public class WindowUtils {
 
     private static Activity scanForActivity(Context cont) {
         if (cont == null) {
-            Log.d("scanForActivity","cont == null");
+            Log.d("scanForActivity", "cont == null");
             return null;
         } else if (cont instanceof Activity) {
-            Log.d("scanForActivity","Activity");
+            Log.d("scanForActivity", "Activity");
             return (Activity) cont;
         } else if (cont instanceof ContextWrapper) {
-            Log.d("scanForActivity","ContextWrapper");
+            Log.d("scanForActivity", "ContextWrapper");
             return scanForActivity(((ContextWrapper) cont).getBaseContext());
         }
-        Log.d("scanForActivity","not result");
+        Log.d("scanForActivity", "not result");
         return null;
     }
 

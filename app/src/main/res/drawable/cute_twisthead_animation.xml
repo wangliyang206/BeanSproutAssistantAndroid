@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+
+    <!-- 呀呦 -->
+    <item
+        android:drawable="@mipmap/icon_twisthead_01"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_02"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_03"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_04"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_05"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_06"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_07"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_08"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_09"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_10"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_11"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_12"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_13"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_14"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_15"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_16"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_17"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_18"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_19"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_20"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_21"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_22"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_23"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_24"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_twisthead_25"
+        android:duration="130" />
+
+    <!-- 眨眼睛 -->
+    <item
+        android:drawable="@mipmap/icon_blink_0"
+        android:duration="2000" />
+    <item
+        android:drawable="@mipmap/icon_blink_1"
+        android:duration="300" />
+    <item
+        android:drawable="@mipmap/icon_blink_0"
+        android:duration="800" />
+    <item
+        android:drawable="@mipmap/icon_blink_1"
+        android:duration="300" />
+    <item
+        android:drawable="@mipmap/icon_blink_0"
+        android:duration="3000" />
+</animation-list>

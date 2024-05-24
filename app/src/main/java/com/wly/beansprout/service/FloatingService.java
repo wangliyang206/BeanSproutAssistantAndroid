@@ -21,6 +21,7 @@ import com.wly.beansprout.R;
 import com.wly.beansprout.TouchEventManager;
 import com.wly.beansprout.bean.Point;
 import com.wly.beansprout.dialog.MenuDialog;
+import com.wly.beansprout.utils.CommonUtil;
 import com.wly.beansprout.utils.DensityUtil;
 import com.wly.beansprout.utils.PathFinder;
 import com.wly.beansprout.utils.WindowUtils;
@@ -50,6 +51,8 @@ public class FloatingService extends Service {
     private boolean isMoving;
     // 基础动画(眨眼+挥手)
     private AnimationDrawable basicAnim;
+    // 随机动画
+    private AnimationDrawable randomAnim;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -120,7 +123,22 @@ public class FloatingService extends Service {
                             onStartAnimation(targetX, targetY);
                         } else {
                             // 没有开启时则生成一个随机数，然后执行随机动画
+                            if (chickModel == 2) {
+                                // 停止 基础动画
+                                if (basicAnim != null && basicAnim.isRunning()) {
+                                    basicAnim.stop();
+                                }
 
+                                // 停止随机动作
+                                if (randomAnim != null) {
+                                    randomAnim.stop();
+                                }
+
+                                randomAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), getRandomAnim());
+                                mFloatingView.setImageDrawable(randomAnim);
+                                mFloatingView.post(() -> randomAnim.start());
+
+                            }
                         }
                     } else {
                         // 按下后抬起的动作
@@ -132,6 +150,22 @@ public class FloatingService extends Service {
             return false;
         });
 
+    }
+
+    /**
+     * 随机动画
+     */
+    public int getRandomAnim() {
+        int index = CommonUtil.getRandomNum(3);
+        Log.i("#####FloatingService", "getRandomAnim=" + index);
+        switch (index) {
+            case 1:                                                                                 // 扭动
+                return R.drawable.cute_twisting_animation;
+            case 2:
+                return R.drawable.cute_yayo_animation;                                              // 呀呦
+            default:
+                return R.drawable.cute_twisthead_animation;                                         // 扭头
+        }
     }
 
 
@@ -311,6 +345,14 @@ public class FloatingService extends Service {
             }
 
             basicAnim = null;
+        }
+
+        if (randomAnim != null) {
+            if (randomAnim.isRunning()) {
+                randomAnim.stop();
+            }
+
+            randomAnim = null;
         }
     }
 
