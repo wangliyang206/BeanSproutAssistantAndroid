@@ -118,6 +118,9 @@ public class FloatingService extends Service {
                         // 如果正在触控中，则开启动画
                         if (TouchEventManager.getInstance().isTouching()) {
                             onStartAnimation(targetX, targetY);
+                        } else {
+                            // 没有开启时则生成一个随机数，然后执行随机动画
+
                         }
                     } else {
                         // 按下后抬起的动作

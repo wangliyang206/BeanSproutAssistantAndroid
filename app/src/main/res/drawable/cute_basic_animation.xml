@@ -18,7 +18,7 @@
         android:drawable="@mipmap/icon_blink_0"
         android:duration="3000" />
 
-    <!-- 动作 -->
+    <!-- 扭动 -->
     <item
         android:drawable="@mipmap/icon_dance_01"
         android:duration="130" />
@@ -94,7 +94,98 @@
     <item
         android:drawable="@mipmap/icon_dance_25"
         android:duration="130" />
+
+    <!-- 眨眼睛 -->
+    <item
+        android:drawable="@mipmap/icon_blink_0"
+        android:duration="2000" />
+    <item
+        android:drawable="@mipmap/icon_blink_1"
+        android:duration="300" />
+    <item
+        android:drawable="@mipmap/icon_blink_0"
+        android:duration="800" />
+    <item
+        android:drawable="@mipmap/icon_blink_1"
+        android:duration="300" />
     <item
         android:drawable="@mipmap/icon_blink_0"
         android:duration="3000" />
+
+    <!-- 呀呦 -->
+    <item
+        android:drawable="@mipmap/icon_yayo_01"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_02"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_03"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_04"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_05"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_06"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_07"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_08"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_09"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_10"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_11"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_12"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_13"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_14"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_15"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_16"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_17"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_18"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_19"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_20"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_21"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_22"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_23"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_24"
+        android:duration="130" />
+    <item
+        android:drawable="@mipmap/icon_yayo_25"
+        android:duration="130" />
 </animation-list>
