@@ -16,6 +16,8 @@ public class TouchEventManager {
     private int touchAction;
     // 专属(包名)
     private String appPackageName = tiktok;
+    // 跳绳动画是否开启
+    private boolean isOpenSkippingRope;
 
     public static TouchEventManager getInstance() {
         if (touchEventManager == null) {
@@ -75,5 +77,13 @@ public class TouchEventManager {
         } else {
             this.appPackageName = "";
         }
+    }
+
+    public boolean isOpenSkippingRope() {
+        return isOpenSkippingRope;
+    }
+
+    public void setOpenSkippingRope(boolean openSkippingRope) {
+        isOpenSkippingRope = openSkippingRope;
     }
 }

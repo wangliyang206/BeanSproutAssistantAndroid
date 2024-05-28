@@ -123,7 +123,7 @@ public class FloatingService extends Service {
                             onStartAnimation(targetX, targetY);
                         } else {
                             // 没有开启时则生成一个随机数，然后执行随机动画
-                            if (chickModel == 2) {
+                            if (chickModel == 2 && !TouchEventManager.getInstance().isOpenSkippingRope()) {
                                 // 停止 基础动画
                                 if (basicAnim != null && basicAnim.isRunning()) {
                                     basicAnim.stop();
@@ -203,6 +203,7 @@ public class FloatingService extends Service {
                     Log.i("#####FloatingService", "onStopTouch=" + basicAnim.isRunning());
 
                     if (basicAnim != null && !basicAnim.isRunning()) {
+                        TouchEventManager.getInstance().setOpenSkippingRope(false);
                         mFloatingView.setImageDrawable(basicAnim);
                         basicAnim.start();
                     }
@@ -279,6 +280,8 @@ public class FloatingService extends Service {
 
                             handler.postDelayed(this, 500); // 0.5秒后再次执行
                         } else {
+                            // 开始跳绳
+                            TouchEventManager.getInstance().setOpenSkippingRope(true);
                             AnimationDrawable skippingRopeAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.cute_skipping_rope_animation);
                             mFloatingView.setImageDrawable(skippingRopeAnim);
                             skippingRopeAnim.start();
@@ -323,6 +326,7 @@ public class FloatingService extends Service {
                 extendAnim.start();
 
                 new Handler().postDelayed(() -> {
+                    TouchEventManager.getInstance().setOpenSkippingRope(true);
                     AnimationDrawable workAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.work_animation);
                     mFloatingView.setImageDrawable(workAnim);
                     mFloatingView.post(() -> workAnim.start());
