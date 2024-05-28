@@ -179,15 +179,7 @@ public class FloatingService extends Service {
 
                 @Override
                 public void onStartTouch(int x, int y) {
-                    // 点击了，触控动作
-//                    if (attach) {
-//                        addViewToWindow(mFloatingView, floatLayoutParams);
-//                    } else {
-//                        removeViewFromWinddow(mFloatingView);
-//                    }
-
-
-                    // 停止 基础动画
+                    // 点击了，触控动作；此时需要停止基础动画。
                     if (basicAnim != null && basicAnim.isRunning()) {
                         basicAnim.stop();
                     }
@@ -199,7 +191,7 @@ public class FloatingService extends Service {
 
                 @Override
                 public void onStopTouch() {
-                    // 点击了，停止触控
+                    // 点击了，停止触控；此时需要开启基础动画。
                     Log.i("#####FloatingService", "onStopTouch=" + basicAnim.isRunning());
 
                     if (basicAnim != null && !basicAnim.isRunning()) {
