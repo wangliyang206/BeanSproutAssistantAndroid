@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+
+    <!-- 变身 -->
+    <item
+        android:drawable="@mipmap/icon_transformation_01"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_02"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_03"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_04"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_05"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_06"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_07"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_08"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_09"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_10"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_11"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_12"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_13"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_14"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_15"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_16"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_17"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_18"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_19"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_20"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_21"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_22"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_23"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_24"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_25"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_26"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_27"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_28"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_29"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_30"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_31"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_32"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_33"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_34"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_35"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_36"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_37"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_38"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_39"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_40"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_41"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_42"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_43"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_44"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_45"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_46"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_47"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_48"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_49"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_50"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_51"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_52"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_53"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_54"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_55"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_56"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_57"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_58"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_59"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_60"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_61"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_62"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_63"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_64"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_65"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_66"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_67"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_68"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_69"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_70"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_71"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_72"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_73"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_74"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_75"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_76"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_77"
+        android:duration="25" />
+    <item
+        android:drawable="@mipmap/icon_transformation_78"
+        android:duration="25" />
+
+    <!-- 眨眼睛 -->
+    <item
+        android:drawable="@mipmap/icon_blink_0"
+        android:duration="2000" />
+    <item
+        android:drawable="@mipmap/icon_blink_1"
+        android:duration="300" />
+    <item
+        android:drawable="@mipmap/icon_blink_0"
+        android:duration="800" />
+    <item
+        android:drawable="@mipmap/icon_blink_1"
+        android:duration="300" />
+    <item
+        android:drawable="@mipmap/icon_blink_0"
+        android:duration="3000" />
+</animation-list>

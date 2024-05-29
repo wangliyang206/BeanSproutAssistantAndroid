@@ -156,13 +156,15 @@ public class FloatingService extends Service {
      * 随机动画
      */
     public int getRandomAnim() {
-        int index = CommonUtil.getRandomNum(3);
+        int index = CommonUtil.getRandomNum(4);
         Log.i("#####FloatingService", "getRandomAnim=" + index);
         switch (index) {
             case 1:                                                                                 // 扭动
                 return R.drawable.cute_twisting_animation;
             case 2:
                 return R.drawable.cute_yayo_animation;                                              // 呀呦
+            case 3:
+                return R.drawable.cute_transformation_animation;                                    // 变身
             default:
                 return R.drawable.cute_twisthead_animation;                                         // 扭头
         }

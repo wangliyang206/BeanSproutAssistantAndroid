@@ -12,7 +12,7 @@ public class CommonUtil {
     /**
      * 生成随机数
      *
-     * @param n 0~n之间的整数
+     * @param n 0~n之间的整数（0包含，n不包含）
      */
     public static int getRandomNum(int n) {
         return (int) ((Math.random() * n));
