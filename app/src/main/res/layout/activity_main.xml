@@ -27,9 +27,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -98,8 +98,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -110,68 +110,75 @@
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
-            <LinearLayout
-                android:id="@+id/lila_function_layout"
-                android:layout_width="wrap_content"
+            <RadioGroup
+                android:id="@+id/ragr_function"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="3dp">
+                android:padding="3dp">
 
-                <CheckBox
-                    android:id="@+id/chk_function_ckbox"
+                <RadioButton
+                    android:id="@+id/cb_function_singleclick"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="单击"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/cb_function_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
+                    android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:checked="true"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:padding="5dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:padding="5dp"
                     android:text="点赞"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
-            </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/lila_bulletchat_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:orientation="horizontal"
-                android:visibility="invisible">
-
-                <CheckBox
-                    android:id="@+id/chk_bulletchat_ckbox"
+                <RadioButton
+                    android:id="@+id/cb_function_slideUpAndDown"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
+                    android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
-                    android:checked="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:padding="5dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:text="直播弹幕欢迎"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="上下\n滑动"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
-            </LinearLayout>
+
+                <RadioButton
+                    android:id="@+id/cb_function_slidingLeftAndRight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="左右\n滑动"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+            </RadioGroup>
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 

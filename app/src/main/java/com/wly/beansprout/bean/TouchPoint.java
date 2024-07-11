@@ -10,8 +10,8 @@ public class TouchPoint {
     private int delay;
     // 是否开启点击
     private boolean isStartClick;
-    // 是否是点赞：true = 双击，false = 单击；
-    private boolean isFunction;
+    // 功能：0其它；1单击；2点赞；3上下滑动；4左右滑动；
+    private int functionType;
 
     public TouchPoint(String name, int x, int y, int delay) {
         this.name = name;
@@ -20,12 +20,12 @@ public class TouchPoint {
         this.delay = delay;
     }
 
-    public boolean isFunction() {
-        return isFunction;
+    public int getFunctionType() {
+        return functionType;
     }
 
-    public void setFunction(boolean function) {
-        isFunction = function;
+    public void setFunctionType(int functionType) {
+        this.functionType = functionType;
     }
 
     public boolean isStartClick() {

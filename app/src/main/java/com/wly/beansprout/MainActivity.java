@@ -3,8 +3,6 @@ package com.wly.beansprout;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -27,14 +25,12 @@ public class MainActivity extends AppCompatActivity {
     private final String STRING_ALERT = "悬浮窗权限";
     private final String STRING_OPEN = "已开启";
 
-    // 开始
-    private TextView tvStart;
-    // 点赞
-    private CheckBox ckboxFunction;
-    // 弹幕欢迎
-    private CheckBox ckboxBulletchat;
+    // 功能
+    private RadioGroup groupFunction;
     // 动画
     private RadioGroup groupAnimation;
+    // 开始
+    private TextView tvStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 case STRING_START:
                     ToastUtil.show(getString(R.string.app_name) + "已启用");
                     Intent mIntent = new Intent(MainActivity.this, FloatingService.class);
-                    mIntent.putExtra("isFunction", ckboxFunction.isChecked());
+                    mIntent.putExtra("functionType", getFunctionType());
                     mIntent.putExtra("chickModel", getChickModel());
                     startService(mIntent);
                     moveTaskToBack(true);
@@ -70,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         // 初始化Toast
         ToastUtil.init(this);
 
+        // 专属
         RadioGroup radioGroup = findViewById(R.id.ragr_exclusive);
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.cb_exclusive_tiktok) {
@@ -84,15 +81,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 点赞
-        LinearLayout functionLayout = findViewById(R.id.lila_function_layout);
-        ckboxFunction = findViewById(R.id.chk_function_ckbox);
-        functionLayout.setOnClickListener(v -> ckboxFunction.setChecked(!ckboxFunction.isChecked()));
-
-        // 弹幕欢迎
-        LinearLayout bulletchatLayout = findViewById(R.id.lila_bulletchat_layout);
-        ckboxBulletchat = findViewById(R.id.chk_bulletchat_ckbox);
-        bulletchatLayout.setOnClickListener(v -> ckboxBulletchat.setChecked(!ckboxBulletchat.isChecked()));
+        // 功能
+        groupFunction = findViewById(R.id.ragr_function);
 
         // 动画
         groupAnimation = findViewById(R.id.ragr_animation);
@@ -154,6 +144,28 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton("取消", null).show();
+    }
+
+    /**
+     * 获取功能类型
+     */
+    private int getFunctionType() {
+        if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_singleclick) {
+            // 单击
+            return 1;
+        } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_like) {
+            // 点赞
+            return 2;
+        } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slideUpAndDown) {
+            // 上下滑动
+            return 3;
+        } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slidingLeftAndRight) {
+            // 左右滑动
+            return 4;
+        } else {
+            // 其它
+            return 0;
+        }
     }
 
     /**

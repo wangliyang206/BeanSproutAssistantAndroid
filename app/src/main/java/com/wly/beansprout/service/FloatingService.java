@@ -37,8 +37,8 @@ public class FloatingService extends Service {
     private MenuDialog menuDialog;
     private WindowManager.LayoutParams floatLayoutParams;
 
-    // 是否勾选的点赞功能
-    private boolean isFunction;
+    // 功能：0其它；1单击；2点赞；3上下滑动；4左右滑动；
+    private int functionType;
     // 模型：1代表功德小鸡；2其它小鸡
     private int chickModel;
     // 当前窗口的X、Y坐标
@@ -63,7 +63,7 @@ public class FloatingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             // 处理传递过来的数据
-            isFunction = intent.getBooleanExtra("isFunction", false);
+            functionType = intent.getIntExtra("functionType", 0);
             chickModel = intent.getIntExtra("chickModel", 1);
         }
 
@@ -210,7 +210,7 @@ public class FloatingService extends Service {
                 }
             });
         }
-        menuDialog.setFunction(isFunction);
+        menuDialog.setFunctionType(functionType);
         menuDialog.show();
     }
 

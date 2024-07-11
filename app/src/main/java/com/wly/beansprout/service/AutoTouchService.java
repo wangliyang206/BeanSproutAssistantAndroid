@@ -95,16 +95,22 @@ public class AutoTouchService extends AccessibilityService {
             // 获取系统的GestureDescription.Builder对象
             GestureDescription.Builder builder = new GestureDescription.Builder();
 
-            // 创建第一次点击的Path
-            Path path = new Path();
-            path.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY());
-            builder.addStroke(new GestureDescription.StrokeDescription(path, 0, 1)).build();
+            if (autoTouchPoint.getFunctionType() == 1) {
+                // 单击
+                builder.addStroke(onSingleClick());
+            } else if (autoTouchPoint.getFunctionType() == 2) {
+                // 点赞
+                builder.addStroke(onSingleClick());
+                builder.addStroke(onDoubleClick());
+            } else if (autoTouchPoint.getFunctionType() == 3) {
+                // 上下滑动
 
-            if (autoTouchPoint.isFunction()) {
-                // 创建第二次点击的Path
-                Path clickPath2 = new Path();
-                clickPath2.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY()); // 点击位置2，通常这里x2,y2与x1,y1有一定的间隔
-                builder.addStroke(new GestureDescription.StrokeDescription(clickPath2, 100, 1)); // 100ms后模拟第二次点击
+            } else if (autoTouchPoint.getFunctionType() == 4) {
+                // 左右滑动
+
+            } else {
+                // 其它
+
             }
 
             // 创建GestureDescription对象
@@ -124,6 +130,25 @@ public class AutoTouchService extends AccessibilityService {
             onAutoClick();
         }
     };
+
+    /**
+     * 单击 事件
+     */
+    private GestureDescription.StrokeDescription onSingleClick() {
+        // 创建第一次点击的Path
+        Path path = new Path();
+        path.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY());
+        return new GestureDescription.StrokeDescription(path, 0, 1);
+    }
+
+    /**
+     * 双击(点赞) 事件
+     */
+    private GestureDescription.StrokeDescription onDoubleClick() {
+        Path clickPath2 = new Path();
+        clickPath2.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY()); // 点击位置2，通常这里x2,y2与x1,y1有一定的间隔
+        return new GestureDescription.StrokeDescription(clickPath2, 100, 1); // 100ms后模拟第二次点击
+    }
 
     private long getDelayTime() {
         // 单位：秒

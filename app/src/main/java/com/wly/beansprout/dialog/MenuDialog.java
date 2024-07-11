@@ -36,8 +36,8 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     private Listener listener;
     private TouchPointAdapter touchPointAdapter;
 
-    // 是否开启点赞
-    private boolean isFunction;
+    // 功能：0其它；1单击；2点赞；3上下滑动；4左右滑动；
+    private int functionType;
 
     public MenuDialog(@NonNull Context context) {
         super(context);
@@ -72,7 +72,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 // 点击一行
                 btStop.setVisibility(View.VISIBLE);
                 dismiss();
-                touchPoint.setFunction(isFunction);
+                touchPoint.setFunctionType(functionType);
                 // 通知 动作服务，开启点赞功能
                 TouchEvent.postStartAction(touchPoint);
                 // 特殊处理，关闭所有，然后单独开启已选择的项
@@ -155,12 +155,8 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
         }
     }
 
-    public boolean isFunction() {
-        return isFunction;
-    }
-
-    public void setFunction(boolean function) {
-        isFunction = function;
+    public void setFunctionType(int functionType) {
+        this.functionType = functionType;
     }
 
     public void setListener(Listener listener) {
