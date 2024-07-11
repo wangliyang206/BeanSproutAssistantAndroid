@@ -156,12 +156,18 @@ public class MainActivity extends AppCompatActivity {
         } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_like) {
             // 点赞
             return 2;
+        } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slidedDown) {
+            // 向下滑动
+            return 3;
         } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slideUpAndDown) {
             // 上下滑动
-            return 3;
-        } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slidingLeftAndRight) {
-            // 左右滑动
             return 4;
+        } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slidingLeft) {
+            // 向左滑动
+            return 5;
+        } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slidingRight) {
+            // 向右滑动
+            return 6;
         } else {
             // 其它
             return 0;

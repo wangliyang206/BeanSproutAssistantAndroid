@@ -36,7 +36,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     private Listener listener;
     private TouchPointAdapter touchPointAdapter;
 
-    // 功能：0其它；1单击；2点赞；3上下滑动；4左右滑动；
+    // 功能：0其它；1单击；2点赞；3向下滑动；4向上滑动；5向左滑动；6向右滑动；
     private int functionType;
 
     public MenuDialog(@NonNull Context context) {

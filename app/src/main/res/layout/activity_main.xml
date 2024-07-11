@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -99,6 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -110,67 +112,88 @@
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
-            <RadioGroup
+            <com.wly.beansprout.view.GridRadioGroup
                 android:id="@+id/ragr_function"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="3dp">
+                app:columnNum="3">
 
                 <RadioButton
                     android:id="@+id/cb_function_singleclick"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
-                    android:padding="5dp"
-                    android:text="单击"
+                    android:text="轻点触发"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
                 <RadioButton
                     android:id="@+id/cb_function_like"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:checked="true"
                     android:gravity="center"
-                    android:padding="5dp"
-                    android:text="点赞"
+                    android:text="直播点赞"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/cb_function_slidedDown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:text="向下滑动"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
                 <RadioButton
                     android:id="@+id/cb_function_slideUpAndDown"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
-                    android:padding="5dp"
-                    android:text="上下\n滑动"
+                    android:paddingTop="5dp"
+                    android:text="向上滑动"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
                 <RadioButton
-                    android:id="@+id/cb_function_slidingLeftAndRight"
+                    android:id="@+id/cb_function_slidingLeft"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
-                    android:padding="5dp"
-                    android:text="左右\n滑动"
+                    android:paddingTop="5dp"
+                    android:text="向左滑动"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
-            </RadioGroup>
+
+                <RadioButton
+                    android:id="@+id/cb_function_slidingRight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:paddingTop="5dp"
+                    android:text="向右滑动"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+            </com.wly.beansprout.view.GridRadioGroup>
 
         </LinearLayout>
 
@@ -178,6 +201,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">

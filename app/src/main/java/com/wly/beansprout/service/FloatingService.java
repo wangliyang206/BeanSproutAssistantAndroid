@@ -37,7 +37,7 @@ public class FloatingService extends Service {
     private MenuDialog menuDialog;
     private WindowManager.LayoutParams floatLayoutParams;
 
-    // 功能：0其它；1单击；2点赞；3上下滑动；4左右滑动；
+    // 功能：0其它；1单击；2点赞；3向下滑动；4向上滑动；5向左滑动；6向右滑动；
     private int functionType;
     // 模型：1代表功德小鸡；2其它小鸡
     private int chickModel;

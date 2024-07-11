@@ -103,11 +103,17 @@ public class AutoTouchService extends AccessibilityService {
                 builder.addStroke(onSingleClick());
                 builder.addStroke(onDoubleClick());
             } else if (autoTouchPoint.getFunctionType() == 3) {
-                // 上下滑动
-
+                // 向下滑动
+                builder.addStroke(onSlide(1));
             } else if (autoTouchPoint.getFunctionType() == 4) {
-                // 左右滑动
-
+                // 上下滑动
+                builder.addStroke(onSlide(2));
+            } else if (autoTouchPoint.getFunctionType() == 5) {
+                // 向左滑动
+                builder.addStroke(onSlide(3));
+            } else if (autoTouchPoint.getFunctionType() == 6) {
+                // 向右滑动
+                builder.addStroke(onSlide(4));
             } else {
                 // 其它
 
@@ -120,11 +126,13 @@ public class AutoTouchService extends AccessibilityService {
                 @Override
                 public void onCompleted(GestureDescription gestureDescription) {
                     super.onCompleted(gestureDescription);
+                    // 完成的回调
                 }
 
                 @Override
                 public void onCancelled(GestureDescription gestureDescription) {
                     super.onCancelled(gestureDescription);
+                    // 取消的回调
                 }
             }, null);
             onAutoClick();
@@ -148,6 +156,40 @@ public class AutoTouchService extends AccessibilityService {
         Path clickPath2 = new Path();
         clickPath2.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY()); // 点击位置2，通常这里x2,y2与x1,y1有一定的间隔
         return new GestureDescription.StrokeDescription(clickPath2, 100, 1); // 100ms后模拟第二次点击
+    }
+
+    /**
+     * 滑动
+     *
+     * @param type 滑动方向：1向下滑动；2向上滑动；3向左滑动；4向右滑动；
+     * @return
+     */
+    private GestureDescription.StrokeDescription onSlide(int type) {
+        // 创建Path对象，用于描述滑动的路径
+        Path path = new Path();
+        // 设置起点
+        path.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY());
+
+        if (type == 1) {
+            // 向下滑动
+            // 添加滑动的路径
+            path.lineTo(autoTouchPoint.getX(), autoTouchPoint.getY() - 100);
+        } else if (type == 2) {
+            // 向上滑动
+            // 添加滑动的路径
+            path.lineTo(autoTouchPoint.getX(), autoTouchPoint.getY() + 100);
+        } else if (type == 3) {
+            // 向左滑动
+            // 添加滑动的路径
+            path.lineTo(autoTouchPoint.getX() - 100, autoTouchPoint.getY());
+        } else if (type == 4) {
+            // 向右滑动
+            // 添加滑动的路径
+            path.lineTo(autoTouchPoint.getX() + 100, autoTouchPoint.getY());
+        }
+
+        // 创建PathStroke对象，设置Path的相关属性
+        return new GestureDescription.StrokeDescription(path, 0, 1);
     }
 
     private long getDelayTime() {
