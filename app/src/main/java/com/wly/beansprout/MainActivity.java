@@ -14,6 +14,7 @@ import com.wly.beansprout.fw_permission.FloatWinPermissionCompat;
 import com.wly.beansprout.service.AutoTouchService;
 import com.wly.beansprout.service.FloatingService;
 import com.wly.beansprout.utils.AccessibilityUtil;
+import com.wly.beansprout.utils.CommonUtils;
 import com.wly.beansprout.utils.ToastUtil;
 import com.wly.beansprout.utils.WindowUtils;
 
@@ -185,5 +186,10 @@ public class MainActivity extends AppCompatActivity {
             // 其它小鸡
             return 2;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        CommonUtils.exitSys(this);
     }
 }

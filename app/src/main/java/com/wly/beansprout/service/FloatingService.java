@@ -21,7 +21,7 @@ import com.wly.beansprout.R;
 import com.wly.beansprout.TouchEventManager;
 import com.wly.beansprout.bean.Point;
 import com.wly.beansprout.dialog.MenuDialog;
-import com.wly.beansprout.utils.CommonUtil;
+import com.wly.beansprout.utils.CommonUtils;
 import com.wly.beansprout.utils.DensityUtil;
 import com.wly.beansprout.utils.PathFinder;
 import com.wly.beansprout.utils.WindowUtils;
@@ -156,7 +156,7 @@ public class FloatingService extends Service {
      * 随机动画
      */
     public int getRandomAnim() {
-        int index = CommonUtil.getRandomNum(4);
+        int index = CommonUtils.getRandomNum(4);
         Log.i("#####FloatingService", "getRandomAnim=" + index);
         switch (index) {
             case 1:                                                                                 // 扭动
