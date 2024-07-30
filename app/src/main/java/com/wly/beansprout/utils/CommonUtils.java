@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Environment;
 import android.telephony.TelephonyManager;
 
 import androidx.core.app.ActivityCompat;
@@ -20,6 +21,35 @@ import androidx.core.app.ActivityCompat;
 public class CommonUtils {
     // 最后一次点击时间
     private static long lastClickTime;
+
+    public static String getSDCardPathByEnvironment() {
+        if (isSDCardEnableByEnvironment()) {
+            return Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
+        return "";
+    }
+
+    public static boolean isSDCardEnableByEnvironment() {
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+    }
+
+    /**
+     * 获取版本号
+     *
+     * @param context
+     * @return
+     */
+    public static int getVersionCode(Context context) {
+        int versionCode = 0;
+        try {
+            versionCode = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(),
+                            0).versionCode;
+        } catch (PackageManager.NameNotFoundException ex) {
+            versionCode = 0;
+        }
+        return versionCode;
+    }
 
     /**
      * 获得资源

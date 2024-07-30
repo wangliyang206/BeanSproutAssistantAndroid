@@ -10,9 +10,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.qiangxi.checkupdatelibrary.CheckUpdateOption;
+import com.qiangxi.checkupdatelibrary.Q;
 import com.wly.beansprout.bean.AppUpdate;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.fw_permission.FloatWinPermissionCompat;
+import com.wly.beansprout.global.Constant;
 import com.wly.beansprout.http.MyHttpClient;
 import com.wly.beansprout.service.AutoTouchService;
 import com.wly.beansprout.service.FloatingService;
@@ -120,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onNext(AppUpdate appUpdate) {
                         Log.i("main", "onNext");
+                        if (haveNew(appUpdate)) {
+                            // 先提醒升级
+                            askDialog(appUpdate);
+                        }
                     }
 
                     @Override
@@ -230,6 +237,53 @@ public class MainActivity extends AppCompatActivity {
             // 其它小鸡
             return 2;
         }
+    }
+
+    /**
+     * 版本号比较
+     *
+     * @return 是否升级
+     */
+    private boolean haveNew(AppUpdate appUpdate) {
+        boolean haveNew = false;
+        if (appUpdate == null) {
+            return false;
+        }
+
+        int curVersionCode = CommonUtils.getVersionCode(getApplicationContext());
+        if (curVersionCode < appUpdate.getVerCode()) {
+            haveNew = true;
+        }
+        return haveNew;
+    }
+
+    public void askDialog(AppUpdate info) {
+        Q.show(this, new CheckUpdateOption.Builder()
+                .setAppName(info.getName())
+                .setFileName("/" + info.getFileName())
+                .setFilePath(Constant.APP_UPDATE_PATH)
+//                .setImageUrl("http://imgsrc.baidu.com/imgad/pic/item/6c224f4a20a446233d216c4f9322720e0cf3d730.jpg")
+                .setImageResId(R.mipmap.icon_upgrade_logo)
+                .setIsForceUpdate(info.getForce() == 1)
+                .setNewAppSize(info.getNewAppSize())
+                .setNewAppUpdateDesc(info.getNewAppUpdateDesc())
+                .setNewAppUrl(info.getFilePath())
+                .setNewAppVersionName(info.getVerName())
+                .setNotificationSuccessContent("下载成功，点击安装")
+                .setNotificationFailureContent("下载失败，点击重新下载")
+                .setNotificationIconResId(R.mipmap.ic_launcher)
+                .setNotificationTitle(getString(R.string.app_name))
+                .setMode(2)
+                .build(), (view, imageUrl) -> {
+            // 下载图片
+//            view.setScaleType(ImageView.ScaleType.FIT_XY);
+//            mImageLoader.loadImage(getActivity(),
+//                    ImageConfigImpl
+//                            .builder()
+//                            .url(imageUrl)
+//                            .imageView(view)
+//                            .build());
+        });
     }
 
     @Override

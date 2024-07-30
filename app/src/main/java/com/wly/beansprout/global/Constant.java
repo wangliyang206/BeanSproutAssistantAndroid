@@ -1,5 +1,7 @@
 package com.wly.beansprout.global;
 
+import com.wly.beansprout.utils.CommonUtils;
+
 /**
  * @ProjectName: BeanSproutAssistantAndroid
  * @Package: com.wly.beansprout.global
@@ -24,4 +26,10 @@ public interface Constant {
      * 默认展示20条
      */
     int PAGESIZE = 20;
+
+
+    /**
+     * APP升级路径
+     */
+    String APP_UPDATE_PATH = CommonUtils.getSDCardPathByEnvironment() + "/ChickenAtWork/AppUpdate/";
 }
