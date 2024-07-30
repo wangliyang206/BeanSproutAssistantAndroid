@@ -1,6 +1,13 @@
 package com.wly.beansprout.utils;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.telephony.TelephonyManager;
+
+import androidx.core.app.ActivityCompat;
 
 /**
  * @ProjectName: BeanSproutAssistantAndroid
@@ -13,6 +20,80 @@ import android.app.Activity;
 public class CommonUtils {
     // 最后一次点击时间
     private static long lastClickTime;
+
+    /**
+     * 获得资源
+     */
+    public static Resources getResources(Context context) {
+        return context.getResources();
+    }
+
+    /**
+     * 获得屏幕的宽度
+     *
+     * @return
+     */
+    public static int getScreenWidth(Context context) {
+        return getResources(context).getDisplayMetrics().widthPixels;
+    }
+
+    /**
+     * 获得屏幕的高度
+     *
+     * @return
+     */
+    public static int getScreenHeidth(Context context) {
+        return getResources(context).getDisplayMetrics().heightPixels;
+    }
+
+    public static String getIMEI(Context context) {
+        TelephonyManager tel = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            // 无权限
+            return "";
+        }
+        return tel.getDeviceId();
+    }
+
+    /***
+     * Sim卡序列号
+     */
+    public static String getSimSerialNumber(Context context) {
+        try {
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                // 无权限
+                return "";
+            }
+            String ret = tm.getSimSerialNumber();
+            if (ret != null)
+                return ret;
+            else
+                return "";
+        } catch (Exception ex) {
+            return "";
+        }
+    }
+
+    /***
+     * 拿到电话号码(此接口不会100%的获取手机号码，原因是手机号码是映射到sim卡中的。要想100%获取手机号码只能通过靠对接运营商接口获得)
+     */
+    public static String getPhoneNumber(Context context) {
+        try {
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                // 无权限
+                return "";
+            }
+            String ret = tm.getLine1Number();
+            if (ret != null)
+                return ret;
+            else
+                return "";
+        } catch (Exception ex) {
+            return "";
+        }
+    }
 
     /**
      * 生成随机数
