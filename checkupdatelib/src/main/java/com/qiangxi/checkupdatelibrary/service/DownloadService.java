@@ -3,6 +3,8 @@ package com.qiangxi.checkupdatelibrary.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.qiangxi.checkupdatelibrary.CheckUpdateOption;
@@ -71,6 +73,7 @@ public class DownloadService extends Service implements DownloadCallback {
         Intent intent = new Intent(this, DownloadService.class);
         intent.putExtra("CheckUpdateOption", mOption);
         startService(intent);
+        Log.e("DownloadService","失败原因："+t.getMessage());
         mNotificationUtil.showDownloadFailureNotification(this, intent, mOption.getNotificationIconResId(),
                 mOption.getNotificationTitle(), mOption.getNotificationFailureContent(), true);
     }

@@ -162,7 +162,7 @@ class InternalDialog extends Dialog implements DownloadCallback {
                     return;
                 }
                 timeRange = System.currentTimeMillis();
-
+                // 如果下载完成，则直接安装
                 if (isDownloadComplete) {
                     AppUtil.installApk(getContext(), mApk);
                     return;
@@ -171,8 +171,7 @@ class InternalDialog extends Dialog implements DownloadCallback {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         int permissionStatus = ActivityCompat.checkSelfPermission(mActivity, Manifest.permission_group.STORAGE);
                         if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
-                            mCheckUpdateDialog.requestPermissions(new String[]{Manifest.permission.
-                                    WRITE_EXTERNAL_STORAGE}, 0x007);
+                            mCheckUpdateDialog.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0x007);
                         } else {
                             downloadInBackgroundIfNeeded();
                         }
@@ -187,6 +186,9 @@ class InternalDialog extends Dialog implements DownloadCallback {
     }
 
     void downloadInBackgroundIfNeeded() {
+        // 检查文件路径是否创建完成
+
+        // 检查是否是强制更新
         if (mOption.isForceUpdate()) {
             // 强制更新
             checkUpdatePositive.setClickable(false);

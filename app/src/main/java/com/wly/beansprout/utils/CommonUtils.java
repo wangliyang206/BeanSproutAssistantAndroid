@@ -10,6 +10,8 @@ import android.telephony.TelephonyManager;
 
 import androidx.core.app.ActivityCompat;
 
+import java.io.File;
+
 /**
  * @ProjectName: BeanSproutAssistantAndroid
  * @Package: com.wly.beansprout.utils
@@ -22,15 +24,18 @@ public class CommonUtils {
     // 最后一次点击时间
     private static long lastClickTime;
 
-    public static String getSDCardPathByEnvironment() {
-        if (isSDCardEnableByEnvironment()) {
-            return Environment.getExternalStorageDirectory().getAbsolutePath();
-        }
-        return "";
+    public static String getExternalDownloadsPath() {
+        if (!isSDCardEnableByEnvironment()) return "";
+        return getAbsolutePath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
     }
 
     public static boolean isSDCardEnableByEnvironment() {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+    }
+
+    private static String getAbsolutePath(final File file) {
+        if (file == null) return "";
+        return file.getAbsolutePath();
     }
 
     /**

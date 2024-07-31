@@ -27,9 +27,13 @@ public interface Constant {
      */
     int PAGESIZE = 20;
 
+    /**
+     * 项目目录
+     */
+    String APP_CATALOGUE = "ChickenAtWork";
 
     /**
      * APP升级路径
      */
-    String APP_UPDATE_PATH = CommonUtils.getSDCardPathByEnvironment() + "/ChickenAtWork/AppUpdate/";
+    String APP_UPDATE_PATH = CommonUtils.getExternalDownloadsPath() + "/";
 }
