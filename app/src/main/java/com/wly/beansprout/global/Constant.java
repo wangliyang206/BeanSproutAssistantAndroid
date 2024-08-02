@@ -33,7 +33,7 @@ public interface Constant {
     String APP_CATALOGUE = "ChickenAtWork";
 
     /**
-     * APP升级路径
+     * 文件权限
      */
-    String APP_UPDATE_PATH = CommonUtils.getExternalDownloadsPath() + "/";
+    int SELECT_FILE_PERMISSION = 0;
 }

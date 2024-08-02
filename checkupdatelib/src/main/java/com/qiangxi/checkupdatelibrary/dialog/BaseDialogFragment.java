@@ -74,8 +74,9 @@ public abstract class BaseDialogFragment extends DialogFragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (permissions[0].equals(Manifest.permission.READ_EXTERNAL_STORAGE)&&
+                permissions[1].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (requestCode == 0x007) {
                 agreeStoragePermission();
             }

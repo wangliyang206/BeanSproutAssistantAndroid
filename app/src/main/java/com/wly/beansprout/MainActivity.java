@@ -15,7 +15,6 @@ import com.qiangxi.checkupdatelibrary.Q;
 import com.wly.beansprout.bean.AppUpdate;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.fw_permission.FloatWinPermissionCompat;
-import com.wly.beansprout.global.Constant;
 import com.wly.beansprout.http.MyHttpClient;
 import com.wly.beansprout.service.AutoTouchService;
 import com.wly.beansprout.service.FloatingService;
@@ -111,6 +110,13 @@ public class MainActivity extends AppCompatActivity {
         groupAnimation = findViewById(R.id.ragr_animation);
 
         // 检查更新
+        getVersion();
+    }
+
+    /**
+     * 检查更新
+     */
+    private void getVersion() {
         mMyHttpClient.getVersion()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -131,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.i("main", "onError="+e.getMessage());
+                        Log.i("main", "onError=" + e.getMessage());
                     }
 
                     @Override
@@ -261,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
         Q.show(this, new CheckUpdateOption.Builder()
                 .setAppName(info.getName())
                 .setFileName("/" + info.getFileName())
-                .setFilePath(Constant.APP_UPDATE_PATH)
+                .setFilePath(getFilesDir().getPath())
 //                .setImageUrl("http://imgsrc.baidu.com/imgad/pic/item/6c224f4a20a446233d216c4f9322720e0cf3d730.jpg")
                 .setImageResId(R.mipmap.icon_upgrade_logo)
                 .setIsForceUpdate(info.getForce() == 1)

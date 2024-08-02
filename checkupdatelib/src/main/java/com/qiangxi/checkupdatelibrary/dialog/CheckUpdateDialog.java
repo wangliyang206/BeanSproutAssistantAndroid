@@ -171,7 +171,7 @@ class InternalDialog extends Dialog implements DownloadCallback {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         int permissionStatus = ActivityCompat.checkSelfPermission(mActivity, Manifest.permission_group.STORAGE);
                         if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
-                            mCheckUpdateDialog.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0x007);
+                            mCheckUpdateDialog.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0x007);
                         } else {
                             downloadInBackgroundIfNeeded();
                         }
