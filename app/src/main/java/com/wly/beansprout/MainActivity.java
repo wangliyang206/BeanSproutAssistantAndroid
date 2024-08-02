@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
                 .setFilePath(getFilesDir().getPath())
 //                .setImageUrl("http://imgsrc.baidu.com/imgad/pic/item/6c224f4a20a446233d216c4f9322720e0cf3d730.jpg")
                 .setImageResId(R.mipmap.icon_upgrade_logo)
-                .setIsForceUpdate(info.getForce() == 1)
+                .setIsForceUpdate(info.getAppForce() == 1)
                 .setNewAppSize(info.getNewAppSize())
                 .setNewAppUpdateDesc(info.getNewAppUpdateDesc())
                 .setNewAppUrl(info.getFilePath())
