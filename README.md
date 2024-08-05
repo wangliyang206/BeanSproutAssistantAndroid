@@ -1,4 +1,4 @@
-# BeanSproutAssistantAndroid
+# BeanSproutAssistantAndroid (持续维护中)
 赤槿 - 打工鸡APP
 
 ## 初衷
@@ -24,6 +24,10 @@
 ![](image/功德小鸡.jpg)
 ![](image/跳绳小鸡.jpg)
 ![](image/跳绳.jpg)
+
+## 下载体验
+    请使用浏览器扫描此处，提供下载apk安装包，进行体验。
+    ![](image/下载.png)
 
 ## Donate
     如果它对你帮助很大，在实际开发中切实的提升了您的工作效率和开发能力，并且你很想支持库的后续开发和维护,
