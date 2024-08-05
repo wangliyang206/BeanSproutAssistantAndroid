@@ -269,7 +269,7 @@ public class FloatingService extends Service {
                             floatLayoutParams.x = info.x;
                             floatLayoutParams.y = info.y;
                             mWindowManager.updateViewLayout(mFloatingView, floatLayoutParams);
-                            Log.d("过程", "info.x=" + info.x + ";info.y=" + info.y);
+                            Log.d("移动过程", "info.x=" + info.x + ";info.y=" + info.y);
                             num++;
 
                             handler.postDelayed(this, 500); // 0.5秒后再次执行

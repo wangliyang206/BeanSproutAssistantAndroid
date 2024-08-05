@@ -59,19 +59,19 @@ public class AutoTouchService extends AccessibilityService {
         TouchEventManager.getInstance().setTouchAction(event.getAction());
         handler.removeCallbacks(autoTouchRunnable);
         switch (event.getAction()) {
-            case TouchEvent.ACTION_START:
+            case TouchEvent.ACTION_START:                                                           // 动作开启
                 autoTouchPoint = event.getTouchPoint();
                 onAutoClick();
                 break;
-            case TouchEvent.ACTION_CONTINUE:
+            case TouchEvent.ACTION_CONTINUE:                                                        // 动作继续
                 if (autoTouchPoint != null) {
                     onAutoClick();
                 }
                 break;
-            case TouchEvent.ACTION_PAUSE:
+            case TouchEvent.ACTION_PAUSE:                                                           // 动作暂停
                 handler.removeCallbacks(autoTouchRunnable);
                 break;
-            case TouchEvent.ACTION_STOP:
+            case TouchEvent.ACTION_STOP:                                                            // 动作停止
                 handler.removeCallbacks(autoTouchRunnable);
                 autoTouchPoint = null;
                 break;
@@ -173,23 +173,23 @@ public class AutoTouchService extends AccessibilityService {
         if (type == 1) {
             // 向下滑动
             // 添加滑动的路径
-            path.lineTo(autoTouchPoint.getX(), autoTouchPoint.getY() - 100);
+            path.lineTo(autoTouchPoint.getX(), autoTouchPoint.getY() - 1000);
         } else if (type == 2) {
             // 向上滑动
             // 添加滑动的路径
-            path.lineTo(autoTouchPoint.getX(), autoTouchPoint.getY() + 100);
+            path.lineTo(autoTouchPoint.getX(), autoTouchPoint.getY() + 1000);
         } else if (type == 3) {
             // 向左滑动
             // 添加滑动的路径
-            path.lineTo(autoTouchPoint.getX() - 100, autoTouchPoint.getY());
+            path.lineTo(autoTouchPoint.getX() - 1000, autoTouchPoint.getY());
         } else if (type == 4) {
             // 向右滑动
             // 添加滑动的路径
-            path.lineTo(autoTouchPoint.getX() + 100, autoTouchPoint.getY());
+            path.lineTo(autoTouchPoint.getX() + 1000, autoTouchPoint.getY());
         }
 
         // 创建PathStroke对象，设置Path的相关属性
-        return new GestureDescription.StrokeDescription(path, 0, 1);
+        return new GestureDescription.StrokeDescription(path, 0, 100);
     }
 
     private long getDelayTime() {
