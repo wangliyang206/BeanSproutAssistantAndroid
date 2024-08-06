@@ -228,7 +228,7 @@ public class AutoTouchService extends AccessibilityService {
         // 包名不为空，说明外界已经设置了专属。
         if (!TextUtils.isEmpty(TouchEventManager.getInstance().getAppPackageName())) {
             // 如果活动APP不是目标APP，则不响应
-            if (packageName.equalsIgnoreCase(TouchEventManager.getInstance().getAppPackageName())) {
+            if (packageName.contains(TouchEventManager.getInstance().getAppPackageName())) {
                 // 如果是动作暂停状态，则自动开启继续点赞
                 if (TouchEventManager.getInstance().isPaused()) {
                     Log.d("onWindowContentChanged", "###执行了 继续动作 事件");
