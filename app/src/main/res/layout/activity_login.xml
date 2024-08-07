@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16.5dp"
-        android:text="欢迎使用-打工鸡"
+        android:text="欢迎使用-打工鸡辅助助手"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="@+id/txvi_login_tips_one"

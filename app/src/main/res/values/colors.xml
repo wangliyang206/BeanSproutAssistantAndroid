@@ -25,4 +25,7 @@
 
     <color name="dialog_line">#EDEDED</color>
     <color name="dialog_cancel">#CCCCCC</color>
+
+    <!-- 图片获得焦点颜色 -->
+    <color name="common_image_normal_bak">#00ffffff</color>                                         <!-- 图片正常颜色 -->
 </resources>

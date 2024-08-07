@@ -135,4 +135,6 @@ dependencies {
     implementation project(path: ':checkupdatelib')
     // 对话框(https://github.com/afollestad/material-dialogs)
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+    // 状态栏
+    implementation 'com.github.niorgai:StatusBarCompat:2.3.3'
 }

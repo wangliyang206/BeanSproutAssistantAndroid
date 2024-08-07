@@ -5,12 +5,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.os.Environment;
 import android.telephony.TelephonyManager;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.core.app.ActivityCompat;
-
-import java.io.File;
 
 /**
  * @ProjectName: BeanSproutAssistantAndroid
@@ -23,6 +22,16 @@ import java.io.File;
 public class CommonUtils {
     // 最后一次点击时间
     private static long lastClickTime;
+
+    // 隐藏软键盘
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        // 获取当前焦点所在的视图，如果为null则不隐藏软键盘
+        View currentFocus = activity.getCurrentFocus();
+        if (currentFocus != null) {
+            imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+        }
+    }
 
     /**
      * 获取版本号

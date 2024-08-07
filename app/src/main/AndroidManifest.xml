@@ -25,7 +25,8 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="label">
 
         <!-- 闪页 -->
         <activity
@@ -45,7 +46,15 @@
             android:name="com.wly.beansprout.LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <!-- 注册界面 -->
+        <activity
+            android:name="com.wly.beansprout.RegisterActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="user"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!-- 首页 -->
         <activity

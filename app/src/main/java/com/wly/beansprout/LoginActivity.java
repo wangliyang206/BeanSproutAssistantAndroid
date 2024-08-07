@@ -1,10 +1,15 @@
 package com.wly.beansprout;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,6 +21,8 @@ import com.wly.beansprout.bean.LoginResponse;
 import com.wly.beansprout.dialog.CommTipsDialog;
 import com.wly.beansprout.global.AccountManager;
 import com.wly.beansprout.http.MyHttpClient;
+import com.wly.beansprout.utils.CommonUtils;
+import com.wly.beansprout.utils.StatusBarCompatUtils;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +31,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import qiu.niorgai.StatusBarCompat;
 
 /**
  * @ProjectName: BeanSproutAssistantAndroid
@@ -68,12 +76,27 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        setStatusBar();
         // 初始化Loading对话框
         mDialog = new MaterialDialog.Builder(this).content("正在请求中，请稍候……").progress(true, 0).build();
         mMyHttpClient = new MyHttpClient(getApplicationContext());
         mAccountManager = new AccountManager(getApplicationContext());
         initView();
         initEvent();
+    }
+
+    /**
+     *设置状态栏为透明
+     */
+    public void setStatusBar() {
+        // 纯透明
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(android.R.color.white, typedValue, true);
+        StatusBarCompat.setStatusBarColor(this, typedValue.data);
+
+        StatusBarCompatUtils.changeToLightStatusBar(this);
+        // 取消灯光状态栏
+//        StatusBarCompatUtils.cancelLightStatusBar(this);
     }
 
     /**
@@ -86,9 +109,18 @@ public class LoginActivity extends AppCompatActivity {
         mTextInputPassword = findViewById(R.id.input_login_password);
         mEditTextPassword = findViewById(R.id.edit_login_password);
         Button btnLogin = findViewById(R.id.btn_login);
+        TextView txviRegister = findViewById(R.id.txvi_login_register);
 
+        // 新用户注册
+        txviRegister.setOnClickListener(v -> {
+            hideInput();
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+        });
+        // 关闭按钮
         btnClose.setOnClickListener(v -> onBackPressed());
+        // 登录按钮
         btnLogin.setOnClickListener(v -> {
+            hideInput();
             if (checkInput()) {
                 String username = Objects.requireNonNull(mEditTextMobile.getText()).toString().trim();
                 String password = Objects.requireNonNull(mEditTextPassword.getText()).toString().trim();
@@ -201,5 +233,18 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return !mTextInputPassword.isErrorEnabled();
+    }
+
+    /**
+     * 隐藏软键盘
+     */
+    private void hideInput() {
+        CommonUtils.hideSoftKeyboard(this);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        hideInput();
+        return super.onTouchEvent(event);
     }
 }
