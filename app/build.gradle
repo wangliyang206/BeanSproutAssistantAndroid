@@ -133,4 +133,6 @@ dependencies {
 
     // 检查更新
     implementation project(path: ':checkupdatelib')
+    // 对话框(https://github.com/afollestad/material-dialogs)
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 }

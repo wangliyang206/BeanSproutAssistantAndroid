@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.jakewharton.rxbinding3.widget.RxTextView;
@@ -49,6 +50,8 @@ public class LoginActivity extends AppCompatActivity {
     // 网络请求
     private MyHttpClient mMyHttpClient;
     private AccountManager mAccountManager;
+    // 登录对话框
+    private MaterialDialog mDialog;
 
     @Override
     protected void onDestroy() {
@@ -65,6 +68,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // 初始化Loading对话框
+        mDialog = new MaterialDialog.Builder(this).content("正在请求中，请稍候……").progress(true, 0).build();
         mMyHttpClient = new MyHttpClient(getApplicationContext());
         mAccountManager = new AccountManager(getApplicationContext());
         initView();
@@ -87,6 +92,7 @@ public class LoginActivity extends AppCompatActivity {
             if (checkInput()) {
                 String username = Objects.requireNonNull(mEditTextMobile.getText()).toString().trim();
                 String password = Objects.requireNonNull(mEditTextPassword.getText()).toString().trim();
+                mDialog.show();
 
                 mMyHttpClient.login(username, password)
                         .subscribeOn(Schedulers.io())
@@ -100,6 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onNext(LoginResponse loginResponse) {
                                 Log.i(TAG, "onNext");
+                                mDialog.dismiss();
                                 mAccountManager.saveAccountInfo(username, password, loginResponse);
                                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                 // 关闭自己
@@ -109,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onError(Throwable e) {
                                 Log.i(TAG, "onError=" + e.getMessage());
+                                mDialog.dismiss();
                             }
 
                             @Override
