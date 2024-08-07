@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mMyHttpClient = null;
+        this.mMyHttpClient = null;
     }
 
     @Override

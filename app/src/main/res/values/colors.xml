@@ -4,4 +4,25 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorTouchPointViewBg">#66000000</color>
+
+    <!--TextView 字体颜色-->
+    <color name="text_normal_color">#333333</color>
+    <color name="text_tips_color">#999999</color>
+    <color name="text_hint_color">#666666</color>
+
+    <!--Edit 字体颜色-->
+    <color name="common_input_edit_color">#646464</color>
+
+    <!-- 按钮禁止输入时的颜色 -->
+    <color name="btn_not_enabled">#E6E6E6</color>
+    <!-- 按钮正常颜色 -->
+    <color name="btn_normal_color">@color/colorPrimary</color>
+    <!-- 按钮按下颜色 -->
+    <color name="btn_press_color">#8ec31e</color>
+
+    <!-- 透明百分之二十 -->
+    <color name="translucent_20">#20000000</color>
+
+    <color name="dialog_line">#EDEDED</color>
+    <color name="dialog_cancel">#CCCCCC</color>
 </resources>

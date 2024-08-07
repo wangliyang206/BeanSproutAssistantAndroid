@@ -1,6 +1,7 @@
 package com.wly.beansprout.http;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.wly.beansprout.api.AccountService;
 import com.wly.beansprout.bean.AppUpdate;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 import io.reactivex.Observable;
 import okhttp3.Interceptor;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Http客户端
@@ -34,7 +36,7 @@ public class MyHttpClient extends AbstractHttpClient {
      */
     public Observable<LoginResponse> login(String username, String password) {
         Map<String, String> params = new HashMap<>();
-        params.put("userPhone", username);
+        params.put("mobile", username);
         params.put("password", password);
 
         return apiOperator.chain(params, request -> accountService.login(request));
@@ -66,13 +68,8 @@ public class MyHttpClient extends AbstractHttpClient {
     @Override
     public List<Interceptor> getApplicationInterceptors() {
         List<Interceptor> interceptors = new ArrayList<>();
-//        interceptors.add(new HeaderInterceptor());
-//        interceptors.add(new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-//            @Override
-//            public void log(String message) {
-//                Log.d(TAG, message);
-//            }
-//        }).setLevel(HttpLoggingInterceptor.Level.BODY));
+        interceptors.add(new HeaderInterceptor());
+        interceptors.add(new HttpLoggingInterceptor(message -> Log.d(TAG, message)).setLevel(HttpLoggingInterceptor.Level.BODY));
         return interceptors;
     }
 }

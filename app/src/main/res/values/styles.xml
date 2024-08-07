@@ -28,4 +28,32 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
+
+    <style name="LoginTextStyle" parent="Theme.AppCompat.Light">
+        <item name="android:textSize">14sp</item>
+        <!-- Label标签的颜色 -->
+        <item name="colorAccent">@color/text_hint_color</item>
+        <!-- 下划线没有获取焦点，也就是默认的颜色 -->
+        <item name="colorControlNormal">@color/text_tips_color</item>
+        <!-- 点击时下划线的颜色 -->
+        <item name="colorControlActivated">@color/text_tips_color</item>
+    </style>
+
+    <!-- 弹框样式(背景半透明) -->
+    <style name="weicomeDialog">
+        <item name="android:background">@null</item>
+
+        <item name="android:windowFrame">@null</item>
+        <!-- 边框 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsTranslucent">false</item>
+        <!-- 半透明 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 无标题 -->
+        <item name="android:windowBackground">@color/translucent_20</item>
+        <!-- 背景透明 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 模糊 -->
+    </style>
 </resources>

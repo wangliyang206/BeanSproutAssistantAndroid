@@ -26,6 +26,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <!-- 闪页 -->
         <activity
             android:name="com.wly.beansprout.SplashActivity"
             android:exported="true"
@@ -38,9 +40,17 @@
             </intent-filter>
         </activity>
 
+        <!-- 登录界面 -->
+        <activity
+            android:name="com.wly.beansprout.LoginActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <!-- 首页 -->
         <activity
             android:name="com.wly.beansprout.MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <service
             android:name="com.wly.beansprout.service.AutoTouchService"
