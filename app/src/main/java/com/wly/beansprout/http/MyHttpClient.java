@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.wly.beansprout.api.AccountService;
 import com.wly.beansprout.bean.AppUpdate;
+import com.wly.beansprout.bean.CommonResponse;
 import com.wly.beansprout.bean.LoginResponse;
 import com.wly.beansprout.global.Constant;
 
@@ -40,6 +41,20 @@ public class MyHttpClient extends AbstractHttpClient {
         params.put("password", password);
 
         return apiOperator.chain(params, request -> accountService.login(request));
+    }
+
+    /**
+     * 注册
+     *
+     * @param mobile   账号
+     * @param password 密码
+     */
+    public Observable<CommonResponse> register(String mobile, String password) {
+        Map<String, String> params = new HashMap<>();
+        params.put("mobile", mobile);
+        params.put("password", password);
+
+        return apiOperator.chain(params, request -> accountService.register(request));
     }
 
     /**

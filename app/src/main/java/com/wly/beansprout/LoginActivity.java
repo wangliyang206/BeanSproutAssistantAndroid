@@ -1,12 +1,10 @@
 package com.wly.beansprout;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,9 +18,11 @@ import com.jakewharton.rxbinding3.widget.RxTextView;
 import com.wly.beansprout.bean.LoginResponse;
 import com.wly.beansprout.dialog.CommTipsDialog;
 import com.wly.beansprout.global.AccountManager;
+import com.wly.beansprout.http.ApiException;
 import com.wly.beansprout.http.MyHttpClient;
 import com.wly.beansprout.utils.CommonUtils;
 import com.wly.beansprout.utils.StatusBarCompatUtils;
+import com.wly.beansprout.utils.ToastUtil;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     *设置状态栏
+     * 设置状态栏
      */
     public void setStatusBar() {
         // 纯透明
@@ -149,6 +149,10 @@ public class LoginActivity extends AppCompatActivity {
                             public void onError(Throwable e) {
                                 Log.i(TAG, "onError=" + e.getMessage());
                                 mDialog.dismiss();
+                                if (e instanceof ApiException) {
+                                    ApiException apiException = (ApiException) e;
+                                    ToastUtil.show(apiException.getErrorInfo().getErrormessage());
+                                }
                             }
 
                             @Override

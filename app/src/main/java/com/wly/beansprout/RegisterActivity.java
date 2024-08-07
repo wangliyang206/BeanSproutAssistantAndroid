@@ -14,11 +14,12 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.jakewharton.rxbinding3.widget.RxTextView;
-import com.wly.beansprout.bean.LoginResponse;
+import com.wly.beansprout.bean.CommonResponse;
 import com.wly.beansprout.global.AccountManager;
 import com.wly.beansprout.http.MyHttpClient;
 import com.wly.beansprout.utils.CommonUtils;
 import com.wly.beansprout.utils.StatusBarCompatUtils;
+import com.wly.beansprout.utils.ToastUtil;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -126,23 +127,22 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = Objects.requireNonNull(mEditTextPassword.getText()).toString().trim();
                 mDialog.show();
 
-                mMyHttpClient.login(username, password)
+                mMyHttpClient.register(username, password)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<LoginResponse>() {
+                        .subscribe(new Observer<CommonResponse>() {
                             @Override
                             public void onSubscribe(Disposable d) {
                                 Log.i(TAG, "onSubscribe");
                             }
 
                             @Override
-                            public void onNext(LoginResponse loginResponse) {
+                            public void onNext(CommonResponse loginResponse) {
                                 Log.i(TAG, "onNext");
                                 mDialog.dismiss();
-//                                mAccountManager.saveAccountInfo(username, password, loginResponse);
-//                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-//                                // 关闭自己
-//                                LoginActivity.this.finish();
+                                runOnUiThread(() -> ToastUtil.show("注册成功！"));
+                                // 关闭自己
+                                RegisterActivity.this.finish();
                             }
 
                             @Override

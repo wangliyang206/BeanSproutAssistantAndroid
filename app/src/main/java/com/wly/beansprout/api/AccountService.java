@@ -1,6 +1,7 @@
 package com.wly.beansprout.api;
 
 import com.wly.beansprout.bean.AppUpdate;
+import com.wly.beansprout.bean.CommonResponse;
 import com.wly.beansprout.bean.GsonRequest;
 import com.wly.beansprout.bean.GsonResponse;
 import com.wly.beansprout.bean.LoginResponse;
@@ -32,6 +33,10 @@ public interface AccountService {
     //快捷登录
     @POST("member/quickLogin")
     Observable<GsonResponse<LoginResponse>> quickLogin(@Body GsonRequest<Map<String, String>> request);
+
+    //注册
+    @POST("member/register")
+    Observable<GsonResponse<CommonResponse>> register(@Body GsonRequest<Map<String, String>> request);
 
     //获取APP版本信息
     @POST("system/getVersion")

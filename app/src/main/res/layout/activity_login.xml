@@ -64,7 +64,7 @@
             android:id="@+id/edit_login_mobile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="账号"
+            android:hint="手机号"
             android:inputType="phone"
             android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>

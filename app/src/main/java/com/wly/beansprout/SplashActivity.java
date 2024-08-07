@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.wly.beansprout.bean.LoginResponse;
 import com.wly.beansprout.global.AccountManager;
 import com.wly.beansprout.http.MyHttpClient;
+import com.wly.beansprout.utils.ToastUtil;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -43,6 +44,8 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        // 初始化Toast
+        ToastUtil.init(this);
         mMyHttpClient = new MyHttpClient(getApplicationContext());
         mAccountManager = new AccountManager(getApplicationContext());
 

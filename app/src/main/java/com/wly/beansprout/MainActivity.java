@@ -85,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         });
-        // 初始化Toast
-        ToastUtil.init(this);
 
         // 专属
         RadioGroup radioGroup = findViewById(R.id.ragr_exclusive);
