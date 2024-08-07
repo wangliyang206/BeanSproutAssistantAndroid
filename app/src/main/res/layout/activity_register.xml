@@ -2,154 +2,92 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/white"
     android:orientation="vertical">
 
     <!--头部-->
-    <include layout="@layout/comm_top_dark" />
+    <include layout="@layout/comm_top_light" />
 
-    <!--<LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/login_background_frame"
-        android:orientation="horizontal"
-        android:padding="5dp">
-
-        &lt;!&ndash;手机号&ndash;&gt;
-        <EditText
-            android:id="@+id/edit_registeractivity_phone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="@null"
-            android:hint="@string/forgotpasswordactitivy_user_title"
-            android:inputType="number"
-            android:maxLength="11"
-            android:textColor="@color/common_input_edit_color"
-            android:textColorHint="@color/common_input_edit_hint_color"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/login_background_frame"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="5dp">
-
-        <EditText
-            android:id="@+id/edit_registeractivity_sendverifycode"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:background="@null"
-            android:hint="@string/forgotpasswordactitivy_verification_code"
-            android:inputType="number"
-            android:maxLength="10"
-            android:textColor="@color/common_input_edit_color"
-            android:textColorHint="@color/common_input_edit_hint_color"
-            android:textSize="14sp" />
-
-        <View
-            android:layout_width="0.1dp"
-            android:layout_height="15dp"
-            android:background="@color/line_input_color" />
-
-        <Button
-            android:id="@+id/btn_registeractivity_sendverifycode"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_weight="1.8"
-            android:background="@null"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="@string/forgotpasswordactitivy_send_the_code"
-            android:textColor="@color/main_color"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-    <LinearLayout
+    <!-- 手机号 -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_register_mobile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/login_activity_submit_left_margin"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="@dimen/login_activity_submit_right_margin"
-        android:orientation="horizontal"
-        android:padding="2dp">
+        android:layout_marginLeft="29.5dp"
+        android:layout_marginTop="60.5dp"
+        android:layout_marginRight="29.5dp"
+        android:theme="@style/LoginTextStyle"
+        app:errorEnabled="true">
 
-        <CheckBox
-            android:id="@+id/checkbox_registeractivity_cb"
-            android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_register_mobile"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:button="@drawable/smallloan_checked_style"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:textColor="@color/common_text_tips_color" />
+            android:hint="账号"
+            android:inputType="phone"
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/txvi_registeractivity_tips1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:text="我同意"
-            android:textColor="@color/common_text_color"
-            android:textSize="13sp" />
-
-        <TextView
-            android:id="@+id/txvi_registeractivity_tips2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="《服务协议》"
-            android:textColor="@color/main_color"
-            android:textSize="13sp" />
-
-        <TextView
-            android:id="@+id/txvi_registeractivity_tips3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="和"
-            android:textColor="@color/common_text_color"
-            android:textSize="13sp" />
-
-        <TextView
-            android:id="@+id/txvi_registeractivity_tips4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="《隐私政策》"
-            android:textColor="@color/main_color"
-            android:textSize="13sp" />
-    </LinearLayout>
-
-    &lt;!&ndash; 提交 &ndash;&gt;
-    <Button
-        android:id="@+id/btn_registeractivity_confim"
+    <!-- 密码 -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_register_password"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginStart="@dimen/login_activity_submit_left_margin"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="29.5dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="@dimen/login_activity_submit_right_margin"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/log_in_button_selector"
-        android:clickable="false"
-        android:enabled="false"
-        android:gravity="center"
-        android:paddingLeft="8dp"
-        android:paddingTop="5dp"
-        android:paddingRight="8dp"
-        android:paddingBottom="5dp"
-        android:text="@string/registeractivity_submit"
+        android:layout_marginRight="29.5dp"
+        android:theme="@style/LoginTextStyle"
+        app:errorEnabled="true"
+        app:hintAnimationEnabled="true"
+        app:hintEnabled="true"
+        app:passwordToggleEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_register_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="密码"
+            android:inputType="textPassword"
+            android:maxLength="20"
+            android:maxLines="1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 确认密码 -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_register_confirmpassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="29.5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="29.5dp"
+        android:theme="@style/LoginTextStyle"
+        app:errorEnabled="true"
+        app:hintAnimationEnabled="true"
+        app:hintEnabled="true"
+        app:passwordToggleEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_register_confirmpassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="确认密码"
+            android:inputType="textPassword"
+            android:maxLength="20"
+            android:maxLines="1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 提交 -->
+    <Button
+        android:id="@+id/btn_register"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28.5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="28.5dp"
+        android:background="@drawable/btn_bg_selector"
+        android:text="提交"
         android:textColor="@android:color/white"
-        android:textSize="14sp"
-        android:textStyle="bold" />-->
+        android:textSize="16sp" />
 </LinearLayout>

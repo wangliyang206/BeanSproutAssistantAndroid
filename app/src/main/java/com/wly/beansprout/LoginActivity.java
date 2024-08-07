@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     *设置状态栏为透明
+     *设置状态栏
      */
     public void setStatusBar() {
         // 纯透明
