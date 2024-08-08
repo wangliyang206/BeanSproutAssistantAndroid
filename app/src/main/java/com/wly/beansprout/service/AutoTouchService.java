@@ -5,6 +5,7 @@ import android.accessibilityservice.GestureDescription;
 import android.annotation.SuppressLint;
 import android.graphics.Path;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -15,9 +16,11 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.RequiresApi;
 
+import com.wly.beansprout.R;
 import com.wly.beansprout.TouchEventManager;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.bean.TouchPoint;
+import com.wly.beansprout.utils.CommonUtils;
 import com.wly.beansprout.utils.WindowUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -92,52 +95,107 @@ public class AutoTouchService extends AccessibilityService {
         public void run() {
             Log.d(TAG, "onAutoClick: " + "x=" + autoTouchPoint.getX() + " y=" + autoTouchPoint.getY());
 
-            // 获取系统的GestureDescription.Builder对象
-            GestureDescription.Builder builder = new GestureDescription.Builder();
-
-            if (autoTouchPoint.getFunctionType() == 1) {
-                // 单击
-                builder.addStroke(onSingleClick());
-            } else if (autoTouchPoint.getFunctionType() == 2) {
-                // 点赞
-                builder.addStroke(onSingleClick());
-                builder.addStroke(onDoubleClick());
-            } else if (autoTouchPoint.getFunctionType() == 3) {
-                // 向下滑动
-                builder.addStroke(onSlide(1));
-            } else if (autoTouchPoint.getFunctionType() == 4) {
-                // 上下滑动
-                builder.addStroke(onSlide(2));
-            } else if (autoTouchPoint.getFunctionType() == 5) {
-                // 向左滑动
-                builder.addStroke(onSlide(3));
-            } else if (autoTouchPoint.getFunctionType() == 6) {
-                // 向右滑动
-                builder.addStroke(onSlide(4));
-            } else if (autoTouchPoint.getFunctionType() == 7) {
+            if (autoTouchPoint.getFunctionType() == 7) {
                 // 自动回复
+                Log.d(TAG, "执行 自动回复 功能");
 
+                // 获取到的 resouce-id 来获取 AccessibilityNodeInfo
+                AccessibilityNodeInfo info = findViewById("com.ss.android.ugc.aweme:id/f=m");
+                if (info != null) {
+
+                    // 点击一下输入框
+                    info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    // 等待1秒
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                    }
+                    // 重新取布局文件
+                    AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
+                    AccessibilityNodeInfo input = accessibilityNodeInfo.getChild(1);
+                    if(!input.getClassName().equals("android.widget.EditText")){
+                        input = accessibilityNodeInfo.getChild(2);
+                    }
+
+                    Log.d(TAG, "input=" + input.getText());
+                    // 设置edit文本内容,具体方法为
+                    int index = CommonUtils.getRandomNum(4);
+                    CharSequence text = "";
+                    switch (index) {
+                        case 1:
+                            text = "喜欢主播的点点关注、点点赞，感谢！";
+                            break;
+                        case 2:
+                            text = "感谢大家的支持！";
+                            break;
+                        case 3:
+                            text = "如果觉得今天的直播不错，就请给我点个赞吧！你们的支持是我最大的动力！";
+                            break;
+                        default:
+                            text = "欢迎各位亲爱的观众朋友们来到直播间！";
+                            break;
+                    }
+
+                    Bundle arguments = new Bundle();
+                    arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text);
+
+                    // 尝试在EditText中设置文本
+                    boolean success = input.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments);
+                    if (success) {
+                        Log.d("AccessibilityService", "Text set successfully");
+                        // 发送
+                        AccessibilityNodeInfo send = findViewById("com.ss.android.ugc.aweme:id/0p7");
+                        send.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    } else {
+                        Log.d("AccessibilityService", "Failed to set text");
+                    }
+                }
             } else {
-                // 其它
+                // 获取系统的GestureDescription.Builder对象
+                GestureDescription.Builder builder = new GestureDescription.Builder();
 
+                if (autoTouchPoint.getFunctionType() == 1) {
+                    // 单击
+                    builder.addStroke(onSingleClick());
+                } else if (autoTouchPoint.getFunctionType() == 2) {
+                    // 点赞
+                    builder.addStroke(onSingleClick());
+                    builder.addStroke(onDoubleClick());
+                } else if (autoTouchPoint.getFunctionType() == 3) {
+                    // 向下滑动
+                    builder.addStroke(onSlide(1));
+                } else if (autoTouchPoint.getFunctionType() == 4) {
+                    // 上下滑动
+                    builder.addStroke(onSlide(2));
+                } else if (autoTouchPoint.getFunctionType() == 5) {
+                    // 向左滑动
+                    builder.addStroke(onSlide(3));
+                } else if (autoTouchPoint.getFunctionType() == 6) {
+                    // 向右滑动
+                    builder.addStroke(onSlide(4));
+                } else {
+                    // 其它
+
+                }
+
+                // 创建GestureDescription对象
+                GestureDescription gestureDescription = builder.build();
+                // 执行模拟的手势
+                dispatchGesture(gestureDescription, new AccessibilityService.GestureResultCallback() {
+                    @Override
+                    public void onCompleted(GestureDescription gestureDescription) {
+                        super.onCompleted(gestureDescription);
+                        // 完成的回调
+                    }
+
+                    @Override
+                    public void onCancelled(GestureDescription gestureDescription) {
+                        super.onCancelled(gestureDescription);
+                        // 取消的回调
+                    }
+                }, null);
             }
 
-            // 创建GestureDescription对象
-            GestureDescription gestureDescription = builder.build();
-            // 执行模拟的手势
-            dispatchGesture(gestureDescription, new AccessibilityService.GestureResultCallback() {
-                @Override
-                public void onCompleted(GestureDescription gestureDescription) {
-                    super.onCompleted(gestureDescription);
-                    // 完成的回调
-                }
-
-                @Override
-                public void onCancelled(GestureDescription gestureDescription) {
-                    super.onCancelled(gestureDescription);
-                    // 取消的回调
-                }
-            }, null);
             onAutoClick();
         }
     };
@@ -212,7 +270,7 @@ public class AutoTouchService extends AccessibilityService {
         switch (event.getEventType()) {
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                 // 类型窗口内容已更改
-                onWindowContentChanged(packageName);
+                onWindowContentChanged(packageName, autoTouchPoint == null ? 0 : autoTouchPoint.getFunctionType());
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 // 类型窗口状态已更改
@@ -226,9 +284,9 @@ public class AutoTouchService extends AccessibilityService {
     /**
      * 窗口内容发生变化(判断是不是切出目标窗口，如果切出，则需要停止点赞动作)
      */
-    private void onWindowContentChanged(String packageName) {
+    private void onWindowContentChanged(String packageName, int type) {
         // 包名不为空，说明外界已经设置了专属。
-        if (!TextUtils.isEmpty(TouchEventManager.getInstance().getAppPackageName())) {
+        if (!TextUtils.isEmpty(TouchEventManager.getInstance().getAppPackageName()) && type != 7) {
             // 如果活动APP不是目标APP，则不响应
             if (packageName.contains(TouchEventManager.getInstance().getAppPackageName())) {
                 // 如果是动作暂停状态，则自动开启继续点赞

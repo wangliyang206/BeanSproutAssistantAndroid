@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     // 功能
     private RadioGroup groupFunction;
+    // 自动回复
+    private RadioButton floatingScreen;
     // 动画
     private RadioGroup groupAnimation;
     // 开始
@@ -92,17 +96,21 @@ public class MainActivity extends AppCompatActivity {
             if (checkedId == R.id.cb_exclusive_tiktok) {
                 // 抖音
                 TouchEventManager.getInstance().setAppPackageName(1);
+                floatingScreen.setVisibility(View.VISIBLE);
             } else if (checkedId == R.id.cb_exclusive_kwai) {
                 // 快手
                 TouchEventManager.getInstance().setAppPackageName(2);
+                floatingScreen.setVisibility(View.GONE);
             } else {
                 // 没有专属
                 TouchEventManager.getInstance().setAppPackageName(3);
+                floatingScreen.setVisibility(View.GONE);
             }
         });
 
         // 功能
         groupFunction = findViewById(R.id.ragr_function);
+        floatingScreen = findViewById(R.id.cb_function_floatingScreen);
 
         // 动画
         groupAnimation = findViewById(R.id.ragr_animation);

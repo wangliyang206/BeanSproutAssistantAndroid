@@ -11,7 +11,7 @@ public class TouchPoint {
     // 是否开启点击
     private boolean isStartClick;
     // 功能：0其它；1单击；2点赞；3向下滑动；4向上滑动；5向左滑动；6向右滑动；7自动回复；
-    private int functionType;
+    private int functionType = 0;
 
     public TouchPoint(String name, int x, int y, int delay) {
         this.name = name;

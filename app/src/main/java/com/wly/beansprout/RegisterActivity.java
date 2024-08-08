@@ -55,6 +55,9 @@ public class RegisterActivity extends AppCompatActivity {
     // 用来销毁 密码 RxBinding
     private Disposable disposPassword;
     private Disposable disposConfirmPassword;
+    private boolean isMobileInit;
+    private boolean isPasswordInit;
+    private boolean isConfirmPasswordInit;
 
     // 网络请求
     private MyHttpClient mMyHttpClient;
@@ -171,7 +174,11 @@ public class RegisterActivity extends AppCompatActivity {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(charSequence -> {
-                    mTextInputMobile.setErrorEnabled(false);
+                    if (isMobileInit) {
+                        mTextInputMobile.setErrorEnabled(false);
+                    } else {
+                        isMobileInit = true;
+                    }
                 });
 
         disposPassword = RxTextView.textChanges(mEditTextPassword)
@@ -180,13 +187,18 @@ public class RegisterActivity extends AppCompatActivity {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(charSequence -> {
-                    int num = Objects.requireNonNull(mEditTextPassword.getText()).length();
-                    mTextInputPassword.setErrorEnabled(false);
+                    if (isPasswordInit) {
+                        int num = Objects.requireNonNull(mEditTextPassword.getText()).length();
+                        mTextInputPassword.setErrorEnabled(false);
 
-                    if (num < 6 || num > 20) {
-                        mTextInputPassword.setError("密码长度为6–20位，建议字母与数字组合");
-                        mTextInputPassword.setErrorEnabled(true);
+                        if (num < 6 || num > 20) {
+                            mTextInputPassword.setError("密码长度为6–20位，建议字母与数字组合");
+                            mTextInputPassword.setErrorEnabled(true);
+                        }
+                    } else {
+                        isPasswordInit = true;
                     }
+
                 });
 
 
@@ -196,17 +208,21 @@ public class RegisterActivity extends AppCompatActivity {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(charSequence -> {
-                    int num = Objects.requireNonNull(mEditTextConfirmPassword.getText()).length();
-                    mTextInputConfirmPassword.setErrorEnabled(false);
+                    if (isConfirmPasswordInit) {
+                        int num = Objects.requireNonNull(mEditTextConfirmPassword.getText()).length();
+                        mTextInputConfirmPassword.setErrorEnabled(false);
 
-                    if (num == 0) {
-                        mTextInputConfirmPassword.setError("请输入密码！");
-                        mTextInputConfirmPassword.setErrorEnabled(true);
-                    }
+                        if (num == 0) {
+                            mTextInputConfirmPassword.setError("请输入密码！");
+                            mTextInputConfirmPassword.setErrorEnabled(true);
+                        }
 
-                    if (!mEditTextConfirmPassword.getText().toString().equalsIgnoreCase(mEditTextPassword.getText().toString())) {
-                        mTextInputConfirmPassword.setError("请确保确认密码与密码输入一至！");
-                        mTextInputConfirmPassword.setErrorEnabled(true);
+                        if (!mEditTextConfirmPassword.getText().toString().equalsIgnoreCase(mEditTextPassword.getText().toString())) {
+                            mTextInputConfirmPassword.setError("请确保确认密码与密码输入一至！");
+                            mTextInputConfirmPassword.setErrorEnabled(true);
+                        }
+                    } else {
+                        isConfirmPasswordInit = true;
                     }
                 });
     }

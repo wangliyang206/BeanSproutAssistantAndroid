@@ -54,6 +54,8 @@ public class LoginActivity extends AppCompatActivity {
     private Disposable disposMobile;
     // 用来销毁 密码 RxBinding
     private Disposable disposPassword;
+    private boolean isMobileInit;
+    private boolean isPasswordInit;
 
     // 网络请求
     private MyHttpClient mMyHttpClient;
@@ -175,7 +177,11 @@ public class LoginActivity extends AppCompatActivity {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(charSequence -> {
-                    mTextInputMobile.setErrorEnabled(false);
+                    if (isMobileInit) {
+                        mTextInputMobile.setErrorEnabled(false);
+                    } else {
+                        isMobileInit = true;
+                    }
                 });
 
         disposPassword = RxTextView.textChanges(mEditTextPassword)
@@ -184,12 +190,16 @@ public class LoginActivity extends AppCompatActivity {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(charSequence -> {
-                    int num = Objects.requireNonNull(mEditTextPassword.getText()).length();
-                    mTextInputPassword.setErrorEnabled(false);
+                    if (isPasswordInit) {
+                        int num = Objects.requireNonNull(mEditTextPassword.getText()).length();
+                        mTextInputPassword.setErrorEnabled(false);
 
-                    if (num < 6 || num > 20) {
-                        mTextInputPassword.setError("密码长度为6–20位，建议字母与数字组合");
-                        mTextInputPassword.setErrorEnabled(true);
+                        if (num < 6 || num > 20) {
+                            mTextInputPassword.setError("密码长度为6–20位，建议字母与数字组合");
+                            mTextInputPassword.setErrorEnabled(true);
+                        }
+                    } else {
+                        isPasswordInit = true;
                     }
                 });
     }
