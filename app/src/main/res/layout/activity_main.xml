@@ -137,7 +137,6 @@
                     android:layout_marginStart="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
-                    android:checked="true"
                     android:gravity="center"
                     android:text="直播点赞"
                     android:textColor="@android:color/black"
@@ -191,6 +190,20 @@
                     android:gravity="center"
                     android:paddingTop="5dp"
                     android:text="向右滑动"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/cb_function_floatingScreen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:paddingTop="5dp"
+                    android:text="自动回复"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
             </com.wly.beansprout.view.GridRadioGroup>

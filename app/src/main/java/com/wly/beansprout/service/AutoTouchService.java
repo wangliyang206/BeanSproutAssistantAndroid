@@ -114,6 +114,9 @@ public class AutoTouchService extends AccessibilityService {
             } else if (autoTouchPoint.getFunctionType() == 6) {
                 // 向右滑动
                 builder.addStroke(onSlide(4));
+            } else if (autoTouchPoint.getFunctionType() == 7) {
+                // 自动回复
+
             } else {
                 // 其它
 
@@ -162,7 +165,6 @@ public class AutoTouchService extends AccessibilityService {
      * 滑动
      *
      * @param type 滑动方向：1向下滑动；2向上滑动；3向左滑动；4向右滑动；
-     * @return
      */
     private GestureDescription.StrokeDescription onSlide(int type) {
         // 创建Path对象，用于描述滑动的路径

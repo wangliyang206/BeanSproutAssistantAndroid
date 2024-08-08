@@ -224,6 +224,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slidingRight) {
             // 向右滑动
             return 6;
+        } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_floatingScreen) {
+            // 自动回复
+            return 7;
         } else {
             // 其它
             return 0;
