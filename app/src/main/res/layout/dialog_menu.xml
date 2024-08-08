@@ -37,6 +37,18 @@
             android:textSize="15sp" />
 
         <Button
+            android:id="@+id/bt_reply"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:background="#666"
+            android:text="回复话术"
+            android:textColor="#fff"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+        <Button
             android:id="@+id/bt_exit"
             android:layout_width="0dp"
             android:layout_height="50dp"

@@ -142,7 +142,12 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.i(TAG, "onNext");
                                 mDialog.dismiss();
                                 mAccountManager.saveAccountInfo(username, password, loginResponse);
-                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+                                Intent mIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                mIntent.putExtra("mobile", loginResponse.getUserPhone());
+                                mIntent.putExtra("status", loginResponse.getStatus());
+                                mIntent.putExtra("daysRemaining", loginResponse.getDaysRemaining());
+                                startActivity(mIntent);
                                 // 关闭自己
                                 LoginActivity.this.finish();
                             }

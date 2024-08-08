@@ -31,6 +31,26 @@ public class LoginResponse {
 
     /* 手机号 */
     private String userPhone = "";
+    // 状态：1待审核、2审核中、3已退回、4使用中、5已停用、6体验中、9已删除。
+    private int status;
+    // 体验状态 - 剩余天数
+    private int daysRemaining;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int getDaysRemaining() {
+        return daysRemaining;
+    }
+
+    public void setDaysRemaining(int daysRemaining) {
+        this.daysRemaining = daysRemaining;
+    }
 
     public String getToken() {
         return token;

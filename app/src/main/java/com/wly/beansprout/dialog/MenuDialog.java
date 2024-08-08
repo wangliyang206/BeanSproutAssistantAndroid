@@ -29,6 +29,7 @@ import java.util.List;
  */
 public class MenuDialog extends BaseServiceDialog implements View.OnClickListener {
 
+    private Button btReply;
     private Button btStop;
     private RecyclerView rvPoints;
 
@@ -63,13 +64,17 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
         setCanceledOnTouchOutside(true);
         findViewById(R.id.bt_exit).setOnClickListener(this);
         findViewById(R.id.bt_add).setOnClickListener(this);
+
+        btReply = findViewById(R.id.bt_reply);
+        btReply.setOnClickListener(this);
         btStop = findViewById(R.id.bt_stop);
         btStop.setOnClickListener(this);
         rvPoints = findViewById(R.id.rv);
         touchPointAdapter = new TouchPointAdapter();
         touchPointAdapter.setOnItemClickListener((view, position, touchPoint) -> {
             if (view.getId() == R.id.item_touch_point) {
-                // 点击一行
+                // 【开始】功能
+                btReply.setVisibility(View.GONE);
                 btStop.setVisibility(View.VISIBLE);
                 dismiss();
                 touchPoint.setFunctionType(functionType);
@@ -86,6 +91,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                     listener.onStartTouch(touchPoint.getX(), touchPoint.getY());
                 }
             } else if (view.getId() == R.id.bt_delete) {
+                // 【删除】功能
                 if (touchPointAdapter != null) {
                     touchPointAdapter.onRemove(getContext(), position);
                 }
@@ -123,14 +129,16 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.bt_add:
+            case R.id.bt_add:                                                                       // 添加触控点
                 DialogUtils.dismiss(addPointDialog);
                 addPointDialog = new AddPointDialog(getContext());
                 addPointDialog.setOnDismissListener(dialog -> MenuDialog.this.show());
                 addPointDialog.show();
                 dismiss();
                 break;
-            case R.id.bt_stop:
+            case R.id.bt_stop:                                                                      // 停止触控
+                // 如果是 “自动回复” ，则显示 话术功能。
+                btReply.setVisibility(functionType == 7 ? View.VISIBLE : View.GONE);
                 btStop.setVisibility(View.GONE);
                 TouchEvent.postStopAction();
                 ToastUtil.show("已停止触控");
@@ -145,7 +153,10 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                     listener.onStopTouch();
                 }
                 break;
-            case R.id.bt_exit:
+            case R.id.bt_reply:                                                                     // 回复话术
+
+                break;
+            case R.id.bt_exit:                                                                      // 退出助手
                 TouchEvent.postStopAction();
                 if (listener != null) {
                     listener.onExitService();
@@ -157,6 +168,9 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
 
     public void setFunctionType(int functionType) {
         this.functionType = functionType;
+
+        // 如果是 “自动回复” ，则显示 话术功能。
+        btReply.setVisibility(functionType == 7 ? View.VISIBLE : View.GONE);
     }
 
     public void setListener(Listener listener) {

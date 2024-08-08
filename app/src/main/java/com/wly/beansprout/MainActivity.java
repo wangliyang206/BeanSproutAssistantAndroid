@@ -17,6 +17,7 @@ import com.qiangxi.checkupdatelibrary.Q;
 import com.wly.beansprout.bean.AppUpdate;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.fw_permission.FloatWinPermissionCompat;
+import com.wly.beansprout.global.AccountManager;
 import com.wly.beansprout.http.MyHttpClient;
 import com.wly.beansprout.service.AutoTouchService;
 import com.wly.beansprout.service.FloatingService;
@@ -35,6 +36,7 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity {
     // 网络请求
     private MyHttpClient mMyHttpClient;
+    private AccountManager mAccountManager;
 
     private final String STRING_START = "开始";
     private final String STRING_ACCESS = "无障碍服务";
@@ -61,8 +63,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // 接收外部提供的参数
+        int status = getIntent().getIntExtra("status", 0);
+        int daysRemaining = getIntent().getIntExtra("daysRemaining", 0);
+
+        // 初始化
         mMyHttpClient = new MyHttpClient(getApplicationContext());
+        mAccountManager = new AccountManager(getApplicationContext());
+        TextView tvUserName = findViewById(R.id.txvi_username);
+        TextView tvState = findViewById(R.id.txvi_state);
+        TextView tvOutLogin = findViewById(R.id.txvi_outlogin);
         tvStart = findViewById(R.id.tv_start);
+        // 专属
+        RadioGroup radioGroup = findViewById(R.id.ragr_exclusive);
+        // 功能
+        groupFunction = findViewById(R.id.ragr_function);
+        floatingScreen = findViewById(R.id.cb_function_floatingScreen);
+        // 动画
+        groupAnimation = findViewById(R.id.ragr_animation);
+
+        // 赋值
+        tvUserName.setText(getIntent().getStringExtra("mobile"));
+        tvState.setText(status == 4 ? "正式用户" : "体验用户(剩余" + daysRemaining + "天)");
+        tvOutLogin.setOnClickListener(v -> {
+            mAccountManager.setToken("");
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            MainActivity.this.finish();
+        });
         tvStart.setOnClickListener(v -> {
             switch (tvStart.getText().toString()) {
                 case STRING_START:
@@ -91,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 专属
-        RadioGroup radioGroup = findViewById(R.id.ragr_exclusive);
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.cb_exclusive_tiktok) {
                 // 抖音
@@ -107,13 +133,6 @@ public class MainActivity extends AppCompatActivity {
                 floatingScreen.setVisibility(View.GONE);
             }
         });
-
-        // 功能
-        groupFunction = findViewById(R.id.ragr_function);
-        floatingScreen = findViewById(R.id.cb_function_floatingScreen);
-
-        // 动画
-        groupAnimation = findViewById(R.id.ragr_animation);
 
         // 检查更新
         getVersion();

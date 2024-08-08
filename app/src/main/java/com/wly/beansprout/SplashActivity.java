@@ -73,7 +73,11 @@ public class SplashActivity extends AppCompatActivity {
                                 mAccountManager.setToken(loginResponse.getToken());
                             }
 
-                            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                            Intent mIntent = new Intent(SplashActivity.this, MainActivity.class);
+                            mIntent.putExtra("mobile", loginResponse.getUserPhone());
+                            mIntent.putExtra("status", loginResponse.getStatus());
+                            mIntent.putExtra("daysRemaining", loginResponse.getDaysRemaining());
+                            startActivity(mIntent);
                             // 关闭自己
                             SplashActivity.this.finish();
                         }
