@@ -174,8 +174,13 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     public void setFunctionType(int functionType) {
         this.functionType = functionType;
 
-        // 如果是 “自动回复” ，则显示 话术功能。
-        btReply.setVisibility(functionType == 7 ? View.VISIBLE : View.GONE);
+        // 如果正在点赞或者已经开启自动回复时，不显示设置话术
+        if (TouchEventManager.getInstance().isTouching()) {
+            btReply.setVisibility(View.GONE);
+        } else {
+            // 如果是 “自动回复” ，则显示 话术功能。
+            btReply.setVisibility(functionType == 7 ? View.VISIBLE : View.GONE);
+        }
     }
 
     public void setListener(Listener listener) {

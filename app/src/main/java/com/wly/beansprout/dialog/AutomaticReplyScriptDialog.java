@@ -9,9 +9,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 
 import com.wly.beansprout.R;
-import com.wly.beansprout.bean.TouchPoint;
 import com.wly.beansprout.global.AccountManager;
-import com.wly.beansprout.utils.SpUtils;
 import com.wly.beansprout.utils.ToastUtil;
 
 /**
@@ -22,14 +20,13 @@ import com.wly.beansprout.utils.ToastUtil;
  * @Author: WLY
  * @CreateDate: 2024/8/9 15:11
  */
-public class AutomaticReplyScriptDialog extends BaseServiceDialog implements View.OnClickListener{
+public class AutomaticReplyScriptDialog extends BaseServiceDialog implements View.OnClickListener {
     // 用户输入话术
     private EditText etInput;
     private AccountManager mAccountManager;
 
     public AutomaticReplyScriptDialog(@NonNull Context context) {
         super(context);
-        mAccountManager = new AccountManager(context);
     }
 
     @Override
@@ -52,6 +49,10 @@ public class AutomaticReplyScriptDialog extends BaseServiceDialog implements Vie
         etInput = findViewById(R.id.edit_autoreplyscript_input);
         findViewById(R.id.bt_autoreplyscript_commit).setOnClickListener(this);
         findViewById(R.id.bt_autoreplyscript_cancel).setOnClickListener(this);
+
+        if (mAccountManager == null) {
+            mAccountManager = new AccountManager(getContext());
+        }
 
         etInput.setText(mAccountManager.getAutoReplyScript());
     }
