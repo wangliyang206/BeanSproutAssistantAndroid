@@ -10,24 +10,21 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.RequiresApi;
 
-import com.wly.beansprout.R;
 import com.wly.beansprout.TouchEventManager;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.bean.TouchPoint;
+import com.wly.beansprout.global.AccountManager;
 import com.wly.beansprout.utils.CommonUtils;
-import com.wly.beansprout.utils.WindowUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -43,17 +40,14 @@ public class AutoTouchService extends AccessibilityService {
     private TouchPoint autoTouchPoint;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(Looper.getMainLooper());
-    private WindowManager windowManager;
-    //倒计时
-    private float countDownTime;
-    private final DecimalFormat floatDf = new DecimalFormat("#0.0");
+    private AccountManager mAccountManager;
 
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
         handler = new Handler();
         EventBus.getDefault().register(this);
-        windowManager = WindowUtils.getWindowManager(this);
+        mAccountManager = new AccountManager(getApplicationContext());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -108,34 +102,23 @@ public class AutoTouchService extends AccessibilityService {
                     // 等待1秒
                     try {
                         Thread.sleep(1000);
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException ignored) {
                     }
                     // 重新取布局文件
                     AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
                     AccessibilityNodeInfo input = accessibilityNodeInfo.getChild(1);
-                    if(!input.getClassName().equals("android.widget.EditText")){
+                    if (!input.getClassName().equals("android.widget.EditText")) {
                         input = accessibilityNodeInfo.getChild(2);
                     }
 
                     Log.d(TAG, "input=" + input.getText());
-                    // 设置edit文本内容,具体方法为
-                    int index = CommonUtils.getRandomNum(4);
-                    CharSequence text = "";
-                    switch (index) {
-                        case 1:
-                            text = "喜欢主播的点点关注、点点赞，感谢！";
-                            break;
-                        case 2:
-                            text = "感谢大家的支持！";
-                            break;
-                        case 3:
-                            text = "如果觉得今天的直播不错，就请给我点个赞吧！你们的支持是我最大的动力！";
-                            break;
-                        default:
-                            text = "欢迎各位亲爱的观众朋友们来到直播间！";
-                            break;
-                    }
 
+                    String[] mAuto = mAccountManager.getAutoReplyScript().split(";");
+
+                    // 设置edit文本内容,具体方法为
+                    int index = CommonUtils.getRandomNum(mAuto.length);
+                    CharSequence text = mAuto[index];
+                    Log.d(TAG, "自动回复=" + text);
                     Bundle arguments = new Bundle();
                     arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text);
 
@@ -372,5 +355,6 @@ public class AutoTouchService extends AccessibilityService {
     public void onDestroy() {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
+        this.mAccountManager = null;
     }
 }

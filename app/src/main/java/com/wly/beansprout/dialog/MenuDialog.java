@@ -34,6 +34,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
     private RecyclerView rvPoints;
 
     private AddPointDialog addPointDialog;
+    private AutomaticReplyScriptDialog autoReplyDialog;
     private Listener listener;
     private TouchPointAdapter touchPointAdapter;
 
@@ -154,7 +155,11 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 }
                 break;
             case R.id.bt_reply:                                                                     // 回复话术
-
+                DialogUtils.dismiss(autoReplyDialog);
+                autoReplyDialog = new AutomaticReplyScriptDialog(getContext());
+                autoReplyDialog.setOnDismissListener(dialog -> MenuDialog.this.show());
+                autoReplyDialog.show();
+                dismiss();
                 break;
             case R.id.bt_exit:                                                                      // 退出助手
                 TouchEvent.postStopAction();

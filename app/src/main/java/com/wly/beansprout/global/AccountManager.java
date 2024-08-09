@@ -53,6 +53,11 @@ public final class AccountManager {
      */
     private final String RECYCLE_PHONE = "recyclePhone";
 
+    /**
+     * 自动回复内容
+     */
+    private final String AUTO_REPLY_SCRIPT = "autoReplyScript";
+
     /*----------------------------------------------操作对象-------------------------------------------------*/
 
     private AppPreferencesHelper spHelper;
@@ -193,4 +198,14 @@ public final class AccountManager {
         return !TextUtils.isEmpty(token);
     }
 
+    /**
+     * 获取自动回复内容
+     */
+    public String getAutoReplyScript() {
+        return spHelper.getPref(AUTO_REPLY_SCRIPT, "喜欢主播的点点关注、点点赞，感谢！;感谢大家的支持！;如果觉得今天的直播不错，就请给我点个赞吧！你们的支持是我最大的动力！;欢迎各位亲们来到直播间！");
+    }
+
+    public void setAutoReplyScript(String val) {
+        spHelper.put(AUTO_REPLY_SCRIPT, val);
+    }
 }
