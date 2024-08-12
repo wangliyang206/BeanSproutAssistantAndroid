@@ -19,6 +19,7 @@ import com.wly.beansprout.bean.AppUpdate;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.fw_permission.FloatWinPermissionCompat;
 import com.wly.beansprout.global.AccountManager;
+import com.wly.beansprout.global.TouchEventManager;
 import com.wly.beansprout.http.MyHttpClient;
 import com.wly.beansprout.service.AutoTouchService;
 import com.wly.beansprout.service.FloatingService;

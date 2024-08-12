@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import androidx.core.content.ContextCompat;
 
 import com.wly.beansprout.R;
-import com.wly.beansprout.TouchEventManager;
+import com.wly.beansprout.global.TouchEventManager;
 import com.wly.beansprout.bean.Point;
 import com.wly.beansprout.dialog.MenuDialog;
 import com.wly.beansprout.utils.CommonUtils;

@@ -15,10 +15,10 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.RequiresApi;
 
-import com.wly.beansprout.TouchEventManager;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.bean.TouchPoint;
 import com.wly.beansprout.global.AccountManager;
+import com.wly.beansprout.global.TouchEventManager;
 import com.wly.beansprout.utils.CommonUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -93,46 +93,17 @@ public class AutoTouchService extends AccessibilityService {
                 // 自动回复
                 Log.d(TAG, "执行 自动回复 功能");
 
-                // 获取到的 resouce-id 来获取 AccessibilityNodeInfo
-                AccessibilityNodeInfo info = findViewById("com.ss.android.ugc.aweme:id/f=m");
-                if (info != null) {
+                // 获取一次屏幕
+                AccessibilityNodeInfo layout = getRootInActiveWindow();
 
-                    // 点击一下输入框
-                    info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    // 等待1秒
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ignored) {
-                    }
-                    // 重新取布局文件
-                    AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
-                    AccessibilityNodeInfo input = accessibilityNodeInfo.getChild(1);
-                    if (!input.getClassName().equals("android.widget.EditText")) {
-                        input = accessibilityNodeInfo.getChild(2);
-                    }
-
-                    Log.d(TAG, "input=" + input.getText());
-
-                    String[] mAuto = mAccountManager.getAutoReplyScript().split(";");
-
-                    // 设置edit文本内容,具体方法为
-                    int index = CommonUtils.getRandomNum(mAuto.length);
-                    CharSequence text = mAuto[index];
-                    Log.d(TAG, "自动回复=" + text);
-                    Bundle arguments = new Bundle();
-                    arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text);
-
-                    // 尝试在EditText中设置文本
-                    boolean success = input.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments);
-                    if (success) {
-                        Log.d("AccessibilityService", "Text set successfully");
-                        // 发送
-                        AccessibilityNodeInfo send = findViewById("com.ss.android.ugc.aweme:id/0p7");
-                        send.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    } else {
-                        Log.d("AccessibilityService", "Failed to set text");
-                    }
+                if (layout.getPackageName().equals(TouchEventManager.getInstance().getAppPackageName())) {
+                    // 抖音
+                    autoReply("com.ss.android.ugc.aweme:id/f=m", "com.ss.android.ugc.aweme:id/0p7");
+                } else {
+                    // 极速版
+                    autoReply("com.ss.android.ugc.aweme.lite:id/dx6", "m.l.live.plugin:id/tv_send_portrait");
                 }
+
             } else {
                 // 获取系统的GestureDescription.Builder对象
                 GestureDescription.Builder builder = new GestureDescription.Builder();
@@ -182,6 +153,54 @@ public class AutoTouchService extends AccessibilityService {
             onAutoClick();
         }
     };
+
+    /**
+     * 自动回复
+     */
+    private void autoReply(String resouceId, String sendId) {
+        // 获取到的 resouce-id 来获取 AccessibilityNodeInfo
+        AccessibilityNodeInfo info = findViewById(resouceId);
+        if (info != null) {
+
+            // 点击一下输入框
+            info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+            // 等待1秒
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+            }
+            // 重新取布局文件
+            AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
+            // 如果没有打开弹幕只默认取index = 1的数值
+            AccessibilityNodeInfo input = accessibilityNodeInfo.getChild(1);
+            if (!input.getClassName().equals("android.widget.EditText")) {
+                // 打开弹幕后，index 取 2
+                input = accessibilityNodeInfo.getChild(2);
+            }
+
+            Log.d(TAG, "input=" + input.getText());
+
+            String[] mAuto = mAccountManager.getAutoReplyScript().split(";");
+
+            // 设置edit文本内容,具体方法为
+            int index = CommonUtils.getRandomNum(mAuto.length);
+            CharSequence text = mAuto[index];
+            Log.d(TAG, "自动回复=" + text);
+            Bundle arguments = new Bundle();
+            arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text);
+
+            // 尝试在EditText中设置文本
+            boolean success = input.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments);
+            if (success) {
+                Log.d("AccessibilityService", "Text set successfully");
+                // 发送
+                AccessibilityNodeInfo send = findViewById(sendId);
+                send.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+            } else {
+                Log.d("AccessibilityService", "Failed to set text");
+            }
+        }
+    }
 
     /**
      * 单击 事件

@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wly.beansprout.R;
-import com.wly.beansprout.TouchEventManager;
+import com.wly.beansprout.global.TouchEventManager;
 import com.wly.beansprout.adapter.TouchPointAdapter;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.bean.TouchPoint;

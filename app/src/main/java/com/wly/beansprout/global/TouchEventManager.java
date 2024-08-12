@@ -1,4 +1,4 @@
-package com.wly.beansprout;
+package com.wly.beansprout.global;
 
 import com.wly.beansprout.bean.TouchEvent;
 
