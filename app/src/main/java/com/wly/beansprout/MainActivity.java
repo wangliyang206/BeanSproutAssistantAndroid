@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.qiangxi.checkupdatelibrary.CheckUpdateOption;
 import com.qiangxi.checkupdatelibrary.Q;
+import com.umeng.analytics.MobclickAgent;
 import com.wly.beansprout.bean.AppUpdate;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.fw_permission.FloatWinPermissionCompat;
@@ -63,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // 友盟统计 - 自定义事件
+        MobclickAgent.onEvent(getApplicationContext(), "open_main");
+
         // 接收外部提供的参数
         int status = getIntent().getIntExtra("status", 0);
         int daysRemaining = getIntent().getIntExtra("daysRemaining", 0);
@@ -86,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         tvUserName.setText(getIntent().getStringExtra("mobile"));
         tvState.setText(status == 4 ? "正式用户" : "体验用户(剩余" + daysRemaining + "天)");
         tvOutLogin.setOnClickListener(v -> {
+            // 登出
+            MobclickAgent.onProfileSignOff();
             mAccountManager.setToken("");
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             MainActivity.this.finish();
@@ -233,31 +239,41 @@ public class MainActivity extends AppCompatActivity {
      * 获取功能类型
      */
     private int getFunctionType() {
+        int index = 0;
+        String value = "";
         if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_singleclick) {
-            // 单击
-            return 1;
+            // 轻点触发(单点)
+            index = 1;
+            value = "lightlyTrigger";
         } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_like) {
-            // 点赞
-            return 2;
+            // 直播点赞
+            index = 2;
+            value = "liveStreamingLikes";
         } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slidedDown) {
             // 向下滑动
-            return 3;
+            index = 3;
+            value = "slideDown";
         } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slideUpAndDown) {
             // 上下滑动
-            return 4;
+            index = 4;
+            value = "wipeUp";
         } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slidingLeft) {
             // 向左滑动
-            return 5;
+            index = 5;
+            value = "swipeLeft";
         } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_slidingRight) {
             // 向右滑动
-            return 6;
+            index = 6;
+            value = "swipeRight";
         } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_floatingScreen) {
             // 自动回复
-            return 7;
-        } else {
-            // 其它
-            return 0;
+            index = 7;
+            value = "autoReply";
         }
+
+        // 友盟统计 - 自定义事件
+        MobclickAgent.onEvent(getApplicationContext(), value);
+        return index;
     }
 
     /**

@@ -36,4 +36,9 @@ public interface Constant {
      * 文件权限
      */
     int SELECT_FILE_PERMISSION = 0;
+
+    /**
+     * 友盟统计 - 渠道
+     */
+    String UM_CHANNEL = "test_channel";
 }

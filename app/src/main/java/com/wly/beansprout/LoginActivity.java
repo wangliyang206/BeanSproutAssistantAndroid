@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.jakewharton.rxbinding3.widget.RxTextView;
+import com.umeng.analytics.MobclickAgent;
 import com.wly.beansprout.bean.LoginResponse;
 import com.wly.beansprout.dialog.CommTipsDialog;
 import com.wly.beansprout.global.AccountManager;
@@ -142,6 +143,8 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.i(TAG, "onNext");
                                 mDialog.dismiss();
                                 mAccountManager.saveAccountInfo(username, password, loginResponse);
+                                // 当用户使用自有账号登录时，可以这样统计：
+                                MobclickAgent.onProfileSignIn(loginResponse.getUserId());
 
                                 Intent mIntent = new Intent(LoginActivity.this, MainActivity.class);
                                 mIntent.putExtra("mobile", loginResponse.getUserPhone());
