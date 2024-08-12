@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
+import com.umeng.umcrash.UMCrash;
 import com.wly.beansprout.bean.LoginResponse;
 import com.wly.beansprout.global.AccountManager;
 import com.wly.beansprout.global.Constant;
@@ -102,7 +103,8 @@ public class SplashActivity extends AppCompatActivity {
         // 手动埋点即可。开发者还需要在每一个Activity的onResume函数中手动调用MobclickAgent.onResume接口，
         // 在Activity的onPause函数中手动调用MobclickAgent.onPause接口。
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO);
-
+        // 监控应用性能
+        UMCrash.setAppVersion(BuildConfig.VERSION_NAME, BuildConfig.BUILD_TYPE, String.valueOf(BuildConfig.VERSION_CODE));
 
         // 校验是否登录过一次，如果没有，则直接跳转登录界面
         if (TextUtils.isEmpty(mAccountManager.getToken()) || TextUtils.isEmpty(mAccountManager.getUserId())) {
