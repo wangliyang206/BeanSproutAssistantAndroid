@@ -2,4 +2,10 @@
     <string name="app_name">打工鸡</string>
     <string name="app_name_debug">Test打工鸡</string>
     <string name="hint">开启该权限才能正常使用自动触控功能</string>
+
+    <!-- 友盟统计 -->
+    <string name="um_app_key_debug">66b9b018192e0574e75d9be9</string>
+    <string name="um_app_key">66b9aa29cac2a664de8a7f6b</string>
+    <string name="um_app_key_manifest_debug">um.66b9b018192e0574e75d9be9</string>
+    <string name="um_app_key_manifest">um.66b9aa29cac2a664de8a7f6b</string>
 </resources>
