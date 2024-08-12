@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -77,12 +78,19 @@ public class CommonUtils {
     }
 
     public static String getIMEI(Context context) {
-        TelephonyManager tel = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // 无权限
+        try {
+            TelephonyManager tel = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                return "";
+            }
+            String ret = tel != null ? tel.getDeviceId() : null;
+            if (TextUtils.isEmpty(ret))
+                return "";
+            else
+                return ret;
+        } catch (Exception ex) {
             return "";
         }
-        return tel.getDeviceId();
     }
 
     /***
