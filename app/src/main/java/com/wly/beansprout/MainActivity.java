@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup groupFunction;
     // 自动回复
     private RadioButton floatingScreen;
+    // 直播点赞
+    private RadioButton like;
     // 动画
     private RadioGroup groupAnimation;
     // 开始
@@ -84,12 +86,16 @@ public class MainActivity extends AppCompatActivity {
         // 功能
         groupFunction = findViewById(R.id.ragr_function);
         floatingScreen = findViewById(R.id.cb_function_floatingScreen);
+        like = findViewById(R.id.cb_function_like);
         // 动画
         groupAnimation = findViewById(R.id.ragr_animation);
+        // 版本号
+        TextView txviVersion = findViewById(R.id.txvi_version);
 
         // 赋值
         tvUserName.setText(getIntent().getStringExtra("mobile"));
         tvState.setText(status == 4 ? "正式用户" : "体验用户(剩余" + daysRemaining + "天)");
+        txviVersion.setText("V" + BuildConfig.VERSION_NAME);
         tvOutLogin.setOnClickListener(v -> {
             // 登出
             MobclickAgent.onProfileSignOff();
@@ -134,10 +140,16 @@ public class MainActivity extends AppCompatActivity {
                 // 快手
                 TouchEventManager.getInstance().setAppPackageName(2);
                 floatingScreen.setVisibility(View.GONE);
+                if (floatingScreen.isChecked()) {
+                    like.setChecked(true);
+                }
             } else {
                 // 没有专属
                 TouchEventManager.getInstance().setAppPackageName(3);
                 floatingScreen.setVisibility(View.GONE);
+                if (floatingScreen.isChecked()) {
+                    like.setChecked(true);
+                }
             }
         });
 
