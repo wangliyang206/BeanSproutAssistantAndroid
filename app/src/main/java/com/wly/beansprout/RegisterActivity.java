@@ -243,6 +243,13 @@ public class RegisterActivity extends AppCompatActivity {
             return false;
         }
 
+        // 校验手机号的有效性
+        if(!CommonUtils.isValidPhoneNumber(username)){
+            mTextInputMobile.setError("请输入有效的手机号！");
+            mTextInputMobile.setErrorEnabled(true);
+            return false;
+        }
+
         if (mTextInputMobile.isErrorEnabled()) {
             return false;
         }

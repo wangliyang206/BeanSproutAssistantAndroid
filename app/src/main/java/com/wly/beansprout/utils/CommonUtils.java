@@ -12,6 +12,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.core.app.ActivityCompat;
 
+import java.util.regex.Pattern;
+
 /**
  * @ProjectName: BeanSproutAssistantAndroid
  * @Package: com.wly.beansprout.utils
@@ -34,11 +36,22 @@ public class CommonUtils {
         }
     }
 
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^1[3-9]\\d{9}$");
+
+    /**
+     * 校验手机号的有效性
+     * @param phoneNumber 手机号
+     */
+    public static boolean isValidPhoneNumber(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.isEmpty()) {
+            return false;
+        }
+        return PHONE_PATTERN.matcher(phoneNumber).matches();
+    }
+
     /**
      * 获取版本号
      *
-     * @param context
-     * @return
      */
     public static int getVersionCode(Context context) {
         int versionCode = 0;
@@ -62,7 +75,6 @@ public class CommonUtils {
     /**
      * 获得屏幕的宽度
      *
-     * @return
      */
     public static int getScreenWidth(Context context) {
         return getResources(context).getDisplayMetrics().widthPixels;
@@ -71,7 +83,6 @@ public class CommonUtils {
     /**
      * 获得屏幕的高度
      *
-     * @return
      */
     public static int getScreenHeidth(Context context) {
         return getResources(context).getDisplayMetrics().heightPixels;
