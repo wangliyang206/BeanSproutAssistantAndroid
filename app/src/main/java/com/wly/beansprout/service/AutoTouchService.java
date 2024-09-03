@@ -98,10 +98,10 @@ public class AutoTouchService extends AccessibilityService {
 
                 if (layout.getPackageName().equals(TouchEventManager.getInstance().getAppPackageName())) {
                     // 抖音
-                    autoReply("com.ss.android.ugc.aweme:id/f-l", "com.ss.android.ugc.aweme:id/0xg");
+                    autoReply("com.ss.android.ugc.aweme:id/gll", "com.ss.android.ugc.aweme:id/07f");
                 } else {
                     // 极速版
-                    autoReply("com.ss.android.ugc.aweme.lite:id/dwt", "m.l.live.plugin:id/tv_send_portrait");
+                    autoReply("com.ss.android.ugc.aweme.lite:id/dwa", "m.l.live.plugin:id/tv_send_portrait");
                 }
 
             } else {
