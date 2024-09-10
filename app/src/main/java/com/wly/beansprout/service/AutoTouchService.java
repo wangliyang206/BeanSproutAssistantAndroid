@@ -98,10 +98,10 @@ public class AutoTouchService extends AccessibilityService {
 
                 if (layout.getPackageName().equals(TouchEventManager.getInstance().getAppPackageName())) {
                     // 抖音
-                    autoReply("com.ss.android.ugc.aweme:id/gll", "com.ss.android.ugc.aweme:id/07f");
+                    autoReply("com.ss.android.ugc.aweme:id/gl6", "com.ss.android.ugc.aweme:id/0=v");
                 } else {
                     // 极速版
-                    autoReply("com.ss.android.ugc.aweme.lite:id/dwa", "m.l.live.plugin:id/tv_send_portrait");
+                    autoReply("com.ss.android.ugc.aweme.lite:id/dv_", "m.l.live.plugin:id/tv_send_portrait");
                 }
 
             } else {
@@ -155,11 +155,39 @@ public class AutoTouchService extends AccessibilityService {
     };
 
     /**
+     * 获取抖音底部评论输入框
+     */
+    private AccessibilityNodeInfo getCommentLayout(String resouceId) {
+        // 根据控件id获取控件。
+        AccessibilityNodeInfo info = findViewById(resouceId);
+        if (info == null) {
+            // 未获取到，只能用笨办法，遍历控件了
+            info = findViewByText("说点什么...");
+        }
+        return info;
+    }
+
+    /**
+     * 获取抖音【发送】按钮
+     *
+     * @param sendId 发送id
+     */
+    private AccessibilityNodeInfo getSendButtonLayout(String sendId) {
+        // 根据控件id获取控件。
+        AccessibilityNodeInfo info = findViewById(sendId);
+        if (info == null) {
+            // 未获取到，只能用笨办法，遍历控件了
+            info = findViewByText("发送");
+        }
+        return info;
+    }
+
+    /**
      * 自动回复
      */
     private void autoReply(String resouceId, String sendId) {
         // 获取到的 resouce-id 来获取 AccessibilityNodeInfo
-        AccessibilityNodeInfo info = findViewById(resouceId);
+        AccessibilityNodeInfo info = getCommentLayout(resouceId);
         if (info != null) {
 
             // 点击一下输入框
@@ -194,7 +222,7 @@ public class AutoTouchService extends AccessibilityService {
             if (success) {
                 Log.d("AccessibilityService", "Text set successfully");
                 // 发送
-                AccessibilityNodeInfo send = findViewById(sendId);
+                AccessibilityNodeInfo send = getSendButtonLayout(sendId);
                 send.performAction(AccessibilityNodeInfo.ACTION_CLICK);
             } else {
                 Log.d("AccessibilityService", "Failed to set text");
