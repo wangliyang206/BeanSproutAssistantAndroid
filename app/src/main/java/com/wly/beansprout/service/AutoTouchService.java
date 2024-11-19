@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
 import android.annotation.SuppressLint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +41,8 @@ public class AutoTouchService extends AccessibilityService {
     private TouchPoint autoTouchPoint;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(Looper.getMainLooper());
+    // 创建一个Handler，它与当前线程（通常是UI线程）的Looper关联
+    private Handler delayHandler = new Handler(Looper.getMainLooper());
     private AccountManager mAccountManager;
 
     @Override
@@ -69,6 +72,7 @@ public class AutoTouchService extends AccessibilityService {
                 handler.removeCallbacks(autoTouchRunnable);
                 break;
             case TouchEvent.ACTION_STOP:                                                            // 动作停止
+                mLuckyBagStep = 0;
                 handler.removeCallbacks(autoTouchRunnable);
                 autoTouchPoint = null;
                 break;
@@ -91,8 +95,13 @@ public class AutoTouchService extends AccessibilityService {
 
             if (autoTouchPoint.getFunctionType() == 8) {
                 // 抢福袋
-                Log.d(TAG, "执行 抢福袋 功能");
-                grabLuckyBag();
+                if (mLuckyBagStep > 0) {
+                    Log.d(TAG, "###抢福袋 正在执行中，不能重复执行");
+                } else {
+                    Log.d(TAG, "###执行 抢福袋 功能");
+                    grabLuckyBag();
+                }
+
             } else if (autoTouchPoint.getFunctionType() == 7) {
                 // 自动回复
                 Log.d(TAG, "执行 自动回复 功能");
@@ -399,60 +408,160 @@ public class AutoTouchService extends AccessibilityService {
     }
 
     /**
+     * 抢福袋环节：0：未抢，1：获取福袋控件，2：超级福袋界面；
+     */
+    int mLuckyBagStep;
+
+    /**
      * 抢福袋
      */
     private void grabLuckyBag() {
+        mLuckyBagStep = 1;
         Log.d(TAG, "-----------------------------------------------------------------------");
-        AccessibilityNodeInfo findViewByClassName = findViewByClassName("com.lynx.tasm.behavior.ui.LynxFlattenUI");
+        AccessibilityNodeInfo mInfo = getRootInActiveWindow();
+        boolean found = findSpecificTypeNode("com.lynx.tasm.behavior.ui.LynxFlattenUI", "超级福袋", mInfo);
         Log.d(TAG, "-----------------------------------------------------------------------");
-        if (findViewByClassName != null) {
+        if (found && luckyBagNode != null) {
             // 检查到抢福袋控件，则模拟点击抢福袋
-            Log.d("grabLuckyBag", "###抢福袋控件存在，模拟点击抢福袋");
-            findViewByClassName.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-            // 等待1秒
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {
-            }
-            // 重新取布局文件
-            AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
+            Log.d(TAG, "###找到 福袋 控件");
+            luckyBagNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
 
+            // 获取屏幕坐标
+            Rect rect = new Rect();
+            luckyBagNode.getBoundsInScreen(rect);
+            // 初始化点击事件
+            GestureDescription.Builder builder = new GestureDescription.Builder();
+            Path p = new Path();
+            p.moveTo(rect.left, rect.top);
+            builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
+            GestureDescription gesture = builder.build();
+            dispatchGesture(gesture, new GestureResultCallback() {
+                @Override
+                public void onCompleted(GestureDescription gestureDescription) {
+                    super.onCompleted(gestureDescription);
+                    // 完成的回调
+                    mLuckyBagStep = 2;
+
+                    Log.d(TAG, "###已点击 福袋，完成的回调");
+                    // 等待2秒
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ignored) {
+                    }
+                    AccessibilityNodeInfo mInfo = getRootInActiveWindow();
+                    boolean found = findSpecificTypeNode("com.lynx.tasm.behavior.ui.view.UIView", "一键发表评论", mInfo);
+                    if (found && luckyBagNode != null) {
+
+                        // 获取屏幕坐标
+                        Rect rect = new Rect();
+                        luckyBagNode.getBoundsInScreen(rect);
+                        // 初始化点击事件
+                        GestureDescription.Builder builder = new GestureDescription.Builder();
+                        Path p = new Path();
+                        p.moveTo(rect.left, rect.top);
+                        builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
+                        GestureDescription gesture = builder.build();
+                        dispatchGesture(gesture, new GestureResultCallback() {
+                            @Override
+                            public void onCompleted(GestureDescription gestureDescription) {
+                                super.onCompleted(gestureDescription);
+                                // 完成的回调
+                                Log.d("一键发表评论", "###完成的回调");
+                            }
+
+                            @Override
+                            public void onCancelled(GestureDescription gestureDescription) {
+                                super.onCancelled(gestureDescription);
+                                // 取消的回调
+
+                                Log.d("一键发表评论", "###取消的回调");
+                            }
+                        }, null);
+                    } else {
+                        // 没有找到控件或者已参与成功
+                        Log.d("一键发表评论", "###没有找到控件或福袋已参与成功");
+                    }
+                }
+
+                @Override
+                public void onCancelled(GestureDescription gestureDescription) {
+                    super.onCancelled(gestureDescription);
+                    // 取消的回调
+                    mLuckyBagStep = 0;
+                }
+            }, null);
+        } else {
+            Log.d(TAG, "###没有找到 福袋 控件");
+            mLuckyBagStep = 0;
         }
     }
 
-    /**
-     * 根据 控件类型  获取具体控件
-     */
-    public AccessibilityNodeInfo findViewByClassName(String className) {
-        AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
-        if (accessibilityNodeInfo == null) {
-            return null;
-        }
-
-        return traverseNode(className, accessibilityNodeInfo);
-    }
+    // 福袋控件结果
+    private AccessibilityNodeInfo luckyBagNode;
 
     /**
      * 遍历所有控件
      */
-    private AccessibilityNodeInfo traverseNode(String className, AccessibilityNodeInfo nodeInfo) {
-        if (nodeInfo == null) {
-            return null;
+    public boolean findSpecificTypeNode(String className, String tips, AccessibilityNodeInfo rootNode) {
+        if (rootNode == null) {
+            return false;
         }
 
-        for (int i = 0; i < nodeInfo.getChildCount(); i++) {
-            AccessibilityNodeInfo childNodeInfo = nodeInfo.getChild(i);
-
-            CharSequence mClassName = childNodeInfo.getClassName();
-            Log.d(TAG, "ClassName=" + mClassName);
-            if (mClassName != null && mClassName.toString().equals(className)) {
-                return childNodeInfo;
+        // Check if the current node matches the desired class name
+        if (TextUtils.isEmpty(tips)) {
+            if (rootNode.getClassName().equals(className)) {
+                luckyBagNode = rootNode;
+                Log.d(TAG, "ClassName1=" + rootNode.getClassName() + "；text=" + rootNode.getText());
+                return true;
             }
-            // 未检查到，继续遍历
-            traverseNode(className, childNodeInfo);
+        } else {
+            if (rootNode.getClassName().equals(className) && rootNode.getContentDescription().toString().contains(tips)) {
+                luckyBagNode = rootNode;
+                Log.d(TAG, "ClassName0=" + rootNode.getClassName() + "；text=" + rootNode.getText());
+                return true;
+            }
         }
 
-        return null;
+        // Recursively check all child nodes
+        for (int i = 0; i < rootNode.getChildCount(); i++) {
+            AccessibilityNodeInfo child = rootNode.getChild(i);
+            if (child != null) {
+                Log.d(TAG, "ClassName=" + child.getClassName());
+                if (findSpecificTypeNode(className, tips, child)) {
+                    luckyBagNode = child;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    public boolean findNode(String className, AccessibilityNodeInfo rootNode) {
+        if (rootNode == null) {
+            return false;
+        }
+
+//        if (rootNode.getClassName().equals(className)) {
+//            luckyBagNode = rootNode;
+//            Log.d(TAG, "ClassName1=" + rootNode.getClassName() + "；text=" + rootNode.getText());
+//            return true;
+//        }
+
+        // Recursively check all child nodes
+        for (int i = 0; i < rootNode.getChildCount(); i++) {
+            AccessibilityNodeInfo child = rootNode.getChild(i);
+            if (child != null) {
+                Log.d(TAG, "ClassName=" + child.getClassName() + "；text=" + child.getText());
+                if (findNode(className, child)) {
+                    luckyBagNode = child;
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override
