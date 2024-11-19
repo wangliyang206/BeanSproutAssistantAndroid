@@ -89,7 +89,11 @@ public class AutoTouchService extends AccessibilityService {
         public void run() {
             Log.d(TAG, "onAutoClick: " + "x=" + autoTouchPoint.getX() + " y=" + autoTouchPoint.getY());
 
-            if (autoTouchPoint.getFunctionType() == 7) {
+            if (autoTouchPoint.getFunctionType() == 8) {
+                // 抢福袋
+                Log.d(TAG, "执行 抢福袋 功能");
+                grabLuckyBag();
+            } else if (autoTouchPoint.getFunctionType() == 7) {
                 // 自动回复
                 Log.d(TAG, "执行 自动回复 功能");
 
@@ -389,6 +393,63 @@ public class AutoTouchService extends AccessibilityService {
                     return nodeInfo;
                 }
             }
+        }
+
+        return null;
+    }
+
+    /**
+     * 抢福袋
+     */
+    private void grabLuckyBag() {
+        Log.d(TAG, "-----------------------------------------------------------------------");
+        AccessibilityNodeInfo findViewByClassName = findViewByClassName("com.lynx.tasm.behavior.ui.LynxFlattenUI");
+        Log.d(TAG, "-----------------------------------------------------------------------");
+        if (findViewByClassName != null) {
+            // 检查到抢福袋控件，则模拟点击抢福袋
+            Log.d("grabLuckyBag", "###抢福袋控件存在，模拟点击抢福袋");
+            findViewByClassName.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+            // 等待1秒
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+            }
+            // 重新取布局文件
+            AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
+
+        }
+    }
+
+    /**
+     * 根据 控件类型  获取具体控件
+     */
+    public AccessibilityNodeInfo findViewByClassName(String className) {
+        AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
+        if (accessibilityNodeInfo == null) {
+            return null;
+        }
+
+        return traverseNode(className, accessibilityNodeInfo);
+    }
+
+    /**
+     * 遍历所有控件
+     */
+    private AccessibilityNodeInfo traverseNode(String className, AccessibilityNodeInfo nodeInfo) {
+        if (nodeInfo == null) {
+            return null;
+        }
+
+        for (int i = 0; i < nodeInfo.getChildCount(); i++) {
+            AccessibilityNodeInfo childNodeInfo = nodeInfo.getChild(i);
+
+            CharSequence mClassName = childNodeInfo.getClassName();
+            Log.d(TAG, "ClassName=" + mClassName);
+            if (mClassName != null && mClassName.toString().equals(className)) {
+                return childNodeInfo;
+            }
+            // 未检查到，继续遍历
+            traverseNode(className, childNodeInfo);
         }
 
         return null;

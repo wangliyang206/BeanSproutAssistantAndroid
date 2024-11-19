@@ -262,6 +262,19 @@
                         android:text="自动回复"
                         android:textColor="@android:color/black"
                         android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/cb_function_luckyBag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:background="@null"
+                        android:button="@drawable/checkbox_checked_style"
+                        android:gravity="center"
+                        android:paddingTop="5dp"
+                        android:text="抢福袋"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
                 </com.wly.beansprout.view.GridRadioGroup>
 
             </LinearLayout>

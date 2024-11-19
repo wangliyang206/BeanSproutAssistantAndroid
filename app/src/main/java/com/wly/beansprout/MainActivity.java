@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
     // 功能
     private RadioGroup groupFunction;
-    // 自动回复
-    private RadioButton floatingScreen;
+    // 自动回复、抢福袋
+    private RadioButton floatingScreen,luckyBag;
     // 直播点赞
     private RadioButton like;
     // 动画
@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         // 功能
         groupFunction = findViewById(R.id.ragr_function);
         floatingScreen = findViewById(R.id.cb_function_floatingScreen);
+        luckyBag = findViewById(R.id.cb_function_luckyBag);
         like = findViewById(R.id.cb_function_like);
         // 动画
         groupAnimation = findViewById(R.id.ragr_animation);
@@ -136,10 +137,12 @@ public class MainActivity extends AppCompatActivity {
                 // 抖音
                 TouchEventManager.getInstance().setAppPackageName(1);
                 floatingScreen.setVisibility(View.VISIBLE);
+                luckyBag.setVisibility(View.VISIBLE);
             } else if (checkedId == R.id.cb_exclusive_kwai) {
                 // 快手
                 TouchEventManager.getInstance().setAppPackageName(2);
                 floatingScreen.setVisibility(View.GONE);
+                luckyBag.setVisibility(View.GONE);
                 if (floatingScreen.isChecked()) {
                     like.setChecked(true);
                 }
@@ -147,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 // 没有专属
                 TouchEventManager.getInstance().setAppPackageName(3);
                 floatingScreen.setVisibility(View.GONE);
+                luckyBag.setVisibility(View.GONE);
                 if (floatingScreen.isChecked()) {
                     like.setChecked(true);
                 }
@@ -282,6 +286,10 @@ public class MainActivity extends AppCompatActivity {
             // 自动回复
             index = 7;
             value = "autoReply";
+        } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_luckyBag) {
+            // 抢福袋
+            index = 8;
+            value = "luckyBag";
         }
 
         // 友盟统计 - 自定义事件
