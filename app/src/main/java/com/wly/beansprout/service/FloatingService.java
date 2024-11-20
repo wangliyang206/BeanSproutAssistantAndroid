@@ -18,9 +18,9 @@ import android.widget.ImageView;
 import androidx.core.content.ContextCompat;
 
 import com.wly.beansprout.R;
-import com.wly.beansprout.global.TouchEventManager;
 import com.wly.beansprout.bean.Point;
 import com.wly.beansprout.dialog.MenuDialog;
+import com.wly.beansprout.global.TouchEventManager;
 import com.wly.beansprout.utils.CommonUtils;
 import com.wly.beansprout.utils.DensityUtil;
 import com.wly.beansprout.utils.PathFinder;
@@ -188,7 +188,13 @@ public class FloatingService extends Service {
 
                     targetX = x;
                     targetY = y;
-                    onStartAnimation(x, y);
+                    if (functionType != 8) {
+                        // 跑到目标点，然后执行动画
+                        onStartAnimation(x, y);
+                    } else {
+                        // 不让小鸡跑到目标点
+                        startSkippingRopeAnimation();
+                    }
                 }
 
                 @Override
@@ -275,10 +281,7 @@ public class FloatingService extends Service {
                             handler.postDelayed(this, 500); // 0.5秒后再次执行
                         } else {
                             // 开始跳绳
-                            TouchEventManager.getInstance().setOpenSkippingRope(true);
-                            AnimationDrawable skippingRopeAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.cute_skipping_rope_animation);
-                            mFloatingView.setImageDrawable(skippingRopeAnim);
-                            skippingRopeAnim.start();
+                            startSkippingRopeAnimation();
                         }
                     }
                 };
@@ -287,6 +290,16 @@ public class FloatingService extends Service {
                 handler.postDelayed(moveViewTask, 500);
             }
         }
+    }
+
+    /**
+     * 开始跳绳动画
+     */
+    private void startSkippingRopeAnimation() {
+        TouchEventManager.getInstance().setOpenSkippingRope(true);
+        AnimationDrawable skippingRopeAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.cute_skipping_rope_animation);
+        mFloatingView.setImageDrawable(skippingRopeAnim);
+        skippingRopeAnim.start();
     }
 
     /**

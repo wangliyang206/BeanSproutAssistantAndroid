@@ -37,13 +37,38 @@ import java.util.List;
 public class AutoTouchService extends AccessibilityService {
 
     private final String TAG = "AutoTouchService+++";
-    //自动点击事件
+    // 自动点击事件
     private TouchPoint autoTouchPoint;
+    // 创建一个Handler，它与当前线程（通常是UI线程）的Looper关联
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(Looper.getMainLooper());
-    // 创建一个Handler，它与当前线程（通常是UI线程）的Looper关联
-    private Handler delayHandler = new Handler(Looper.getMainLooper());
+    // 延迟Handler，它与当前线程（通常是UI线程）的Looper关联
+    private final Handler delayHandler = new Handler(Looper.getMainLooper());
+    // 基本数据源
     private AccountManager mAccountManager;
+
+    /**
+     * 抢福袋环节：0没有抢福袋；1未识别福袋控件；2超级福袋界面；3已参与抽福袋；4已点击观看直播；
+     */
+    private int mLuckyBagStep;
+    /**
+     * 福袋控件X，Y 坐标(可以自动获取)
+     */
+    private int mLuckyBagX, mLuckyBagY;
+    //    /**
+//     * 超级福袋中，参与抽奖、观看5分钟、一键评论位置坐标
+//     */
+//    private int mCommentX = 550;
+//    private int mCommentY = 2031;
+    /**
+     * 没有抽中福袋按钮坐标
+     */
+    private int mNotDrawnX = 531;
+    private int mNotDrawnY = 1213;
+    /**
+     * 福袋控件结果
+     */
+    private AccessibilityNodeInfo luckyBagNode;
 
     @Override
     protected void onServiceConnected() {
@@ -95,9 +120,7 @@ public class AutoTouchService extends AccessibilityService {
 
             if (autoTouchPoint.getFunctionType() == 8) {
                 // 抢福袋
-                if (mLuckyBagStep > 0) {
-                    Log.d(TAG, "###抢福袋 正在执行中，不能重复执行");
-                } else {
+                if (mLuckyBagStep == 0) {
                     Log.d(TAG, "###执行 抢福袋 功能");
                     grabLuckyBag();
                 }
@@ -206,40 +229,39 @@ public class AutoTouchService extends AccessibilityService {
             // 点击一下输入框
             info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
             // 等待1秒
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {
-            }
-            // 重新取布局文件
-            AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
-            // 如果没有打开弹幕只默认取index = 1的数值
-            AccessibilityNodeInfo input = accessibilityNodeInfo.getChild(1);
-            if (!input.getClassName().equals("android.widget.EditText")) {
-                // 打开弹幕后，index 取 2
-                input = accessibilityNodeInfo.getChild(2);
-            }
+            delayHandler.postDelayed(() -> {
 
-            Log.d(TAG, "input=" + input.getText());
+                // 重新取布局文件
+                AccessibilityNodeInfo accessibilityNodeInfo = getRootInActiveWindow();
+                // 如果没有打开弹幕只默认取index = 1的数值
+                AccessibilityNodeInfo input = accessibilityNodeInfo.getChild(1);
+                if (!input.getClassName().equals("android.widget.EditText")) {
+                    // 打开弹幕后，index 取 2
+                    input = accessibilityNodeInfo.getChild(2);
+                }
 
-            String[] mAuto = mAccountManager.getAutoReplyScript().split(";");
+                Log.d(TAG, "input=" + input.getText());
 
-            // 设置edit文本内容,具体方法为
-            int index = CommonUtils.getRandomNum(mAuto.length);
-            CharSequence text = mAuto[index];
-            Log.d(TAG, "自动回复=" + text);
-            Bundle arguments = new Bundle();
-            arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text);
+                String[] mAuto = mAccountManager.getAutoReplyScript().split(";");
 
-            // 尝试在EditText中设置文本
-            boolean success = input.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments);
-            if (success) {
-                Log.d("AccessibilityService", "Text set successfully");
-                // 发送
-                AccessibilityNodeInfo send = getSendButtonLayout(sendId);
-                send.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-            } else {
-                Log.d("AccessibilityService", "Failed to set text");
-            }
+                // 设置edit文本内容,具体方法为
+                int index = CommonUtils.getRandomNum(mAuto.length);
+                CharSequence text = mAuto[index];
+                Log.d(TAG, "自动回复=" + text);
+                Bundle arguments = new Bundle();
+                arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text);
+
+                // 尝试在EditText中设置文本
+                boolean success = input.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments);
+                if (success) {
+                    Log.d("AccessibilityService", "Text set successfully");
+                    // 发送
+                    AccessibilityNodeInfo send = getSendButtonLayout(sendId);
+                    send.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                } else {
+                    Log.d("AccessibilityService", "Failed to set text");
+                }
+            }, 1000);
         }
     }
 
@@ -345,6 +367,42 @@ public class AutoTouchService extends AccessibilityService {
                 }
             }
         }
+
+        // 福袋相关逻辑，如果检测到 “没有抽中福袋” 界面，则关闭界面。
+        if (type == 8 && mLuckyBagStep > 2) {
+            // 参与福袋中
+            AccessibilityNodeInfo mInfo = getRootInActiveWindow();
+            boolean found = findSpecificTypeNode("com.lynx.tasm.behavior.ui.view.UIView", "我知道了", mInfo);
+            // 检测到没有抽中福袋
+            if (found) {
+                Log.d(TAG, "###界面监听到【没有抽中福袋】界面");
+                // 点击我知道了
+                luckyBagNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+
+                // 初始化点击事件
+                GestureDescription.Builder builder = new GestureDescription.Builder();
+                Path p = new Path();
+                p.moveTo(mNotDrawnX, mNotDrawnY);
+                builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
+                GestureDescription gesture = builder.build();
+                dispatchGesture(gesture, new GestureResultCallback() {
+                    @Override
+                    public void onCompleted(GestureDescription gestureDescription) {
+                        super.onCompleted(gestureDescription);
+                        // 完成的回调
+                        Log.d(TAG, "###已点击，我知道了");
+
+                        mLuckyBagStep = 0;
+                    }
+
+                    @Override
+                    public void onCancelled(GestureDescription gestureDescription) {
+                        super.onCancelled(gestureDescription);
+                        // 取消的回调
+                    }
+                }, null);
+            }
+        }
     }
 
     /**
@@ -408,11 +466,6 @@ public class AutoTouchService extends AccessibilityService {
     }
 
     /**
-     * 抢福袋环节：0：未抢，1：获取福袋控件，2：超级福袋界面；
-     */
-    int mLuckyBagStep;
-
-    /**
      * 抢福袋
      */
     private void grabLuckyBag() {
@@ -429,10 +482,12 @@ public class AutoTouchService extends AccessibilityService {
             // 获取屏幕坐标
             Rect rect = new Rect();
             luckyBagNode.getBoundsInScreen(rect);
+            mLuckyBagX = rect.left;
+            mLuckyBagY = rect.top;
             // 初始化点击事件
             GestureDescription.Builder builder = new GestureDescription.Builder();
             Path p = new Path();
-            p.moveTo(rect.left, rect.top);
+            p.moveTo(mLuckyBagX, mLuckyBagY);
             builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
             GestureDescription gesture = builder.build();
             dispatchGesture(gesture, new GestureResultCallback() {
@@ -442,45 +497,92 @@ public class AutoTouchService extends AccessibilityService {
                     // 完成的回调
                     mLuckyBagStep = 2;
 
-                    Log.d(TAG, "###已点击 福袋，完成的回调");
+                    Log.d(TAG, "###已点击，福袋控件");
                     // 等待2秒
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException ignored) {
-                    }
-                    AccessibilityNodeInfo mInfo = getRootInActiveWindow();
-                    boolean found = findSpecificTypeNode("com.lynx.tasm.behavior.ui.view.UIView", "一键发表评论", mInfo);
-                    if (found && luckyBagNode != null) {
+                    delayHandler.postDelayed(() -> {
+                        AccessibilityNodeInfo mInfo = getRootInActiveWindow();
+                        boolean found = findSpecificTypeNode("com.lynx.tasm.behavior.ui.view.UIView", "一键发表评论", mInfo);
+                        if (found && luckyBagNode != null) {
 
-                        // 获取屏幕坐标
-                        Rect rect = new Rect();
-                        luckyBagNode.getBoundsInScreen(rect);
-                        // 初始化点击事件
-                        GestureDescription.Builder builder = new GestureDescription.Builder();
-                        Path p = new Path();
-                        p.moveTo(rect.left, rect.top);
-                        builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
-                        GestureDescription gesture = builder.build();
-                        dispatchGesture(gesture, new GestureResultCallback() {
-                            @Override
-                            public void onCompleted(GestureDescription gestureDescription) {
-                                super.onCompleted(gestureDescription);
-                                // 完成的回调
-                                Log.d("一键发表评论", "###完成的回调");
+                            // 初始化点击事件
+                            GestureDescription.Builder builder = new GestureDescription.Builder();
+                            Path p = new Path();
+                            p.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY());
+                            builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
+                            GestureDescription gesture = builder.build();
+                            dispatchGesture(gesture, new GestureResultCallback() {
+                                @Override
+                                public void onCompleted(GestureDescription gestureDescription) {
+                                    super.onCompleted(gestureDescription);
+                                    // 完成的回调
+                                    Log.d(TAG, "###已点击，一键发表评论");
+                                    mLuckyBagStep = 3;
+
+                                    delayHandler.postDelayed(() -> {
+                                        AccessibilityNodeInfo mInfo = getRootInActiveWindow();
+                                        boolean found = findSpecificTypeNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", mInfo);
+                                        if (found && luckyBagNode != null) {
+                                            startWatch();
+                                        }
+                                    }, 2000);
+                                }
+
+                                @Override
+                                public void onCancelled(GestureDescription gestureDescription) {
+                                    super.onCancelled(gestureDescription);
+                                    // 取消的回调
+                                }
+                            }, null);
+                        } else {
+                            // 没有找到控件或者已参与成功
+                            Log.d(TAG, "###没有找到【一键发表评论】");
+
+                            // 参与抽奖
+                            found = findSpecificTypeNode("com.lynx.tasm.behavior.ui.view.UIView", "参与抽奖", mInfo);
+                            if (found && luckyBagNode != null) {
+
+                                // 初始化点击事件
+                                GestureDescription.Builder builder = new GestureDescription.Builder();
+                                Path p = new Path();
+                                p.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY());
+                                builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
+                                GestureDescription gesture = builder.build();
+                                dispatchGesture(gesture, new GestureResultCallback() {
+                                    @Override
+                                    public void onCompleted(GestureDescription gestureDescription) {
+                                        super.onCompleted(gestureDescription);
+                                        // 完成的回调
+                                        Log.d(TAG, "###已点击，参与抽奖");
+                                        mLuckyBagStep = 3;
+
+                                        delayHandler.postDelayed(() -> {
+                                            AccessibilityNodeInfo mInfo = getRootInActiveWindow();
+                                            boolean found = findSpecificTypeNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", mInfo);
+                                            if (found && luckyBagNode != null) {
+                                                startWatch();
+                                            }
+                                        }, 2000);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(GestureDescription gestureDescription) {
+                                        super.onCancelled(gestureDescription);
+                                        // 取消的回调
+                                    }
+                                }, null);
+                            } else {
+                                // 观看直播
+                                mInfo = getRootInActiveWindow();
+                                found = findSpecificTypeNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", mInfo);
+                                if (found && luckyBagNode != null) {
+                                    startWatch();
+                                } else {
+                                    // 参与成功 等待开奖、即将开奖 无法参与、活动已结束等，直接关闭界面
+                                    emptyWindowClick();
+                                }
                             }
-
-                            @Override
-                            public void onCancelled(GestureDescription gestureDescription) {
-                                super.onCancelled(gestureDescription);
-                                // 取消的回调
-
-                                Log.d("一键发表评论", "###取消的回调");
-                            }
-                        }, null);
-                    } else {
-                        // 没有找到控件或者已参与成功
-                        Log.d("一键发表评论", "###没有找到控件或福袋已参与成功");
-                    }
+                        }
+                    }, 2000);
                 }
 
                 @Override
@@ -496,8 +598,35 @@ public class AutoTouchService extends AccessibilityService {
         }
     }
 
-    // 福袋控件结果
-    private AccessibilityNodeInfo luckyBagNode;
+    /**
+     * 当前是“开始观看直播任务”，执行关闭
+     */
+    private void startWatch() {
+        // 初始化点击事件
+        GestureDescription.Builder builder = new GestureDescription.Builder();
+        Path p = new Path();
+        p.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY());
+        builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
+        GestureDescription gesture = builder.build();
+        dispatchGesture(gesture, new GestureResultCallback() {
+            @Override
+            public void onCompleted(GestureDescription gestureDescription) {
+                super.onCompleted(gestureDescription);
+                // 完成的回调
+                Log.d(TAG, "###已点击，开始观看直播任务");
+                mLuckyBagStep = 4;
+
+                // 关闭弹窗
+                emptyWindowClick();
+            }
+
+            @Override
+            public void onCancelled(GestureDescription gestureDescription) {
+                super.onCancelled(gestureDescription);
+                // 取消的回调
+            }
+        }, null);
+    }
 
     /**
      * 遍历所有控件
@@ -511,13 +640,13 @@ public class AutoTouchService extends AccessibilityService {
         if (TextUtils.isEmpty(tips)) {
             if (rootNode.getClassName().equals(className)) {
                 luckyBagNode = rootNode;
-                Log.d(TAG, "ClassName1=" + rootNode.getClassName() + "；text=" + rootNode.getText());
+//                Log.d(TAG, "ClassName1=" + rootNode.getClassName() + "；text=" + rootNode.getText());
                 return true;
             }
         } else {
             if (rootNode.getClassName().equals(className) && rootNode.getContentDescription().toString().contains(tips)) {
                 luckyBagNode = rootNode;
-                Log.d(TAG, "ClassName0=" + rootNode.getClassName() + "；text=" + rootNode.getText());
+//                Log.d(TAG, "ClassName0=" + rootNode.getClassName() + "；text=" + rootNode.getText());
                 return true;
             }
         }
@@ -526,7 +655,7 @@ public class AutoTouchService extends AccessibilityService {
         for (int i = 0; i < rootNode.getChildCount(); i++) {
             AccessibilityNodeInfo child = rootNode.getChild(i);
             if (child != null) {
-                Log.d(TAG, "ClassName=" + child.getClassName());
+//                Log.d(TAG, "ClassName=" + child.getClassName());
                 if (findSpecificTypeNode(className, tips, child)) {
                     luckyBagNode = child;
                     return true;
@@ -537,31 +666,64 @@ public class AutoTouchService extends AccessibilityService {
         return false;
     }
 
-
-    public boolean findNode(String className, AccessibilityNodeInfo rootNode) {
+    /**
+     * 遍历所有控件
+     */
+    public boolean findNode(String className, String tips, AccessibilityNodeInfo rootNode) {
         if (rootNode == null) {
             return false;
         }
 
-//        if (rootNode.getClassName().equals(className)) {
-//            luckyBagNode = rootNode;
-//            Log.d(TAG, "ClassName1=" + rootNode.getClassName() + "；text=" + rootNode.getText());
-//            return true;
-//        }
+        // Check if the current node matches the desired class name
+        if (TextUtils.isEmpty(tips)) {
+            if (rootNode.getClassName().equals(className)) {
+                return true;
+            }
+        } else {
+            if (rootNode.getClassName().equals(className) && rootNode.getContentDescription().toString().contains(tips)) {
+                return true;
+            }
+        }
 
         // Recursively check all child nodes
         for (int i = 0; i < rootNode.getChildCount(); i++) {
             AccessibilityNodeInfo child = rootNode.getChild(i);
             if (child != null) {
-                Log.d(TAG, "ClassName=" + child.getClassName() + "；text=" + child.getText());
-                if (findNode(className, child)) {
-                    luckyBagNode = child;
+                if (findNode(className, tips, child)) {
                     return true;
                 }
             }
         }
 
         return false;
+    }
+
+    /**
+     * 点击空白界面
+     */
+    private void emptyWindowClick() {
+        // 等待2秒
+        delayHandler.postDelayed(() -> {
+            GestureDescription.Builder builder = new GestureDescription.Builder();
+            Path p = new Path();
+            p.moveTo(mLuckyBagX, mLuckyBagY);
+            builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
+            GestureDescription gesture = builder.build();
+            dispatchGesture(gesture, new GestureResultCallback() {
+                @Override
+                public void onCompleted(GestureDescription gestureDescription) {
+                    super.onCompleted(gestureDescription);
+                    // 完成的回调
+                    Log.d(TAG, "###已点击，空白界面");
+                }
+
+                @Override
+                public void onCancelled(GestureDescription gestureDescription) {
+                    super.onCancelled(gestureDescription);
+                    // 取消的回调
+                }
+            }, null);
+        }, 2000);
     }
 
     @Override
@@ -571,7 +733,8 @@ public class AutoTouchService extends AccessibilityService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
+        this.handler.removeCallbacksAndMessages(null);
+        this.delayHandler.removeCallbacksAndMessages(null);
         this.mAccountManager = null;
     }
 }
