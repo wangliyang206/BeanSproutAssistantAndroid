@@ -369,7 +369,7 @@ public class AutoTouchService extends AccessibilityService {
         }
 
         // 福袋相关逻辑，如果检测到 “没有抽中福袋” 界面，则关闭界面。
-        if (type == 8 && mLuckyBagStep > 2) {
+        if (type == 8) {
             // 参与福袋中
             AccessibilityNodeInfo mInfo = getRootInActiveWindow();
             boolean found = findSpecificTypeNode("com.lynx.tasm.behavior.ui.view.UIView", "我知道了", mInfo);
