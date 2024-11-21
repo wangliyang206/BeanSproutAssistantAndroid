@@ -1,6 +1,7 @@
 package com.wly.beansprout;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     // 功能
     private RadioGroup groupFunction;
     // 自动回复、抢福袋
-    private RadioButton floatingScreen,luckyBag;
+    private RadioButton floatingScreen, luckyBag;
     // 直播点赞
     private RadioButton like;
     // 动画
@@ -107,12 +108,20 @@ public class MainActivity extends AppCompatActivity {
         tvStart.setOnClickListener(v -> {
             switch (tvStart.getText().toString()) {
                 case STRING_START:
-                    ToastUtil.show(getString(R.string.app_name) + "已启用");
-                    Intent mIntent = new Intent(MainActivity.this, FloatingService.class);
-                    mIntent.putExtra("functionType", getFunctionType());
-                    mIntent.putExtra("chickModel", getChickModel());
-                    startService(mIntent);
-                    moveTaskToBack(true);
+                    // 如果选择的是抢福袋，则每天提醒一次怎么添加 触控点。
+                    if (getFunctionType() == 8 && mAccountManager.isSignPop()) {
+                        mAccountManager.setSavePopDate();
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("提示")
+                                .setMessage("在添加触控点前，先去抖音打开一个福袋，然后触控点的位置点在【一键发表评论】或【参与抽奖】等位置。")
+                                .setPositiveButton("好的", (DialogInterface.OnClickListener) (dialog, which) -> {
+                                    onPenStart();
+                                })
+                                .show();
+                    } else {
+                        onPenStart();
+                    }
+
                     break;
                 case STRING_OPEN:
                     ToastUtil.show(getString(R.string.app_name) + "已关闭");
@@ -159,6 +168,18 @@ public class MainActivity extends AppCompatActivity {
 
         // 检查更新
         getVersion();
+    }
+
+    /**
+     * 开启打工鸡
+     */
+    private void onPenStart() {
+        ToastUtil.show(getString(R.string.app_name) + "已启用");
+        Intent mIntent = new Intent(MainActivity.this, FloatingService.class);
+        mIntent.putExtra("functionType", getFunctionType());
+        mIntent.putExtra("chickModel", getChickModel());
+        startService(mIntent);
+        moveTaskToBack(true);
     }
 
     /**

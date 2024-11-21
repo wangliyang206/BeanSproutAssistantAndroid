@@ -6,6 +6,10 @@ import android.text.TextUtils;
 import com.wly.beansprout.BuildConfig;
 import com.wly.beansprout.bean.LoginResponse;
 import com.wly.beansprout.utils.AppPreferencesHelper;
+import com.wly.beansprout.utils.CommonUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -58,6 +62,10 @@ public final class AccountManager {
      */
     private final String AUTO_REPLY_SCRIPT = "autoReplyScript";
 
+    /**
+     * 控制抢福袋弹框时机：计划一天只弹一次
+     */
+    private static final String E_SIGN_POP_CONTRACT = "eSignPopContract";
     /*----------------------------------------------操作对象-------------------------------------------------*/
 
     private AppPreferencesHelper spHelper;
@@ -207,5 +215,24 @@ public final class AccountManager {
 
     public void setAutoReplyScript(String val) {
         spHelper.put(AUTO_REPLY_SCRIPT, val);
+    }
+
+    /**
+     * 保存弹框，弹出的时间
+     */
+    public void setSavePopDate() {
+        // 获取日期
+        String val = CommonUtils.date2String(new Date(), new SimpleDateFormat("yyyy-MM-dd"));
+        spHelper.put(E_SIGN_POP_CONTRACT, val);
+    }
+
+    /**
+     * 是否允许弹出对话框
+     */
+    public boolean isSignPop() {
+        // 拿到今天日期
+        String val = CommonUtils.date2String(new Date(), new SimpleDateFormat("yyyy-MM-dd"));
+        // 如果和今天日期一致，则不允许弹出
+        return !val.equalsIgnoreCase(spHelper.getPref(E_SIGN_POP_CONTRACT, ""));
     }
 }

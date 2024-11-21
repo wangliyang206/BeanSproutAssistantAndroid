@@ -10,8 +10,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
@@ -47,6 +50,10 @@ public class CommonUtils {
             return false;
         }
         return PHONE_PATTERN.matcher(phoneNumber).matches();
+    }
+
+    public static String date2String(final Date date, @NonNull final DateFormat format) {
+        return format.format(date);
     }
 
     /**
