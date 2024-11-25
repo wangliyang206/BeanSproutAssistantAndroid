@@ -7,7 +7,10 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
@@ -93,6 +96,34 @@ public class CommonUtils {
      */
     public static int getScreenHeidth(Context context) {
         return getResources(context).getDisplayMetrics().heightPixels;
+    }
+
+    /**
+     * 获取屏幕实际高度(无遮挡)
+     * @param windowManager
+     * @return
+     */
+    public static int getScreenActualHeight(WindowManager windowManager) {
+        // 获取 Display 对象
+        Display display = windowManager.getDefaultDisplay();
+
+        // 获取 DisplayMetrics 对象
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+
+        // 如果 API 级别 >= 17，可以使用 getRealMetrics 来获取实际高度
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            display.getRealMetrics(displayMetrics);
+        } else {
+            // 对于低于Jelly Bean MR2（API 17）的设备，你可能需要其他方法来获取屏幕高度
+            // 但通常这些设备已经很少见了，且不一定支持AccessibilityService的高级功能
+            display.getMetrics(displayMetrics);
+            // 注意：getMetrics() 方法不会包括系统UI的高度
+        }
+
+        // 获取屏幕分辨率实际高度（以像素为单位）
+        int screenHeight = displayMetrics.heightPixels;
+
+        return screenHeight;
     }
 
     public static String getIMEI(Context context) {
