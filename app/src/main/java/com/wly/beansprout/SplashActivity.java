@@ -12,9 +12,12 @@ import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.umcrash.UMCrash;
 import com.wly.beansprout.bean.LoginResponse;
+import com.wly.beansprout.dialog.NotPrivacyPolicyDialog;
+import com.wly.beansprout.dialog.PrivacyPolicyDialog;
 import com.wly.beansprout.global.AccountManager;
 import com.wly.beansprout.global.Constant;
 import com.wly.beansprout.http.MyHttpClient;
+import com.wly.beansprout.utils.CommonUtils;
 import com.wly.beansprout.utils.ToastUtil;
 
 import io.reactivex.Observer;
@@ -53,6 +56,70 @@ public class SplashActivity extends AppCompatActivity {
         mMyHttpClient = new MyHttpClient(getApplicationContext());
         mAccountManager = new AccountManager(getApplicationContext());
 
+        initData();
+    }
+
+    private void initData() {
+        if (mAccountManager.getPrivacyPolicy()) {
+            // 已同意 - 获取权限
+            approved();
+        } else {
+            // 未同意
+            disagree();
+        }
+    }
+
+    /**
+     * 已核准
+     */
+    public void approved() {
+        // 已同意 - 获取权限
+        initPresenter();
+    }
+
+    /**
+     * 未授权
+     */
+    public void disagree() {
+        // 未同意
+        PrivacyPolicyDialog mDialog = new PrivacyPolicyDialog(this, R.style.weicomeDialog,
+                isVal -> {
+                    if (isVal) {
+                        // 设置隐私政策
+                        mAccountManager.setPrivacyPolicy(isVal);
+                        approved();
+                    } else {
+                        // 不同意就再问一次
+                        notPrivacyPolicyDialog();
+                    }
+                });
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
+    }
+
+    /**
+     * 不同意就再问一次
+     */
+    private void notPrivacyPolicyDialog() {
+        NotPrivacyPolicyDialog mDialog = new NotPrivacyPolicyDialog(this, R.style.weicomeDialog,
+                isVal -> {
+                    if (isVal) {
+                        // 设置隐私政策
+                        mAccountManager.setPrivacyPolicy(isVal);
+                        approved();
+                    } else {
+                        // 关闭APP
+                        CommonUtils.exitSys(this);
+                    }
+                });
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
+    }
+
+    /**
+     * 开始初始化
+     */
+    public void initPresenter() {
 
         // 友盟统计 - 同意隐私政策
         UMConfigure.submitPolicyGrantResult(getApplicationContext(), true);
@@ -158,7 +225,6 @@ public class SplashActivity extends AppCompatActivity {
                         }
                     });
         }
-
     }
 
     /**

@@ -66,6 +66,11 @@ public final class AccountManager {
      * 控制抢福袋弹框时机：计划一天只弹一次
      */
     private static final String E_SIGN_POP_CONTRACT = "eSignPopContract";
+
+    /**
+     * 是否同意隐私政策
+     */
+    private static final String PRIVACY_POLICY = "privacyPolicy";
     /*----------------------------------------------操作对象-------------------------------------------------*/
 
     private AppPreferencesHelper spHelper;
@@ -235,4 +240,19 @@ public final class AccountManager {
         // 如果和今天日期一致，则不允许弹出
         return !val.equalsIgnoreCase(spHelper.getPref(E_SIGN_POP_CONTRACT, ""));
     }
+
+    /**
+     * 获取当前是否同意隐私政策
+     */
+    public boolean getPrivacyPolicy() {
+        return spHelper.getPref(PRIVACY_POLICY, false);
+    }
+
+    /**
+     * 设置隐私政策
+     */
+    public void setPrivacyPolicy(boolean isValue) {
+        spHelper.put(PRIVACY_POLICY, isValue);
+    }
+
 }

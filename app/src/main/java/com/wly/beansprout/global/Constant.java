@@ -1,7 +1,5 @@
 package com.wly.beansprout.global;
 
-import com.wly.beansprout.utils.CommonUtils;
-
 /**
  * @ProjectName: BeanSproutAssistantAndroid
  * @Package: com.wly.beansprout.global
@@ -41,4 +39,9 @@ public interface Constant {
      * 友盟统计 - 渠道
      */
     String UM_CHANNEL = "test_channel";
+
+    /**
+     * 隐私政策与服务协议
+     */
+    String privacyPolicyUrl = "http://47.115.223.27/privacypolicy.html";
 }

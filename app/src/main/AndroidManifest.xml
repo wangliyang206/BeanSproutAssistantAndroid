@@ -77,6 +77,10 @@
             android:name="com.wly.beansprout.MainActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name="com.wly.beansprout.WebViewActivity"
+            android:screenOrientation="user"/>
+
         <service
             android:name="com.wly.beansprout.service.AutoTouchService"
             android:exported="true"

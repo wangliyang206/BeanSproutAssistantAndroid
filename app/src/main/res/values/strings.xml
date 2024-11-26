@@ -8,4 +8,9 @@
     <string name="um_app_key">66b9aa29cac2a664de8a7f6b</string>
     <string name="um_app_key_manifest_debug">um.66b9b018192e0574e75d9be9</string>
     <string name="um_app_key_manifest">um.66b9aa29cac2a664de8a7f6b</string>
+
+    <string name="privacy_policy_tips">感谢您使用打工鸡软件助手！\n\n在使用前请仔细阅读《服务协议》和《隐私政策》，以了解我们在使用你个人信息时所遵循的条款。我们将严格按照政策内容使用你的个人信息，尽全力保护您的个人信息安全。感谢信任。</string>
+    <string name="privacy_policy_tips_x">点击同意即表示您已阅读并同意《服务协议》和《隐私政策》</string>
+    <string name="not_privacy_policy_tips">不同意将无法使用我们的产品和服务，并会退出App。</string>
+    <string name="login_agreement_tips">我已经认真阅读、理解并同意《服务协议》和《隐私协议》</string>
 </resources>
