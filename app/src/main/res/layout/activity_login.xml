@@ -132,7 +132,6 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:button="@drawable/redeem_checked_style"
-            android:checked="true"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:textColor="@color/text_tips_color" />

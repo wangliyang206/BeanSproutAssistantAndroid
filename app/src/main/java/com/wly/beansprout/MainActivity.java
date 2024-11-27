@@ -20,6 +20,7 @@ import com.wly.beansprout.bean.AppUpdate;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.fw_permission.FloatWinPermissionCompat;
 import com.wly.beansprout.global.AccountManager;
+import com.wly.beansprout.global.Constant;
 import com.wly.beansprout.global.TouchEventManager;
 import com.wly.beansprout.http.MyHttpClient;
 import com.wly.beansprout.service.AutoTouchService;
@@ -36,7 +37,7 @@ import io.reactivex.schedulers.Schedulers;
 
 
 @SuppressLint("SetTextI18n")
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     // 网络请求
     private MyHttpClient mMyHttpClient;
     private AccountManager mAccountManager;
@@ -93,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
         groupAnimation = findViewById(R.id.ragr_animation);
         // 版本号
         TextView txviVersion = findViewById(R.id.txvi_version);
+        findViewById(R.id.txvi_mainactivity_serviceAgreement).setOnClickListener(this);
+        findViewById(R.id.txvi_mainactivity_privacyPolicy).setOnClickListener(this);
 
         // 赋值
         tvUserName.setText(getIntent().getStringExtra("mobile"));
@@ -381,5 +384,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         CommonUtils.exitSys(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("isShowTop", true);
+        Intent intent = new Intent(this, WebViewActivity.class);
+        switch (v.getId()){
+            case R.id.txvi_mainactivity_serviceAgreement:
+                // 《服务协议》
+                bundle.putString("URL", Constant.privacyPolicyUrl);
+                bundle.putString("TITLE", "服务协议");
+
+                intent.putExtras(bundle);
+                startActivity(intent);
+                break;
+            case R.id.txvi_mainactivity_privacyPolicy:
+                // 《隐私政策》
+                bundle.putString("URL", Constant.privacyPolicyUrl);
+                bundle.putString("TITLE", "隐私政策");
+
+                intent.putExtras(bundle);
+                startActivity(intent);
+                break;
+        }
     }
 }

@@ -2,9 +2,12 @@ package com.wly.beansprout;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +21,7 @@ import com.wly.beansprout.bean.CommonResponse;
 import com.wly.beansprout.global.AccountManager;
 import com.wly.beansprout.http.MyHttpClient;
 import com.wly.beansprout.utils.CommonUtils;
+import com.wly.beansprout.utils.MyClickableSpan;
 import com.wly.beansprout.utils.StatusBarCompatUtils;
 import com.wly.beansprout.utils.ToastUtil;
 
@@ -48,6 +52,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private TextInputLayout mTextInputConfirmPassword;                                              // 确认密码
     private TextInputEditText mEditTextConfirmPassword;
+    private TextView txviAgreement;                                                                         // 协议提示
+    private CheckBox checkBox;                                                                              // 勾选协议
     /*--------------------------------业务信息--------------------------------*/
     public static final String TAG = "RegisterActivity";
     // 用来销毁 手机号 RxBinding
@@ -118,6 +124,17 @@ public class RegisterActivity extends AppCompatActivity {
         Button btnRegister = findViewById(R.id.btn_register);
         ImageView imviBack = findViewById(R.id.imgvi_back);
         TextView txviTitle = findViewById(R.id.txvi_title);
+
+        txviAgreement = findViewById(R.id.txvi_registeractivity_tips);
+        checkBox = findViewById(R.id.checkbox_registeractivity_cb);
+
+        SpannableString agreement = new SpannableString(getString(R.string.login_agreement_tips));
+        agreement.setSpan(new MyClickableSpan("《服务协议》"), 13, 19, SpannableString.SPAN_INCLUSIVE_INCLUSIVE);
+        agreement.setSpan(new MyClickableSpan("《隐私政策》"), 20, 26, SpannableString.SPAN_INCLUSIVE_INCLUSIVE);
+        if (txviAgreement != null) {
+            txviAgreement.setText(agreement);
+            txviAgreement.setMovementMethod(LinkMovementMethod.getInstance());
+        }
 
         txviTitle.setText("注册");
         // 关闭按钮
@@ -234,6 +251,10 @@ public class RegisterActivity extends AppCompatActivity {
      * @return 校验是否通过
      */
     private boolean checkInput() {
+        if (!checkBox.isChecked()) {
+            ToastUtil.show("请阅读并同意相关协议");
+            return false;
+        }
 
         // 用户名和密码不能为空，为空时返回false同时给出提示。
         String username = Objects.requireNonNull(mEditTextMobile.getText()).toString().trim();

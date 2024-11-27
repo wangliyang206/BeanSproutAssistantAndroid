@@ -90,4 +90,39 @@
         android:text="提交"
         android:textColor="@android:color/white"
         android:textSize="16sp" />
+
+    <!-- 同意协议 -->
+    <LinearLayout
+        android:id="@+id/lila_registeractivity_agreement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="25dp"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_login">
+
+        <CheckBox
+            android:id="@+id/checkbox_registeractivity_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:button="@drawable/redeem_checked_style"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textColor="@color/text_tips_color" />
+
+        <TextView
+            android:id="@+id/txvi_registeractivity_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text=""
+            android:textColor="@color/text_normal_color"
+            android:textSize="13sp" />
+
+    </LinearLayout>
 </LinearLayout>
