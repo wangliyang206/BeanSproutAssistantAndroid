@@ -54,6 +54,10 @@ public class AutoTouchService extends AccessibilityService {
      */
     private int mLuckyBagStep;
     /**
+     * 是否允许抢福袋
+     */
+    private boolean isAllowed = true;
+    /**
      * 福袋控件X，Y 坐标(可以自动获取)
      */
     private int mLuckyBagX, mLuckyBagY;
@@ -356,7 +360,7 @@ public class AutoTouchService extends AccessibilityService {
      */
     private void onWindowContentChanged(String packageName, int type) {
         // 包名不为空，说明外界已经设置了专属。
-        if (!TextUtils.isEmpty(TouchEventManager.getInstance().getAppPackageName()) && type != 7) {
+        if (!TextUtils.isEmpty(TouchEventManager.getInstance().getAppPackageName()) && type != 7 && type != 8) {
             // 如果活动APP不是目标APP，则不响应
             if (packageName.contains(TouchEventManager.getInstance().getAppPackageName())) {
                 // 如果是动作暂停状态，则自动开启继续点赞
@@ -484,6 +488,13 @@ public class AutoTouchService extends AccessibilityService {
         if (found && luckyBagNode != null) {
             // 检查到抢福袋控件，则模拟点击抢福袋
             Log.d(TAG, "###找到 福袋 控件");
+
+            if (!isAllowed) {
+                Log.d(TAG, "###您设置了福袋卡点时间：" + autoTouchPoint.getLuckybagTime() + "分钟；目前还没有到开抢时间。");
+                mLuckyBagStep = 0;
+                return;
+            }
+
             luckyBagNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
 
             // 获取屏幕坐标
@@ -645,15 +656,34 @@ public class AutoTouchService extends AccessibilityService {
 
         // Check if the current node matches the desired class name
         if (TextUtils.isEmpty(tips)) {
+            // 不需要匹配提示词
             if (rootNode.getClassName().equals(className)) {
                 luckyBagNode = rootNode;
 //                Log.d(TAG, "ClassName1=" + rootNode.getClassName() + "；text=" + rootNode.getText());
                 return true;
             }
         } else {
+            // 需要匹配提示词
             if (rootNode.getClassName().equals(className) && rootNode.getContentDescription().toString().contains(tips)) {
                 luckyBagNode = rootNode;
 //                Log.d(TAG, "ClassName0=" + rootNode.getClassName() + "；text=" + rootNode.getText());
+                // 如果是【超级福袋】的话，匹配一下时间
+                if (tips.contains("超级福袋")) {
+                    // 获取时间，格式：超级福袋 3分56秒 按钮
+                    String time = rootNode.getContentDescription().toString();
+                    time = time.substring(time.indexOf("袋") + 2, time.lastIndexOf("分"));
+
+                    Log.d(TAG, "福袋时间=" + time + "分钟");
+                    if (autoTouchPoint.getLuckybagTime() == 0) {
+                        isAllowed = true;
+                    } else {
+                        if (autoTouchPoint.getLuckybagTime() < Integer.parseInt(time)) {
+                            isAllowed = false;
+                        } else {
+                            isAllowed = true;
+                        }
+                    }
+                }
                 return true;
             }
         }

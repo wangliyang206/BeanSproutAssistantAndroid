@@ -12,6 +12,8 @@ public class TouchPoint {
     private boolean isStartClick;
     // 功能：0其它；1单击；2点赞；3向下滑动；4向上滑动；5向左滑动；6向右滑动；7自动回复；8抢福袋；
     private int functionType = 0;
+    // 抢福袋时间
+    private int luckybagTime;
 
     public TouchPoint(String name, int x, int y, int delay) {
         this.name = name;
@@ -26,6 +28,14 @@ public class TouchPoint {
 
     public void setFunctionType(int functionType) {
         this.functionType = functionType;
+    }
+
+    public int getLuckybagTime() {
+        return luckybagTime;
+    }
+
+    public void setLuckybagTime(int luckybagTime) {
+        this.luckybagTime = luckybagTime;
     }
 
     public boolean isStartClick() {

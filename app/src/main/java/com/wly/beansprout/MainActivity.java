@@ -1,11 +1,11 @@
 package com.wly.beansprout;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -37,7 +37,7 @@ import io.reactivex.schedulers.Schedulers;
 
 
 @SuppressLint("SetTextI18n")
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     // 网络请求
     private MyHttpClient mMyHttpClient;
     private AccountManager mAccountManager;
@@ -57,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RadioGroup groupAnimation;
     // 开始
     private TextView tvStart;
+    // 卡福袋时间
+    private LinearLayout auxiliarySettings;
+    private RadioGroup groupLuckybagTime;
 
     @Override
     protected void onDestroy() {
@@ -85,8 +88,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvStart = findViewById(R.id.tv_start);
         // 专属
         RadioGroup radioGroup = findViewById(R.id.ragr_exclusive);
+        // 卡福袋时间
+        auxiliarySettings = findViewById(R.id.lila_auxiliary_settings);
+        groupLuckybagTime = findViewById(R.id.group_luckybag_time);
+        RadioButton luckyBagTime = findViewById(R.id.radio_luckybagtime_one);
         // 功能
         groupFunction = findViewById(R.id.ragr_function);
+        groupFunction.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.cb_function_luckyBag) {
+                // 抢福袋
+                auxiliarySettings.setVisibility(View.VISIBLE);
+            } else {
+                // 其它功能
+                auxiliarySettings.setVisibility(View.GONE);
+                // 恢复默认
+                luckyBagTime.setChecked(true);
+            }
+        });
         floatingScreen = findViewById(R.id.cb_function_floatingScreen);
         luckyBag = findViewById(R.id.cb_function_luckyBag);
         like = findViewById(R.id.cb_function_like);
@@ -117,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         new AlertDialog.Builder(MainActivity.this)
                                 .setTitle("提示")
                                 .setMessage("在添加触控点前，先去抖音打开一个福袋，然后触控点的位置点在【一键发表评论】或【参与抽奖】等位置。")
-                                .setPositiveButton("好的", (DialogInterface.OnClickListener) (dialog, which) -> {
+                                .setPositiveButton("好的", (dialog, which) -> {
                                     onPenStart();
                                 })
                                 .show();
@@ -181,8 +199,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent mIntent = new Intent(MainActivity.this, FloatingService.class);
         mIntent.putExtra("functionType", getFunctionType());
         mIntent.putExtra("chickModel", getChickModel());
+        mIntent.putExtra("luckybagTime", getLuckybagTime());
         startService(mIntent);
         moveTaskToBack(true);
+    }
+
+    /**
+     * 获取卡福袋时间限制
+     */
+    private int getLuckybagTime() {
+        RadioButton radioButton = findViewById(groupLuckybagTime.getCheckedRadioButtonId());
+        if (radioButton != null) {
+            return Integer.parseInt(radioButton.getTag().toString());
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -391,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bundle bundle = new Bundle();
         bundle.putBoolean("isShowTop", true);
         Intent intent = new Intent(this, WebViewActivity.class);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.txvi_mainactivity_serviceAgreement:
                 // 《服务协议》
                 bundle.putString("URL", Constant.privacyPolicyUrl);

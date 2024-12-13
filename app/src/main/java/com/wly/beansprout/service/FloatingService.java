@@ -41,6 +41,8 @@ public class FloatingService extends Service {
     private int functionType;
     // 模型：1代表功德小鸡；2其它小鸡
     private int chickModel;
+    // 卡福袋时间：0代表不限制；8代表8分钟以下；6代表6分钟以下；代表4分钟以下；3代表3分钟以下；2代表2分钟以下；
+    private int luckybagTime;
     // 当前窗口的X、Y坐标
     private int x;
     private int y;
@@ -65,6 +67,7 @@ public class FloatingService extends Service {
             // 处理传递过来的数据
             functionType = intent.getIntExtra("functionType", 0);
             chickModel = intent.getIntExtra("chickModel", 1);
+            luckybagTime = intent.getIntExtra("luckybagTime", 0);
         }
 
         // 开启基本动画(眨眼+挥手)
@@ -120,7 +123,9 @@ public class FloatingService extends Service {
                         // 移动后抬起的动作
                         // 如果正在触控中，则开启动画
                         if (TouchEventManager.getInstance().isTouching()) {
-                            onStartAnimation(targetX, targetY);
+                            if (functionType != 8) {
+                                onStartAnimation(targetX, targetY);
+                            }
                         } else {
                             // 没有开启时则生成一个随机数，然后执行随机动画
                             if (chickModel == 2 && !TouchEventManager.getInstance().isOpenSkippingRope()) {
@@ -193,7 +198,16 @@ public class FloatingService extends Service {
                         onStartAnimation(x, y);
                     } else {
                         // 不让小鸡跑到目标点
-                        startSkippingRopeAnimation();
+                        if (skippingRopeAnim != null) {
+                            if (!skippingRopeAnim.isRunning()) {
+                                // 未开启跳绳动画
+                                startSkippingRopeAnimation();
+                            }
+                        } else {
+                            // 没有初始化
+                            startSkippingRopeAnimation();
+                        }
+
                     }
                 }
 
@@ -216,7 +230,7 @@ public class FloatingService extends Service {
                 }
             });
         }
-        menuDialog.setFunctionType(functionType);
+        menuDialog.setFunctionType(functionType, luckybagTime);
         menuDialog.show();
     }
 
@@ -292,12 +306,14 @@ public class FloatingService extends Service {
         }
     }
 
+    AnimationDrawable skippingRopeAnim = null;
+
     /**
      * 开始跳绳动画
      */
     private void startSkippingRopeAnimation() {
         TouchEventManager.getInstance().setOpenSkippingRope(true);
-        AnimationDrawable skippingRopeAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.cute_skipping_rope_animation);
+        skippingRopeAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.cute_skipping_rope_animation);
         mFloatingView.setImageDrawable(skippingRopeAnim);
         skippingRopeAnim.start();
     }

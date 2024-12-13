@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wly.beansprout.R;
-import com.wly.beansprout.global.TouchEventManager;
 import com.wly.beansprout.adapter.TouchPointAdapter;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.bean.TouchPoint;
+import com.wly.beansprout.global.TouchEventManager;
 import com.wly.beansprout.utils.DensityUtil;
 import com.wly.beansprout.utils.DialogUtils;
 import com.wly.beansprout.utils.GsonUtils;
@@ -40,6 +40,8 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
 
     // 功能：0其它；1单击；2点赞；3向下滑动；4向上滑动；5向左滑动；6向右滑动；7自动回复；8抢福袋；
     private int functionType;
+    // 卡福袋时间：0代表不限制；8代表8分钟以下；6代表6分钟以下；代表4分钟以下；3代表3分钟以下；2代表2分钟以下；
+    private int luckybagTime;
 
     public MenuDialog(@NonNull Context context) {
         super(context);
@@ -79,6 +81,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                 btStop.setVisibility(View.VISIBLE);
                 dismiss();
                 touchPoint.setFunctionType(functionType);
+                touchPoint.setLuckybagTime(luckybagTime);
                 // 通知 动作服务，开启点赞功能
                 TouchEvent.postStartAction(touchPoint);
                 // 特殊处理，关闭所有，然后单独开启已选择的项
@@ -171,8 +174,9 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
         }
     }
 
-    public void setFunctionType(int functionType) {
+    public void setFunctionType(int functionType, int luckybagTime) {
         this.functionType = functionType;
+        this.luckybagTime = luckybagTime;
 
         // 如果正在点赞或者已经开启自动回复时，不显示设置话术
         if (TouchEventManager.getInstance().isTouching()) {
