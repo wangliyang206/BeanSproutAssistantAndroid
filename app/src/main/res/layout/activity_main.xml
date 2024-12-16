@@ -315,26 +315,12 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:tag="0"
-                        android:text="不限制"
+                        android:text="不限"
                         android:textColor="@android:color/black"
                         android:textSize="14sp" />
 
                     <RadioButton
                         android:id="@+id/radio_luckybagtime_two"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="8"
-                        android:text="8分钟"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp" />
-
-                    <RadioButton
-                        android:id="@+id/radio_luckybagtime_three"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
@@ -348,7 +334,7 @@
                         android:textSize="14sp" />
 
                     <RadioButton
-                        android:id="@+id/radio_luckybagtime_four"
+                        android:id="@+id/radio_luckybagtime_three"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
@@ -356,13 +342,13 @@
                         android:button="@drawable/checkbox_checked_style"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:tag="4"
-                        android:text="4分钟"
+                        android:tag="5"
+                        android:text="5分钟"
                         android:textColor="@android:color/black"
                         android:textSize="14sp" />
 
                     <RadioButton
-                        android:id="@+id/radio_luckybagtime_five"
+                        android:id="@+id/radio_luckybagtime_four"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
@@ -376,7 +362,7 @@
                         android:textSize="14sp" />
 
                     <RadioButton
-                        android:id="@+id/radio_luckybagtime_six"
+                        android:id="@+id/radio_luckybagtime_five"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
@@ -386,6 +372,20 @@
                         android:padding="5dp"
                         android:tag="2"
                         android:text="2分钟"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/radio_luckybagtime_six"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:background="@null"
+                        android:button="@drawable/checkbox_checked_style"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:tag="1"
+                        android:text="1分钟"
                         android:textColor="@android:color/black"
                         android:textSize="14sp" />
                 </com.wly.beansprout.view.GridRadioGroup>

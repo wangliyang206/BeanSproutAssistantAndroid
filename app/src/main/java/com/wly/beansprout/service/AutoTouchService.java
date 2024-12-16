@@ -404,6 +404,7 @@ public class AutoTouchService extends AccessibilityService {
                         Log.d(TAG, "###已点击，我知道了");
 
                         mLuckyBagStep = 0;
+                        isAllowed = true;
                     }
 
                     @Override
@@ -677,6 +678,7 @@ public class AutoTouchService extends AccessibilityService {
                     if (autoTouchPoint.getLuckybagTime() == 0) {
                         isAllowed = true;
                     } else {
+                        // 配置时间小于超级福袋时间，不允许参与
                         if (autoTouchPoint.getLuckybagTime() < Integer.parseInt(time)) {
                             isAllowed = false;
                         } else {

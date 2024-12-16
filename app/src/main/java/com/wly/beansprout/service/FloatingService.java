@@ -14,6 +14,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
@@ -33,7 +35,12 @@ import java.util.List;
  */
 public class FloatingService extends Service {
     private WindowManager mWindowManager;
-    private ImageView mFloatingView;
+    // 悬浮窗 - 总布局
+    private LinearLayout layoutFloatingView;
+    // 悬浮窗 - 小鸡形象
+    private ImageView viewChickenImage;
+    // 悬浮窗 - 卡点时间
+    private TextView txviTime;
     private MenuDialog menuDialog;
     private WindowManager.LayoutParams floatLayoutParams;
 
@@ -72,8 +79,8 @@ public class FloatingService extends Service {
 
         // 开启基本动画(眨眼+挥手)
         basicAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), (chickModel == 1) ? R.drawable.golden_basic_animation : R.drawable.cute_basic_animation);
-        mFloatingView.setImageDrawable(basicAnim);
-        mFloatingView.post(() -> basicAnim.start());
+        viewChickenImage.setImageDrawable(basicAnim);
+        viewChickenImage.post(() -> basicAnim.start());
 
         return START_NOT_STICKY;
     }
@@ -81,20 +88,23 @@ public class FloatingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mFloatingView = creatView(R.layout.layout_window);
+        layoutFloatingView = creatView(R.layout.layout_window);
+        viewChickenImage = layoutFloatingView.findViewById(R.id.imvi_layoutwindow_chicken);
+        txviTime = layoutFloatingView.findViewById(R.id.txt_layoutwindow_time);
         //设置WindowManger布局参数以及相关属性
-        int d = DensityUtil.dip2px(this, 100);
-        floatLayoutParams = WindowUtils.newWmParams(d, d);
+        int width = DensityUtil.dip2px(this, 100);
+        int height = DensityUtil.dip2px(this, 130);
+        floatLayoutParams = WindowUtils.newWmParams(width, height);
         //初始化位置
-        floatLayoutParams.gravity = Gravity.TOP | Gravity.START;
+        floatLayoutParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         floatLayoutParams.x = WindowUtils.getScreenWidth(this) - DensityUtil.dip2px(this, 100);
         floatLayoutParams.y = WindowUtils.getScreenHeight(this) - DensityUtil.dip2px(this, 200);
         //获取WindowManager对象
         mWindowManager = WindowUtils.getWindowManager(this);
-        addViewToWindow(mFloatingView, floatLayoutParams);
+        addViewToWindow(layoutFloatingView, floatLayoutParams);
         //FloatingView的拖动事件
-        mFloatingView.setClickable(true);
-        mFloatingView.setOnTouchListener((v, event) -> {
+        layoutFloatingView.setClickable(true);
+        layoutFloatingView.setOnTouchListener((v, event) -> {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:                                                       // 按下动作
@@ -112,7 +122,7 @@ public class FloatingService extends Service {
                         floatLayoutParams.x += moveX;
                         floatLayoutParams.y += moveY;
                         //更新View的位置
-                        mWindowManager.updateViewLayout(mFloatingView, floatLayoutParams);
+                        mWindowManager.updateViewLayout(layoutFloatingView, floatLayoutParams);
                         x = nowX;
                         y = nowY;
                         return true;
@@ -140,8 +150,8 @@ public class FloatingService extends Service {
                                 }
 
                                 randomAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), getRandomAnim());
-                                mFloatingView.setImageDrawable(randomAnim);
-                                mFloatingView.post(() -> randomAnim.start());
+                                viewChickenImage.setImageDrawable(randomAnim);
+                                viewChickenImage.post(() -> randomAnim.start());
 
                             }
                         }
@@ -197,6 +207,9 @@ public class FloatingService extends Service {
                         // 跑到目标点，然后执行动画
                         onStartAnimation(x, y);
                     } else {
+                        // 福袋时，显示 卡点时间
+                        txviTime.setText(luckybagTime == 0 ? "" : luckybagTime + "分钟");
+
                         // 不让小鸡跑到目标点
                         if (skippingRopeAnim != null) {
                             if (!skippingRopeAnim.isRunning()) {
@@ -218,7 +231,7 @@ public class FloatingService extends Service {
 
                     if (basicAnim != null && !basicAnim.isRunning()) {
                         TouchEventManager.getInstance().setOpenSkippingRope(false);
-                        mFloatingView.setImageDrawable(basicAnim);
+                        viewChickenImage.setImageDrawable(basicAnim);
                         basicAnim.start();
                     }
                 }
@@ -265,7 +278,7 @@ public class FloatingService extends Service {
 
             // 转圈动画
             AnimationDrawable shrinkAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), (startX > targetX) ? R.drawable.cute_circle_left_animation : R.drawable.cute_circle_right_animation);
-            mFloatingView.setImageDrawable(shrinkAnim);
+            viewChickenImage.setImageDrawable(shrinkAnim);
             shrinkAnim.start();
 
             Log.d("openWanderingChicken", "startX=" + startX + ";startY=" + startY);
@@ -288,7 +301,7 @@ public class FloatingService extends Service {
                             Point info = list.get(num);
                             floatLayoutParams.x = info.x;
                             floatLayoutParams.y = info.y;
-                            mWindowManager.updateViewLayout(mFloatingView, floatLayoutParams);
+                            mWindowManager.updateViewLayout(layoutFloatingView, floatLayoutParams);
                             Log.d("移动过程", "info.x=" + info.x + ";info.y=" + info.y);
                             num++;
 
@@ -314,7 +327,7 @@ public class FloatingService extends Service {
     private void startSkippingRopeAnimation() {
         TouchEventManager.getInstance().setOpenSkippingRope(true);
         skippingRopeAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.cute_skipping_rope_animation);
-        mFloatingView.setImageDrawable(skippingRopeAnim);
+        viewChickenImage.setImageDrawable(skippingRopeAnim);
         skippingRopeAnim.start();
     }
 
@@ -327,7 +340,7 @@ public class FloatingService extends Service {
         if (mWindowManager != null) {
             // 收缩动画
             AnimationDrawable shrinkAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.hide_frame_animation);
-            mFloatingView.setImageDrawable(shrinkAnim);
+            viewChickenImage.setImageDrawable(shrinkAnim);
             shrinkAnim.start();
 
             // 使用Handler来在动画结束后执行操作
@@ -341,18 +354,18 @@ public class FloatingService extends Service {
                 // 闪现
                 floatLayoutParams.x = targetX;
                 floatLayoutParams.y = targetY;
-                mWindowManager.updateViewLayout(mFloatingView, floatLayoutParams);
+                mWindowManager.updateViewLayout(layoutFloatingView, floatLayoutParams);
 
                 // 冒出
                 AnimationDrawable extendAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.show_frame_animation);
-                mFloatingView.setImageDrawable(extendAnim);
+                viewChickenImage.setImageDrawable(extendAnim);
                 extendAnim.start();
 
                 new Handler().postDelayed(() -> {
                     TouchEventManager.getInstance().setOpenSkippingRope(true);
                     AnimationDrawable workAnim = (AnimationDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.work_animation);
-                    mFloatingView.setImageDrawable(workAnim);
-                    mFloatingView.post(() -> workAnim.start());
+                    viewChickenImage.setImageDrawable(workAnim);
+                    viewChickenImage.post(() -> workAnim.start());
 
                 }, 450);// 动画的总时长（毫秒）
 
@@ -364,7 +377,7 @@ public class FloatingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        removeViewFromWinddow(mFloatingView);
+        removeViewFromWinddow(layoutFloatingView);
         hideDialog(menuDialog);
         if (basicAnim != null) {
             if (basicAnim.isRunning()) {
