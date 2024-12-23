@@ -96,7 +96,7 @@ public class FloatingService extends Service {
         int height = DensityUtil.dip2px(this, 130);
         floatLayoutParams = WindowUtils.newWmParams(width, height);
         //初始化位置
-        floatLayoutParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        floatLayoutParams.gravity = Gravity.TOP | Gravity.START;
         floatLayoutParams.x = WindowUtils.getScreenWidth(this) - DensityUtil.dip2px(this, 100);
         floatLayoutParams.y = WindowUtils.getScreenHeight(this) - DensityUtil.dip2px(this, 200);
         //获取WindowManager对象
