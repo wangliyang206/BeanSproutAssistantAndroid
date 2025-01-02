@@ -16,6 +16,7 @@ import com.wly.beansprout.adapter.TouchPointAdapter;
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.bean.TouchPoint;
 import com.wly.beansprout.global.TouchEventManager;
+import com.wly.beansprout.utils.CommonUtils;
 import com.wly.beansprout.utils.DensityUtil;
 import com.wly.beansprout.utils.DialogUtils;
 import com.wly.beansprout.utils.GsonUtils;
@@ -77,27 +78,31 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
         touchPointAdapter.setOnItemClickListener((view, position, touchPoint) -> {
             if (view.getId() == R.id.item_touch_point) {
                 // 【开始】功能
-                btReply.setVisibility(View.GONE);
-                btStop.setVisibility(View.VISIBLE);
-                dismiss();
-                touchPoint.setFunctionType(functionType);
-                touchPoint.setLuckybagTime(luckybagTime);
-                // 通知 动作服务，开启点赞功能
-                TouchEvent.postStartAction(touchPoint);
-                // 特殊处理，关闭所有，然后单独开启已选择的项
-                for (TouchPoint info : touchPointAdapter.getTouchPointList()) {
-                    info.setStartClick(false);
-                }
-                touchPointAdapter.getTouchPointList().get(position).setStartClick(true);
-                // 重新保存到 轻文件
-                SpUtils.setTouchPoints(getContext(), touchPointAdapter.getTouchPointList());
-                if (listener != null) {
-                    listener.onStartTouch(touchPoint.getX(), touchPoint.getY());
+                if (!CommonUtils.isDoubleClick()) {
+                    btReply.setVisibility(View.GONE);
+                    btStop.setVisibility(View.VISIBLE);
+                    dismiss();
+                    touchPoint.setFunctionType(functionType);
+                    touchPoint.setLuckybagTime(luckybagTime);
+                    // 通知 动作服务，开启点赞功能
+                    TouchEvent.postStartAction(touchPoint);
+                    // 特殊处理，关闭所有，然后单独开启已选择的项
+                    for (TouchPoint info : touchPointAdapter.getTouchPointList()) {
+                        info.setStartClick(false);
+                    }
+                    touchPointAdapter.getTouchPointList().get(position).setStartClick(true);
+                    // 重新保存到 轻文件
+                    SpUtils.setTouchPoints(getContext(), touchPointAdapter.getTouchPointList());
+                    if (listener != null) {
+                        listener.onStartTouch(touchPoint.getX(), touchPoint.getY());
+                    }
                 }
             } else if (view.getId() == R.id.bt_delete) {
                 // 【删除】功能
-                if (touchPointAdapter != null) {
-                    touchPointAdapter.onRemove(getContext(), position);
+                if (!CommonUtils.isDoubleClick()) {
+                    if (touchPointAdapter != null) {
+                        touchPointAdapter.onRemove(getContext(), position);
+                    }
                 }
             }
 

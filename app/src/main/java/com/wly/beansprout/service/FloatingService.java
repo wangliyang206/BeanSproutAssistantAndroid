@@ -44,11 +44,17 @@ public class FloatingService extends Service {
     private MenuDialog menuDialog;
     private WindowManager.LayoutParams floatLayoutParams;
 
-    // 功能：0其它；1单击；2点赞；3向下滑动；4向上滑动；5向左滑动；6向右滑动；7自动回复；8抢福袋；
+    /**
+     * 功能：0其它；1单击；2点赞；3向下滑动；4向上滑动；5向左滑动；6向右滑动；7自动回复；8抢福袋；
+     */
     private int functionType;
-    // 模型：1代表功德小鸡；2其它小鸡
+    /**
+     * 模型：1代表功德小鸡；2其它小鸡
+     */
     private int chickModel;
-    // 卡福袋时间：0代表不限制；8代表8分钟以下；6代表6分钟以下；代表4分钟以下；3代表3分钟以下；2代表2分钟以下；
+    /**
+     * 卡福袋时间：0代表不限制；8代表8分钟以下；6代表6分钟以下；代表4分钟以下；3代表3分钟以下；2代表2分钟以下；
+     */
     private int luckybagTime;
     // 当前窗口的X、Y坐标
     private int x;
@@ -56,7 +62,7 @@ public class FloatingService extends Service {
     // 目标窗口的X、Y坐标
     private int targetX;
     private int targetY;
-    //是否在移动
+    // 是否在移动
     private boolean isMoving;
     // 基础动画(眨眼+挥手)
     private AnimationDrawable basicAnim;

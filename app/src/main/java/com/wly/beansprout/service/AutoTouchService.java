@@ -3,7 +3,6 @@ package com.wly.beansprout.service;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.Build;
@@ -12,7 +11,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -61,22 +59,10 @@ public class AutoTouchService extends AccessibilityService {
      * 福袋控件X，Y 坐标(可以自动获取)
      */
     private int mLuckyBagX, mLuckyBagY;
-    //    /**
-//     * 超级福袋中，参与抽奖、观看5分钟、一键评论位置坐标
-//     */
-//    private int mCommentX = 550;
-//    private int mCommentY = 2031;
-    /**
-     * 没有抽中福袋按钮坐标
-     */
-    private float mNotDrawnX = 540;
-    private float mNotDrawnY = 1212;
     /**
      * 福袋控件结果
      */
     private AccessibilityNodeInfo luckyBagNode;
-    // 窗口管理器
-    private WindowManager windowManager;
 
     @Override
     protected void onServiceConnected() {
@@ -84,7 +70,6 @@ public class AutoTouchService extends AccessibilityService {
         handler = new Handler();
         EventBus.getDefault().register(this);
         mAccountManager = new AccountManager(getApplicationContext());
-        windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -390,10 +375,12 @@ public class AutoTouchService extends AccessibilityService {
 
                 // 初始化点击事件
                 GestureDescription.Builder builder = new GestureDescription.Builder();
+
+                // 获取屏幕坐标
+                Rect rect = new Rect();
+                luckyBagNode.getBoundsInScreen(rect);
                 Path p = new Path();
-                double h = CommonUtils.getScreenActualHeight(windowManager);
-                mNotDrawnY = (float) (h * 0.54);
-                p.moveTo(mNotDrawnX, mNotDrawnY);
+                p.moveTo(rect.left, rect.top);
                 builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
                 GestureDescription gesture = builder.build();
                 dispatchGesture(gesture, new GestureResultCallback() {
@@ -503,6 +490,7 @@ public class AutoTouchService extends AccessibilityService {
             luckyBagNode.getBoundsInScreen(rect);
             mLuckyBagX = rect.left;
             mLuckyBagY = rect.top;
+//            Log.d(TAG, "###抢福袋坐标：" + mLuckyBagX + "," + mLuckyBagY + "," + rect.right + "," + rect.bottom);
             // 初始化点击事件
             GestureDescription.Builder builder = new GestureDescription.Builder();
             Path p = new Path();
@@ -694,9 +682,7 @@ public class AutoTouchService extends AccessibilityService {
         for (int i = 0; i < rootNode.getChildCount(); i++) {
             AccessibilityNodeInfo child = rootNode.getChild(i);
             if (child != null) {
-//                Log.d(TAG, "ClassName=" + child.getClassName());
                 if (findSpecificTypeNode(className, tips, child)) {
-                    luckyBagNode = child;
                     return true;
                 }
             }
@@ -772,6 +758,7 @@ public class AutoTouchService extends AccessibilityService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().removeAllStickyEvents();
         this.handler.removeCallbacksAndMessages(null);
         this.delayHandler.removeCallbacksAndMessages(null);
         this.mAccountManager = null;

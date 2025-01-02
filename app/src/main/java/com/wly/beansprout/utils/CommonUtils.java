@@ -32,6 +32,23 @@ public class CommonUtils {
     // 最后一次点击时间
     private static long lastClickTime;
 
+
+    /**
+     * 防止按钮快速重复点击
+     *
+     * @return 双击 = true，单击 = false；
+     */
+    public static boolean isDoubleClick() {
+        long time = System.currentTimeMillis();
+        long timeD = time - lastClickTime;
+        if (0L < timeD && timeD < 800L) {
+            return true;
+        } else {
+            lastClickTime = time;
+            return false;
+        }
+    }
+
     // 隐藏软键盘
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
