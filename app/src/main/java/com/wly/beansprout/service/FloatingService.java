@@ -214,7 +214,18 @@ public class FloatingService extends Service {
                         onStartAnimation(x, y);
                     } else {
                         // 福袋时，显示 卡点时间
-                        txviTime.setText(luckybagTime == 0 ? "" : luckybagTime + "分钟");
+                        if (luckybagTime == 999) {
+                            // 不设置时间，要求立即参与
+                            txviTime.setText("");
+                        } else if (luckybagTime == 998) {
+                            // 5~10分钟随机
+                            txviTime.setText("5~10随机");
+                        } else if (luckybagTime == 997) {
+                            // 0~5分钟随机
+                            txviTime.setText("0~5随机");
+                        } else {
+                            txviTime.setText(luckybagTime + "分钟");
+                        }
 
                         // 不让小鸡跑到目标点
                         if (skippingRopeAnim != null) {

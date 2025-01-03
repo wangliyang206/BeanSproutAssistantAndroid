@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
@@ -63,6 +64,7 @@ public class CommonUtils {
 
     /**
      * 校验手机号的有效性
+     *
      * @param phoneNumber 手机号
      */
     public static boolean isValidPhoneNumber(String phoneNumber) {
@@ -78,7 +80,6 @@ public class CommonUtils {
 
     /**
      * 获取版本号
-     *
      */
     public static int getVersionCode(Context context) {
         int versionCode = 0;
@@ -101,7 +102,6 @@ public class CommonUtils {
 
     /**
      * 获得屏幕的宽度
-     *
      */
     public static int getScreenWidth(Context context) {
         return getResources(context).getDisplayMetrics().widthPixels;
@@ -109,7 +109,6 @@ public class CommonUtils {
 
     /**
      * 获得屏幕的高度
-     *
      */
     public static int getScreenHeidth(Context context) {
         return getResources(context).getDisplayMetrics().heightPixels;
@@ -117,6 +116,7 @@ public class CommonUtils {
 
     /**
      * 获取屏幕实际高度(无遮挡)
+     *
      * @param windowManager
      * @return
      */
@@ -206,6 +206,17 @@ public class CommonUtils {
      */
     public static int getRandomNum(int n) {
         return (int) ((Math.random() * n));
+    }
+
+    /**
+     * 生成随机数：min~max之间的整数（包含min，不包含max）
+     *
+     * @param min 最小数
+     * @param max 最大数
+     * @return 结果
+     */
+    public static int getRandomNum(int min, int max) {
+        return new Random().nextInt(max - min + 1) + min;
     }
 
     /**

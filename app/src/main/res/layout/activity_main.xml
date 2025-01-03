@@ -294,7 +294,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="卡点时间："
+                    android:text="设置时间："
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
@@ -314,10 +314,10 @@
                         android:checked="true"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:tag="0"
-                        android:text="不限"
+                        android:tag="999"
+                        android:text="不设置"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
                     <RadioButton
                         android:id="@+id/radio_luckybagtime_two"
@@ -328,10 +328,10 @@
                         android:button="@drawable/checkbox_checked_style"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:tag="6"
-                        android:text="6分钟"
+                        android:tag="998"
+                        android:text="5~10随机"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
                     <RadioButton
                         android:id="@+id/radio_luckybagtime_three"
@@ -342,10 +342,10 @@
                         android:button="@drawable/checkbox_checked_style"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:tag="5"
-                        android:text="5分钟"
+                        android:tag="997"
+                        android:text="0~5随机"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
                     <RadioButton
                         android:id="@+id/radio_luckybagtime_four"
@@ -356,10 +356,10 @@
                         android:button="@drawable/checkbox_checked_style"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:tag="3"
-                        android:text="3分钟"
+                        android:tag="5"
+                        android:text="5分钟"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
                     <RadioButton
                         android:id="@+id/radio_luckybagtime_five"
@@ -370,10 +370,10 @@
                         android:button="@drawable/checkbox_checked_style"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:tag="2"
-                        android:text="2分钟"
+                        android:tag="1"
+                        android:text="1分钟"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
                     <RadioButton
                         android:id="@+id/radio_luckybagtime_six"
@@ -384,10 +384,10 @@
                         android:button="@drawable/checkbox_checked_style"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:tag="1"
-                        android:text="1分钟"
+                        android:tag="0"
+                        android:text="小于1分"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
                 </com.wly.beansprout.view.GridRadioGroup>
             </LinearLayout>
 
