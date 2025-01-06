@@ -37,7 +37,7 @@ public class FindSpecificTypeNodeUtil {
      *
      * @param className        控件全称，例如：android.widget.Button或com.lynx.tasm.behavior.ui.view.UIView
      * @param tips             内容描述，控件上面的提示词
-     * @param luckyBagTime     福袋卡点时间，单位：分钟；如果不设置才赋值为0；
+     * @param luckyBagTime     福袋卡点时间，单位：分钟；如果不设置赋值为-1或999；
      * @param rootNode         屏幕获取的节点
      * @param findNodeCallback 回调
      */
@@ -63,7 +63,7 @@ public class FindSpecificTypeNodeUtil {
      *
      * @param className    控件全称，例如：android.widget.Button或com.lynx.tasm.behavior.ui.view.UIView
      * @param tips         内容描述，控件上面的提示词
-     * @param luckyBagTime 福袋卡点时间，单位：分钟；如果不设置才赋值为0；
+     * @param luckyBagTime 福袋卡点时间，单位：分钟；如果不设置赋值为-1或999；
      * @param rootNode     屏幕获取的节点
      */
     public boolean findSpecificTypeNode(String className, String tips, int luckyBagTime, AccessibilityNodeInfo rootNode) {
@@ -77,7 +77,7 @@ public class FindSpecificTypeNodeUtil {
             // 不需要匹配提示词
             if (rootNode.getClassName().equals(className)) {
                 resultNode = rootNode;
-//                Log.d(TAG, "ClassName1=" + rootNode.getClassName() + "；text=" + rootNode.getText());
+//                Log.d(TAG, "###ClassName1=" + rootNode.getClassName() + "；text=" + rootNode.getText());
                 if (findNodeCallback != null) {
                     findNodeCallback.onFindNodeResults(rootNode);
                 }
@@ -86,28 +86,17 @@ public class FindSpecificTypeNodeUtil {
         } else {
             // 需要匹配提示词
             if (rootNode.getClassName().equals(className) && rootNode.getContentDescription().toString().contains(tips)) {
-//                Log.d(TAG, "ClassName0=" + rootNode.getClassName() + "；text=" + rootNode.getText());
+//                Log.d(TAG, "###ClassName0=" + rootNode.getClassName() + "；text=" + rootNode.getText());
                 // 如果是【超级福袋】的话，匹配一下时间
                 if (tips.contains("超级福袋")) {
                     // 获取时间，格式：超级福袋 3分56秒 按钮
                     String time = rootNode.getContentDescription().toString();
                     time = time.substring(time.indexOf("袋") + 2, time.lastIndexOf("分"));
 
-                    Log.d(TAG, "福袋时间=" + time + "分钟");
-                    if (luckyBagTime == 999) {
+                    Log.d(TAG, "###福袋时间=" + time + "分钟");
+                    if (luckyBagTime == -1 || luckyBagTime == 999) {
                         // 不设置时间，要求立即参与
                         AutoTouchService.isAllowed = true;
-                    } else if (luckyBagTime == 998) {
-                        // 5~10分钟随机
-                        int num = CommonUtils.getRandomNum(5,10);
-                        Log.d(TAG, "随机生成时间=" + num + "分钟");
-                        AutoTouchService.isAllowed = num >= Integer.parseInt(time);
-
-                    } else if (luckyBagTime == 997) {
-                        // 0~5分钟随机
-                        int num = CommonUtils.getRandomNum(0,5);
-                        Log.d(TAG, "随机生成时间=" + num + "分钟");
-                        AutoTouchService.isAllowed = num >= Integer.parseInt(time);
                     } else {
                         // 配置时间小于超级福袋时间，不允许参与
                         AutoTouchService.isAllowed = luckyBagTime >= Integer.parseInt(time);
