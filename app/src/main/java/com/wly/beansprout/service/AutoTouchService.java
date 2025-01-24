@@ -398,47 +398,54 @@ public class AutoTouchService extends AccessibilityService {
         // 福袋相关逻辑，如果检测到 “没有抽中福袋” 界面，则关闭界面。
         if (type == 8 && mLuckyBagStep >= 2) {
             // 参与福袋中
-            mRootNodeInfo = getRootInActiveWindow();
-            findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "我知道了", -1, mRootNodeInfo, nodeInfo -> {
-
-                // 检测到没有抽中福袋
-                if (nodeInfo != null) {
-                    Log.d(TAG, "###界面监听到【没有抽中福袋】界面");
-                    // 点击我知道了
-                    nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-
-                    // 初始化点击事件
-                    GestureDescription.Builder builder = new GestureDescription.Builder();
-
-                    // 获取屏幕坐标
-                    Rect rect = new Rect();
-                    nodeInfo.getBoundsInScreen(rect);
-                    Path p = new Path();
-                    p.moveTo(rect.left, rect.top);
-                    builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
-                    GestureDescription gesture = builder.build();
-                    dispatchGesture(gesture, new GestureResultCallback() {
-                        @Override
-                        public void onCompleted(GestureDescription gestureDescription) {
-                            super.onCompleted(gestureDescription);
-                            // 完成的回调
-                            Log.d(TAG, "###已点击，我知道了");
-
-                            // 重新生成一个抢福袋时间
-                            getLuckyBagTime();
-                            mLuckyBagStep = 0;
-                            isAllowed = true;
-                        }
-
-                        @Override
-                        public void onCancelled(GestureDescription gestureDescription) {
-                            super.onCancelled(gestureDescription);
-                            // 取消的回调
-                        }
-                    }, null);
-                }
-            });
+            onIGotIt();
         }
+    }
+
+    /**
+     * 我知道了
+     */
+    private synchronized void onIGotIt() {
+        mRootNodeInfo = getRootInActiveWindow();
+        findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "我知道了", -1, mRootNodeInfo, nodeInfo -> {
+
+            // 检测到没有抽中福袋
+            if (nodeInfo != null) {
+                Log.d(TAG, "###界面监听到【没有抽中福袋】界面");
+                // 点击我知道了
+                nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+
+                // 初始化点击事件
+                GestureDescription.Builder builder = new GestureDescription.Builder();
+
+                // 获取屏幕坐标
+                Rect rect = new Rect();
+                nodeInfo.getBoundsInScreen(rect);
+                Path p = new Path();
+                p.moveTo(rect.left, rect.top);
+                builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
+                GestureDescription gesture = builder.build();
+                dispatchGesture(gesture, new GestureResultCallback() {
+                    @Override
+                    public void onCompleted(GestureDescription gestureDescription) {
+                        super.onCompleted(gestureDescription);
+                        // 完成的回调
+                        Log.d(TAG, "###已点击，我知道了");
+
+                        // 重新生成一个抢福袋时间
+                        getLuckyBagTime();
+                        mLuckyBagStep = 0;
+                        isAllowed = true;
+                    }
+
+                    @Override
+                    public void onCancelled(GestureDescription gestureDescription) {
+                        super.onCancelled(gestureDescription);
+                        // 取消的回调
+                    }
+                }, null);
+            }
+        });
     }
 
     /**

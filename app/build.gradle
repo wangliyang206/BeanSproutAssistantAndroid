@@ -7,8 +7,8 @@ android {
         applicationId "com.wly.beansprout"
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode 144
-        versionName "1.4.4"
+        versionCode 145
+        versionName "1.4.5"
     }
 
     //编译可选项参数
@@ -172,8 +172,8 @@ dependencies {
     // 状态栏
     implementation 'com.github.niorgai:StatusBarCompat:2.3.3'
     // 友盟统计SDK
-    implementation 'com.umeng.umsdk:common:9.4.7'// 必选
-    implementation 'com.umeng.umsdk:asms:1.4.1'// 必选
+    implementation 'com.umeng.umsdk:common:9.8.0'// 必选
+    implementation 'com.umeng.umsdk:asms:1.8.6'// 必选
     implementation 'com.umeng.umsdk:abtest:1.0.0'//使用U-App中ABTest能力，可选
     implementation 'com.umeng.umsdk:apm:1.5.2' // U-APM包依赖(必选)
 
