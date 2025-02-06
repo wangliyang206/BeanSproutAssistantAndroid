@@ -13,7 +13,8 @@ public interface Constant {
     /**
      * 服务器地址
      */
-    String SERVER_URL_VALUE = "http://47.115.223.27/";
+//    String SERVER_URL_VALUE = "http://47.115.223.27/";
+    String SERVER_URL_VALUE = "http://www.dagongji.xin/";
 
     /**
      * API版本号
