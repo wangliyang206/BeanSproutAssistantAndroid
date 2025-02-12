@@ -21,13 +21,15 @@ import com.wly.beansprout.bean.TouchPoint;
 import com.wly.beansprout.global.AccountManager;
 import com.wly.beansprout.global.TouchEventManager;
 import com.wly.beansprout.utils.CommonUtils;
-import com.wly.beansprout.utils.FindSpecificTypeNodeUtil;
+import com.wly.beansprout.utils.FindTargetNodeUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 无障碍服务-自动点赞
@@ -45,6 +47,8 @@ public class AutoTouchService extends AccessibilityService {
     private Handler handler = new Handler(Looper.getMainLooper());
     // 延迟Handler，它与当前线程（通常是UI线程）的Looper关联
     private final Handler delayHandler = new Handler(Looper.getMainLooper());
+    // 创建单线程池
+    private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
     // 基本数据源
     private AccountManager mAccountManager;
 
@@ -65,10 +69,9 @@ public class AutoTouchService extends AccessibilityService {
      */
     private int luckyBagTime;
     /**
-     * 查找特定类型节点 对象
+     * 查找目标节点 对象
      */
-    private FindSpecificTypeNodeUtil findNode;
-    private AccessibilityNodeInfo mRootNodeInfo;
+    private FindTargetNodeUtil findNode;
 
     @Override
     protected void onServiceConnected() {
@@ -76,7 +79,7 @@ public class AutoTouchService extends AccessibilityService {
         handler = new Handler();
         EventBus.getDefault().register(this);
         mAccountManager = new AccountManager(getApplicationContext());
-        findNode = new FindSpecificTypeNodeUtil(getApplicationContext());
+        findNode = new FindTargetNodeUtil(getApplicationContext());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -396,56 +399,53 @@ public class AutoTouchService extends AccessibilityService {
         }
 
         // 福袋相关逻辑，如果检测到 “没有抽中福袋” 界面，则关闭界面。
-        if (type == 8 && mLuckyBagStep >= 2) {
-            // 参与福袋中
-            onIGotIt();
+        // 必须满足以下条件：1、当前包名是【抖音】包名；2、当前为抢福袋功能；3、已经参与过抽过福袋了。
+        if (packageName.contains(TouchEventManager.getInstance().getAppPackageName()) && type == 8 && mLuckyBagStep >= 2) {
+            // 提交任务到线程池
+            mExecutor.execute(() -> {
+                AccessibilityNodeInfo foundNode = findNode.findTargetNode(getRootInActiveWindow(), "com.lynx.tasm.behavior.ui.view.UIView", "我知道了", -1);
+                Log.d(TAG, "###" + Thread.currentThread().getName() + "----------foundNode=" + (foundNode != null));
+                if (foundNode != null) {
+                    Log.d(TAG, "###界面监听到【没有抽中福袋】界面");
+                    // 点击我知道了
+                    foundNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+
+                    // 使用精确手势点击
+                    // 初始化点击事件
+                    GestureDescription.Builder builder = new GestureDescription.Builder();
+
+                    // 获取屏幕坐标
+                    Rect bounds = new Rect();
+                    foundNode.getBoundsInScreen(bounds);
+                    Path path = new Path();
+                    path.moveTo(bounds.centerX(), bounds.centerY());
+
+                    // 50ms点击更接近真实操作
+                    builder.addStroke(new GestureDescription.StrokeDescription(path, 0, 50));
+                    dispatchGesture(builder.build(), new GestureResultCallback() {
+                        @Override
+                        public void onCompleted(GestureDescription gestureDescription) {
+                            super.onCompleted(gestureDescription);
+                            // 完成的回调
+                            Log.d(TAG, "###已点击，我知道了");
+
+                            // 重新生成一个抢福袋时间
+                            getLuckyBagTime();
+                            mLuckyBagStep = 0;
+                            isAllowed = true;
+                        }
+
+                        @Override
+                        public void onCancelled(GestureDescription gestureDescription) {
+                            super.onCancelled(gestureDescription);
+                            // 取消的回调
+                        }
+                    }, null);
+
+                    foundNode.recycle(); // 必须回收节点
+                }
+            });
         }
-    }
-
-    /**
-     * 我知道了
-     */
-    private synchronized void onIGotIt() {
-        mRootNodeInfo = getRootInActiveWindow();
-        findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "我知道了", -1, mRootNodeInfo, nodeInfo -> {
-
-            // 检测到没有抽中福袋
-            if (nodeInfo != null) {
-                Log.d(TAG, "###界面监听到【没有抽中福袋】界面");
-                // 点击我知道了
-                nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-
-                // 初始化点击事件
-                GestureDescription.Builder builder = new GestureDescription.Builder();
-
-                // 获取屏幕坐标
-                Rect rect = new Rect();
-                nodeInfo.getBoundsInScreen(rect);
-                Path p = new Path();
-                p.moveTo(rect.left, rect.top);
-                builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
-                GestureDescription gesture = builder.build();
-                dispatchGesture(gesture, new GestureResultCallback() {
-                    @Override
-                    public void onCompleted(GestureDescription gestureDescription) {
-                        super.onCompleted(gestureDescription);
-                        // 完成的回调
-                        Log.d(TAG, "###已点击，我知道了");
-
-                        // 重新生成一个抢福袋时间
-                        getLuckyBagTime();
-                        mLuckyBagStep = 0;
-                        isAllowed = true;
-                    }
-
-                    @Override
-                    public void onCancelled(GestureDescription gestureDescription) {
-                        super.onCancelled(gestureDescription);
-                        // 取消的回调
-                    }
-                }, null);
-            }
-        });
     }
 
     /**
@@ -513,8 +513,7 @@ public class AutoTouchService extends AccessibilityService {
      */
     private void grabLuckyBag() {
         mLuckyBagStep = 1;
-        mRootNodeInfo = getRootInActiveWindow();
-        findNode.findNode("com.lynx.tasm.behavior.ui.LynxFlattenUI", "超级福袋", luckyBagTime, mRootNodeInfo, luckyBagNode -> {
+        findNode.findNode("com.lynx.tasm.behavior.ui.LynxFlattenUI", "超级福袋", luckyBagTime, getRootInActiveWindow(), luckyBagNode -> {
             if (luckyBagNode != null) {
                 // 检查到抢福袋控件，则模拟点击抢福袋
                 Log.d(TAG, "###找到 福袋 控件");
@@ -549,8 +548,7 @@ public class AutoTouchService extends AccessibilityService {
                         Log.d(TAG, "###已点击，福袋控件");
                         // 等待2秒
                         delayHandler.postDelayed(() -> {
-                            mRootNodeInfo = getRootInActiveWindow();
-                            findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "一键发表评论", -1, mRootNodeInfo, senCommentNode -> {
+                            findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "一键发表评论", -1, getRootInActiveWindow(), senCommentNode -> {
                                 if (senCommentNode != null) {
 
                                     // 初始化点击事件
@@ -568,8 +566,7 @@ public class AutoTouchService extends AccessibilityService {
                                             mLuckyBagStep = 3;
 
                                             delayHandler.postDelayed(() -> {
-                                                mRootNodeInfo = getRootInActiveWindow();
-                                                findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", -1, mRootNodeInfo, startTaskNode -> {
+                                                findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", -1, getRootInActiveWindow(), startTaskNode -> {
                                                     if (startTaskNode != null) {
                                                         startWatch();
                                                     }
@@ -588,7 +585,7 @@ public class AutoTouchService extends AccessibilityService {
                                     Log.d(TAG, "###没有找到【一键发表评论】");
 
                                     // 参与抽奖
-                                    findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "参与抽奖", -1, mRootNodeInfo, luckDrawNode -> {
+                                    findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "参与抽奖", -1, getRootInActiveWindow(), luckDrawNode -> {
                                         if (luckDrawNode != null) {
 
                                             // 初始化点击事件
@@ -606,8 +603,7 @@ public class AutoTouchService extends AccessibilityService {
                                                     mLuckyBagStep = 3;
 
                                                     delayHandler.postDelayed(() -> {
-                                                        mRootNodeInfo = getRootInActiveWindow();
-                                                        findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", -1, mRootNodeInfo, nodeInfo -> {
+                                                        findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", -1, getRootInActiveWindow(), nodeInfo -> {
                                                             if (nodeInfo != null) {
                                                                 startWatch();
                                                             }
@@ -623,8 +619,7 @@ public class AutoTouchService extends AccessibilityService {
                                             }, null);
                                         } else {
                                             // 观看直播
-                                            mRootNodeInfo = getRootInActiveWindow();
-                                            findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", -1, mRootNodeInfo, nodeInfo -> {
+                                            findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", -1, getRootInActiveWindow(), nodeInfo -> {
                                                 if (nodeInfo != null) {
                                                     // 开始观看直播任务
                                                     startWatch();
@@ -715,16 +710,28 @@ public class AutoTouchService extends AccessibilityService {
 
     @Override
     public void onInterrupt() {
+        // 服务中断时关闭线程池
+        shutdownExecutor();
+    }
+
+    /**
+     * 关闭执行器(线程池)
+     */
+    private void shutdownExecutor() {
+        if (!mExecutor.isShutdown()) {
+            mExecutor.shutdownNow();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        // 服务销毁时关闭线程池
+        shutdownExecutor();
         findNode.onDestroy();
         EventBus.getDefault().removeAllStickyEvents();
         this.handler.removeCallbacksAndMessages(null);
         this.delayHandler.removeCallbacksAndMessages(null);
         this.mAccountManager = null;
-        this.mRootNodeInfo = null;
     }
 }

@@ -10,30 +10,33 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.wly.beansprout.service.AutoTouchService;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * @ProjectName: BeanSproutAssistantAndroid
  * @Package: com.wly.beansprout.utils
  * @ClassName: FindSpecificTypeNodeUtil
- * @Description: 查找特定类型节点
+ * @Description: 查找目标节点
  * @Author: WLY
  * @CreateDate: 2025/1/2 16:39
  */
-public class FindSpecificTypeNodeUtil {
+public class FindTargetNodeUtil {
+    private final String TAG = "FindSpecificTypeNodeUtil+++";
+    // 句柄
     private Context context;
     // 创建一个Handler，它与当前线程（通常是UI线程）的Looper关联
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(Looper.getMainLooper());
-    private final String TAG = "FindSpecificTypeNodeUtil+++";
-    // 结果节点
-    private AccessibilityNodeInfo resultNode;
+    // 回调方式
     private FindNodeCallback findNodeCallback;
 
-    public FindSpecificTypeNodeUtil(Context context) {
+    public FindTargetNodeUtil(Context context) {
         this.context = context;
     }
 
     /**
-     * 查找特定类型节点 入口
+     * 查找目标节点 入口
      *
      * @param className        控件全称，例如：android.widget.Button或com.lynx.tasm.behavior.ui.view.UIView
      * @param tips             内容描述，控件上面的提示词
@@ -47,46 +50,68 @@ public class FindSpecificTypeNodeUtil {
         // 在子线程中执行
         handler.post(() -> {
 //            Log.d(TAG, "-------------------------------【开始】--------------------------------");
-            boolean found = findSpecificTypeNode(className, tips, luckyBagTime, rootNode);
-            if (!found) {
-                if (findNodeCallback != null) {
-                    findNodeCallback.onFindNodeResults(null);
-                }
+            AccessibilityNodeInfo info = findTargetNode(rootNode, className, tips, luckyBagTime);
+
+            if (findNodeCallback != null) {
+                findNodeCallback.onFindNodeResults(info);
             }
 //            Log.d(TAG, "-------------------------------【结束】--------------------------------");
         });
     }
 
-
     /**
-     * 遍历所有控件
+     * 遍历节点树寻找目标控件
      *
+     * @param rootNode     当前窗口的根节点
      * @param className    控件全称，例如：android.widget.Button或com.lynx.tasm.behavior.ui.view.UIView
      * @param tips         内容描述，控件上面的提示词
      * @param luckyBagTime 福袋卡点时间，单位：分钟；如果不设置赋值为-1或999；
-     * @param rootNode     屏幕获取的节点
      */
-    public boolean findSpecificTypeNode(String className, String tips, int luckyBagTime, AccessibilityNodeInfo rootNode) {
-        if (rootNode == null) {
-            resultNode = null;
-            return false;
-        }
+    public AccessibilityNodeInfo findTargetNode(AccessibilityNodeInfo rootNode, String className, String tips, int luckyBagTime) {
+        if (rootNode == null) return null;
 
-        // Check if the current node matches the desired class name
+        // 使用队列实现广度优先搜索
+        Queue<AccessibilityNodeInfo> queue = new LinkedList<>();
+        queue.add(rootNode);
+
+        while (!queue.isEmpty()) {
+            AccessibilityNodeInfo currentNode = queue.poll();
+
+            // 此处添加你的匹配条件（示例：通过ID匹配）
+            if (isTargetNode(currentNode, className, tips, luckyBagTime)) {
+                // 匹配成功
+                return currentNode;
+            }
+
+            // 递归添加子节点
+            for (int i = 0; i < currentNode.getChildCount(); i++) {
+                AccessibilityNodeInfo child = currentNode.getChild(i);
+                if (child != null) {
+                    queue.add(child);
+                }
+            }
+
+            // 回收非目标节点（重要！避免内存泄漏）
+            if (currentNode != rootNode) {
+                currentNode.recycle();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 匹配条件
+     */
+    private boolean isTargetNode(AccessibilityNodeInfo rootNode, String className, String tips, int luckyBagTime) {
         if (TextUtils.isEmpty(tips)) {
             // 不需要匹配提示词
             if (rootNode.getClassName().equals(className)) {
-                resultNode = rootNode;
-//                Log.d(TAG, "###ClassName1=" + rootNode.getClassName() + "；text=" + rootNode.getText());
-                if (findNodeCallback != null) {
-                    findNodeCallback.onFindNodeResults(rootNode);
-                }
                 return true;
             }
+
         } else {
             // 需要匹配提示词
             if (rootNode.getClassName().equals(className) && rootNode.getContentDescription().toString().contains(tips)) {
-//                Log.d(TAG, "###ClassName0=" + rootNode.getClassName() + "；text=" + rootNode.getText());
                 // 如果是【超级福袋】的话，匹配一下时间
                 if (tips.contains("超级福袋")) {
                     // 获取时间，格式：超级福袋 3分56秒 按钮
@@ -102,64 +127,12 @@ public class FindSpecificTypeNodeUtil {
                         AutoTouchService.isAllowed = luckyBagTime >= Integer.parseInt(time);
                     }
                 }
-                resultNode = rootNode;
-                if (findNodeCallback != null) {
-                    findNodeCallback.onFindNodeResults(rootNode);
-                }
-                return true;
-            }
-        }
 
-        // Recursively check all child nodes
-        for (int i = 0; i < rootNode.getChildCount(); i++) {
-            AccessibilityNodeInfo child = rootNode.getChild(i);
-            if (child != null) {
-                if (findSpecificTypeNode(className, tips, luckyBagTime, child)) {
-                    return true;
-                }
+                return true;
             }
         }
 
         return false;
-    }
-
-    /**
-     * 遍历所有控件
-     */
-    public boolean findNode(String className, String tips, AccessibilityNodeInfo rootNode) {
-        if (rootNode == null) {
-            return false;
-        }
-
-        // Check if the current node matches the desired class name
-        if (TextUtils.isEmpty(tips)) {
-            if (rootNode.getClassName().equals(className)) {
-                return true;
-            }
-        } else {
-            if (rootNode.getClassName().equals(className) && rootNode.getContentDescription().toString().contains(tips)) {
-                return true;
-            }
-        }
-
-        // Recursively check all child nodes
-        for (int i = 0; i < rootNode.getChildCount(); i++) {
-            AccessibilityNodeInfo child = rootNode.getChild(i);
-            if (child != null) {
-                if (findNode(className, tips, child)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * 对外提供结果
-     */
-    public AccessibilityNodeInfo getResultNode() {
-        return resultNode;
     }
 
     public void onDestroy() {
@@ -167,7 +140,6 @@ public class FindSpecificTypeNodeUtil {
         if (findNodeCallback != null) {
             findNodeCallback = null;
         }
-        this.resultNode = null;
     }
 
     public interface FindNodeCallback {
