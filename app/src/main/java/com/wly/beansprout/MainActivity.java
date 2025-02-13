@@ -49,16 +49,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // 功能
     private RadioGroup groupFunction;
-    // 自动回复、抢福袋
-    private RadioButton floatingScreen, luckyBag;
-    // 直播点赞
-    private RadioButton like;
     // 动画
     private RadioGroup groupAnimation;
     // 开始
     private TextView tvStart;
     // 卡福袋时间
-    private LinearLayout auxiliarySettings;
     private RadioGroup groupLuckybagTime;
 
     @Override
@@ -75,21 +70,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 友盟统计 - 自定义事件
         MobclickAgent.onEvent(getApplicationContext(), "open_main");
 
-        // 接收外部提供的参数
-        int status = getIntent().getIntExtra("status", 0);
-        int daysRemaining = getIntent().getIntExtra("daysRemaining", 0);
-
         // 初始化
         mMyHttpClient = new MyHttpClient(getApplicationContext());
         mAccountManager = new AccountManager(getApplicationContext());
+
+        // 初始化布局试图
+        initViews();
+
+        // 检查更新
+        getVersion();
+    }
+
+    /**
+     * 初始化视图
+     */
+    private void initViews() {
         TextView tvUserName = findViewById(R.id.txvi_username);
         TextView tvState = findViewById(R.id.txvi_state);
-        TextView tvOutLogin = findViewById(R.id.txvi_outlogin);
         tvStart = findViewById(R.id.tv_start);
         // 专属
         RadioGroup radioGroup = findViewById(R.id.ragr_exclusive);
         // 卡福袋时间
-        auxiliarySettings = findViewById(R.id.lila_auxiliary_settings);
+        LinearLayout auxiliarySettings = findViewById(R.id.lila_auxiliary_settings);
         groupLuckybagTime = findViewById(R.id.group_luckybag_time);
         RadioButton luckyBagTime = findViewById(R.id.radio_luckybagtime_one);
         // 功能
@@ -105,63 +107,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 luckyBagTime.setChecked(true);
             }
         });
-        floatingScreen = findViewById(R.id.cb_function_floatingScreen);
-        luckyBag = findViewById(R.id.cb_function_luckyBag);
-        like = findViewById(R.id.cb_function_like);
+
+        // 直播点赞
+        RadioButton like = findViewById(R.id.cb_function_like);
         // 动画
         groupAnimation = findViewById(R.id.ragr_animation);
         // 版本号
         TextView txviVersion = findViewById(R.id.txvi_version);
+        // 服务政策 与 隐私协议
         findViewById(R.id.txvi_mainactivity_serviceAgreement).setOnClickListener(this);
         findViewById(R.id.txvi_mainactivity_privacyPolicy).setOnClickListener(this);
 
-        // 赋值
+        // 显示用户名、手机号、状态
         tvUserName.setText(getIntent().getStringExtra("mobile"));
-        tvState.setText(status == 4 ? "正式用户" : "体验用户(剩余" + daysRemaining + "天)");
+        tvState.setText(
+                getIntent().getIntExtra("status", 0) == 4 ?
+                        "正式用户" :
+                        "体验用户(剩余" + getIntent().getIntExtra("daysRemaining", 0) + "天)");
         txviVersion.setText("V" + BuildConfig.VERSION_NAME);
-        tvOutLogin.setOnClickListener(v -> {
-            // 登出
-            MobclickAgent.onProfileSignOff();
-            mAccountManager.setToken("");
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            MainActivity.this.finish();
-        });
-        tvStart.setOnClickListener(v -> {
-            switch (tvStart.getText().toString()) {
-                case STRING_START:
-                    // 如果选择的是抢福袋，则每天提醒一次怎么添加 触控点。
-                    if (getFunctionType() == 8 && mAccountManager.isSignPop()) {
-                        mAccountManager.setSavePopDate();
-                        new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("提示")
-                                .setMessage("在添加触控点前，先去抖音打开一个福袋，然后触控点的位置点在【一键发表评论】或【参与抽奖】等位置。")
-                                .setPositiveButton("好的", (dialog, which) -> {
-                                    onPenStart();
-                                })
-                                .show();
-                    } else {
-                        onPenStart();
-                    }
 
-                    break;
-                case STRING_OPEN:
-                    ToastUtil.show(getString(R.string.app_name) + "已关闭");
-                    stopService(new Intent(MainActivity.this, FloatingService.class));
-                    TouchEvent.postStopAction();
-                    tvStart.setText(STRING_START);
-                    break;
-                case STRING_ALERT:
-                    requestPermissionAndShow();
-                    break;
-                case STRING_ACCESS:
-                    requestAcccessibility();
-                    break;
-                default:
-                    break;
-            }
-        });
-
-        // 专属
+        // 抢福袋
+        RadioButton luckyBag = findViewById(R.id.cb_function_luckyBag);
+        // 自动回复
+        RadioButton floatingScreen = findViewById(R.id.cb_function_floatingScreen);
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.cb_exclusive_tiktok) {
                 // 抖音
@@ -186,9 +154,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
+    }
 
-        // 检查更新
-        getVersion();
+    /**
+     * 开始 按钮的事件
+     */
+    public void onStartClick(View view) {
+        switch (tvStart.getText().toString()) {
+            case STRING_START:
+                // 如果选择的是抢福袋，则每天提醒一次怎么添加 触控点。
+                if (getFunctionType() == 8 && mAccountManager.isSignPop()) {
+                    mAccountManager.setSavePopDate();
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("提示")
+                            .setMessage("在添加触控点前，先去抖音打开一个福袋，然后触控点的位置点在【一键发表评论】或【参与抽奖】等位置。")
+                            .setPositiveButton("好的", (dialog, which) -> {
+                                onPenStart();
+                            })
+                            .show();
+                } else {
+                    onPenStart();
+                }
+
+                break;
+            case STRING_OPEN:
+                ToastUtil.show(getString(R.string.app_name) + "已关闭");
+                stopService(new Intent(MainActivity.this, FloatingService.class));
+                TouchEvent.postStopAction();
+                tvStart.setText(STRING_START);
+                break;
+            case STRING_ALERT:
+                requestPermissionAndShow();
+                break;
+            case STRING_ACCESS:
+                requestAcccessibility();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 退出登录 的事件
+     */
+    public void onOutLoginClick(View view) {
+        // 登出
+        MobclickAgent.onProfileSignOff();
+        mAccountManager.setToken("");
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        MainActivity.this.finish();
     }
 
     /**
