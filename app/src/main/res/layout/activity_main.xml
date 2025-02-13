@@ -117,9 +117,9 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:tag="1"
-                        android:text="短视频-音"
+                        android:text="音短视频"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <RadioButton
                         android:id="@+id/cb_exclusive_kwai"
@@ -131,9 +131,9 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:tag="2"
-                        android:text="短视频-手"
+                        android:text="快短视频"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <RadioButton
                         android:id="@+id/cb_exclusive_other"
@@ -147,7 +147,7 @@
                         android:tag="3"
                         android:text="其它"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
                 </RadioGroup>
             </LinearLayout>
 
@@ -184,7 +184,7 @@
                         android:gravity="center"
                         android:text="轻点触发"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <RadioButton
                         android:id="@+id/cb_function_like"
@@ -197,7 +197,7 @@
                         android:gravity="center"
                         android:text="直播点赞"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <RadioButton
                         android:id="@+id/cb_function_slidedDown"
@@ -209,7 +209,7 @@
                         android:gravity="center"
                         android:text="向下滑动"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <RadioButton
                         android:id="@+id/cb_function_slideUpAndDown"
@@ -222,7 +222,7 @@
                         android:paddingTop="5dp"
                         android:text="向上滑动"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <RadioButton
                         android:id="@+id/cb_function_slidingLeft"
@@ -235,7 +235,7 @@
                         android:paddingTop="5dp"
                         android:text="向左滑动"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <RadioButton
                         android:id="@+id/cb_function_slidingRight"
@@ -248,7 +248,7 @@
                         android:paddingTop="5dp"
                         android:text="向右滑动"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <RadioButton
                         android:id="@+id/cb_function_floatingScreen"
@@ -261,7 +261,7 @@
                         android:paddingTop="5dp"
                         android:text="自动回复"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <RadioButton
                         android:id="@+id/cb_function_luckyBag"
@@ -274,7 +274,7 @@
                         android:paddingTop="5dp"
                         android:text="抢福袋"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
                 </com.wly.beansprout.view.GridRadioGroup>
 
             </LinearLayout>
@@ -428,7 +428,7 @@
                         android:tag="1"
                         android:text="功德小鸡"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <RadioButton
                         android:id="@+id/cb_animation_cuteChicken"
@@ -443,7 +443,7 @@
                         android:tag="2"
                         android:text="跳绳小鸡"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                 </RadioGroup>
             </LinearLayout>
