@@ -77,7 +77,8 @@ public class AutoTouchService extends AccessibilityService {
     protected void onServiceConnected() {
         super.onServiceConnected();
         handler = new Handler();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         mAccountManager = new AccountManager(getApplicationContext());
         findNode = new FindTargetNodeUtil(getApplicationContext());
     }
