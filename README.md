@@ -38,6 +38,14 @@
     请使用浏览器扫描此处，提供下载apk安装包，进行体验。
 ![](image/下载.png)
 
+## 开发环境
+    目前只支持Android 11以上版本，目前只支持Java + Xml开发，后续会支持Kotlin + Jetpack Compose开发。
+|       语言                | Android Studio                              | AGP       | Gradle    |
+|:------------------------:|:-------------------------------------------:|:---------:|:---------:|
+| Java + Xml               | Android Studio Chipmunk(2021.2.1 Patch 2)   | 3.6.0     | 5.6.4     |
+| Kotlin + Jetpack Compose | 内容D                                        | 内容G      | 内容E     |
+
+
 ## Donate
     如果它对你帮助很大，在实际开发中切实的提升了您的工作效率和开发能力，并且你很想支持库的后续开发和维护,
     请您点击右上角 Star 支持一下谢谢!
