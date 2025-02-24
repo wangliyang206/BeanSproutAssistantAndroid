@@ -40,10 +40,10 @@
 
 ## 开发环境
     目前只支持Android 11以上版本，目前只支持Java + Xml开发，后续会支持Kotlin + Jetpack Compose开发。
-|       语言                | Android Studio                              | AGP       | Gradle    |
-|:------------------------:|:-------------------------------------------:|:---------:|:---------:|
-| Java + Xml               | Android Studio Chipmunk(2021.2.1 Patch 2)   | 3.6.0     | 5.6.4     |
-| Kotlin + Jetpack Compose | 内容D                                        | 内容G      | 内容E     |
+|       语言                |                Android Studio                 |  AGP  | Gradle    |
+|:------------------------:|:---------------------------------------------:|:-----:|:---------:|
+| Java + Xml               | Android Studio Chipmunk(2021.2.1 Patch 2)     | 3.6.0 | 5.6.4     |
+| Kotlin + Jetpack Compose | Android Studio Ladybug Feature Drop(2024.2.2) | 7.2.2 | 7.5.1     |
 
 
 ## Donate
