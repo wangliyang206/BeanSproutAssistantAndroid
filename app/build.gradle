@@ -173,6 +173,6 @@ dependencies {
     implementation(libs.umsdk.common)// 必选
     implementation(libs.umsdk.asms)// 必选
     implementation(libs.umsdk.abtest)//使用U-App中ABTest能力，可选
-    implementation(libs.umsdk.apm) // U-APM包依赖(必选)
+    implementation(libs.umsdk.apm)// U-APM包依赖(必选)
 
 }

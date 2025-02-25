@@ -54,8 +54,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputLayout mTextInputPassword;                                                     // 密码
     private TextInputEditText mEditTextPassword;
 
-    private TextView txviAgreement;                                                                         // 协议提示
-    private CheckBox checkBox;                                                                              // 勾选协议
+    private CheckBox checkBox;                                                                      // 勾选协议
     /*--------------------------------业务信息--------------------------------*/
     public static final String TAG = "LoginActivity";
     // 用来销毁 手机号 RxBinding
@@ -73,6 +72,13 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        // 添加资源释放逻辑
+        if (disposMobile != null && !disposMobile.isDisposed()) {
+            disposMobile.dispose();
+        }
+        if (disposPassword != null && !disposPassword.isDisposed()) {
+            disposPassword.dispose();
+        }
         super.onDestroy();
 
         this.disposMobile = null;
@@ -120,8 +126,7 @@ public class LoginActivity extends AppCompatActivity {
         mEditTextPassword = findViewById(R.id.edit_login_password);
         Button btnLogin = findViewById(R.id.btn_login);
         TextView txviRegister = findViewById(R.id.txvi_login_register);
-
-        txviAgreement = findViewById(R.id.txvi_loginactivity_tips);
+        TextView txviAgreement = findViewById(R.id.txvi_loginactivity_tips);
         checkBox = findViewById(R.id.checkbox_loginactivity_cb);
 
         SpannableString agreement = new SpannableString(getString(R.string.login_agreement_tips));
@@ -258,7 +263,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // 用户名和密码不能为空，为空时返回false同时给出提示。
         String username = Objects.requireNonNull(mEditTextMobile.getText()).toString().trim();
-        if ("".equals(username)) {
+        if (username.isEmpty()) {
             mTextInputMobile.setError("您输入的账号不能为空！");
             mTextInputMobile.setErrorEnabled(true);
             return false;
@@ -270,7 +275,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // 账号密码登录
         String password = Objects.requireNonNull(mEditTextPassword.getText()).toString().trim();
-        if ("".equals(password)) {
+        if (password.isEmpty()) {
             mTextInputPassword.setError("您输入的密码不能为空！");
             mTextInputPassword.setErrorEnabled(true);
             return false;

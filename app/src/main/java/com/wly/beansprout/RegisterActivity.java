@@ -1,6 +1,5 @@
 package com.wly.beansprout;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -18,7 +17,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.jakewharton.rxbinding3.widget.RxTextView;
 import com.wly.beansprout.bean.CommonResponse;
-import com.wly.beansprout.global.AccountManager;
 import com.wly.beansprout.http.MyHttpClient;
 import com.wly.beansprout.utils.CommonUtils;
 import com.wly.beansprout.utils.MyClickableSpan;
@@ -52,8 +50,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private TextInputLayout mTextInputConfirmPassword;                                              // 确认密码
     private TextInputEditText mEditTextConfirmPassword;
-    private TextView txviAgreement;                                                                         // 协议提示
-    private CheckBox checkBox;                                                                              // 勾选协议
+
+    private CheckBox checkBox;                                                                      // 勾选协议
     /*--------------------------------业务信息--------------------------------*/
     public static final String TAG = "RegisterActivity";
     // 用来销毁 手机号 RxBinding
@@ -67,19 +65,27 @@ public class RegisterActivity extends AppCompatActivity {
 
     // 网络请求
     private MyHttpClient mMyHttpClient;
-    private AccountManager mAccountManager;
     // 登录对话框
     private MaterialDialog mDialog;
 
     @Override
     protected void onDestroy() {
+        // 添加资源释放逻辑
+        if (disposMobile != null && !disposMobile.isDisposed()) {
+            disposMobile.dispose();
+        }
+        if (disposPassword != null && !disposPassword.isDisposed()) {
+            disposPassword.dispose();
+        }
+        if (disposConfirmPassword != null && !disposConfirmPassword.isDisposed()) {
+            disposConfirmPassword.dispose();
+        }
         super.onDestroy();
 
         this.disposMobile = null;
         this.disposPassword = null;
         this.disposConfirmPassword = null;
         this.mMyHttpClient = null;
-        this.mAccountManager = null;
     }
 
     @Override
@@ -91,7 +97,6 @@ public class RegisterActivity extends AppCompatActivity {
         // 初始化Loading对话框
         mDialog = new MaterialDialog.Builder(this).content("正在请求中，请稍候……").progress(true, 0).build();
         mMyHttpClient = new MyHttpClient(getApplicationContext());
-        mAccountManager = new AccountManager(getApplicationContext());
         initView();
         initEvent();
     }
@@ -100,14 +105,8 @@ public class RegisterActivity extends AppCompatActivity {
      * 设置状态栏
      */
     public void setStatusBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //SDK >= 21时, 取消状态栏的阴影
-            StatusBarCompat.translucentStatusBar(this, true);
-        } else {
-            //透明状态栏
-            StatusBarCompat.translucentStatusBar(this);
-        }
-
+        // 取消状态栏的阴影
+        StatusBarCompat.translucentStatusBar(this, true);
         StatusBarCompatUtils.cancelLightStatusBar(this);
     }
 
@@ -124,8 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
         Button btnRegister = findViewById(R.id.btn_register);
         ImageView imviBack = findViewById(R.id.imgvi_back);
         TextView txviTitle = findViewById(R.id.txvi_title);
-
-        txviAgreement = findViewById(R.id.txvi_registeractivity_tips);
+        TextView txviAgreement = findViewById(R.id.txvi_registeractivity_tips);
         checkBox = findViewById(R.id.checkbox_registeractivity_cb);
 
         SpannableString agreement = new SpannableString(getString(R.string.login_agreement_tips));
@@ -234,7 +232,7 @@ public class RegisterActivity extends AppCompatActivity {
                             mTextInputConfirmPassword.setErrorEnabled(true);
                         }
 
-                        if (!mEditTextConfirmPassword.getText().toString().equalsIgnoreCase(mEditTextPassword.getText().toString())) {
+                        if (!getSafeText(mEditTextConfirmPassword).equalsIgnoreCase(getSafeText(mEditTextPassword))) {
                             mTextInputConfirmPassword.setError("请确保确认密码与密码输入一至！");
                             mTextInputConfirmPassword.setErrorEnabled(true);
                         }
@@ -244,6 +242,12 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * 定义工具方法
+     */
+    public static String getSafeText(TextInputEditText editText) {
+        return editText.getText() != null ? editText.getText().toString() : "";
+    }
 
     /**
      * 用户输入有效性验证
@@ -258,14 +262,14 @@ public class RegisterActivity extends AppCompatActivity {
 
         // 用户名和密码不能为空，为空时返回false同时给出提示。
         String username = Objects.requireNonNull(mEditTextMobile.getText()).toString().trim();
-        if ("".equals(username)) {
+        if (username.isEmpty()) {
             mTextInputMobile.setError("您输入的账号不能为空！");
             mTextInputMobile.setErrorEnabled(true);
             return false;
         }
 
         // 校验手机号的有效性
-        if(!CommonUtils.isValidPhoneNumber(username)){
+        if (!CommonUtils.isValidPhoneNumber(username)) {
             mTextInputMobile.setError("请输入有效的手机号！");
             mTextInputMobile.setErrorEnabled(true);
             return false;
@@ -277,7 +281,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         // 账号密码登录
         String password = Objects.requireNonNull(mEditTextPassword.getText()).toString().trim();
-        if ("".equals(password)) {
+        if (password.isEmpty()) {
             mTextInputPassword.setError("您输入的密码不能为空！");
             mTextInputPassword.setErrorEnabled(true);
             return false;
@@ -288,7 +292,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         String confirmPassword = Objects.requireNonNull(mEditTextConfirmPassword.getText()).toString().trim();
-        if ("".equals(confirmPassword)) {
+        if (confirmPassword.isEmpty()) {
             mTextInputConfirmPassword.setError("您输入的确认密码不能为空！");
             mTextInputConfirmPassword.setErrorEnabled(true);
             return false;

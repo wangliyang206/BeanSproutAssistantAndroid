@@ -38,6 +38,8 @@ import io.reactivex.schedulers.Schedulers;
 
 @SuppressLint("SetTextI18n")
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private final String TAG = "MainActivity";
+
     // 网络请求
     private MyHttpClient mMyHttpClient;
     private AccountManager mAccountManager;
@@ -168,9 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("提示")
                             .setMessage("在添加触控点前，先去抖音打开一个福袋，然后触控点的位置点在【一键发表评论】或【参与抽奖】等位置。")
-                            .setPositiveButton("好的", (dialog, which) -> {
-                                onPenStart();
-                            })
+                            .setPositiveButton("好的", (dialog, which) -> onPenStart())
                             .show();
                 } else {
                     onPenStart();
@@ -240,12 +240,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .subscribe(new Observer<AppUpdate>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Log.i("main", "onSubscribe");
+                        Log.i(TAG, "onSubscribe");
                     }
 
                     @Override
                     public void onNext(AppUpdate appUpdate) {
-                        Log.i("main", "onNext");
+                        Log.i(TAG, "onNext");
                         if (haveNew(appUpdate)) {
                             // 先提醒升级
                             askDialog(appUpdate);
@@ -254,12 +254,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.i("main", "onError=" + e.getMessage());
+                        Log.i(TAG, "onError=" + e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.i("main", "onComplete");
+                        Log.i(TAG, "onComplete");
                     }
                 });
     }
@@ -298,7 +298,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     try {
                         AccessibilityUtil.jumpToSetting(MainActivity.this);
                     } catch (Exception e) {
-                        e.printStackTrace();
+//                        e.printStackTrace();
+                        Log.e(TAG, "FloatWinPermission apply failed", e);
                     }
                 })
                 .setNegativeButton("取消", null).show();
@@ -315,7 +316,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     try {
                         FloatWinPermissionCompat.getInstance().apply(MainActivity.this);
                     } catch (Exception e) {
-                        e.printStackTrace();
+//                        e.printStackTrace();
+                        Log.e(TAG, "Error requesting float window permission", e);
                     }
                 })
                 .setNegativeButton("取消", null).show();
@@ -436,23 +438,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bundle bundle = new Bundle();
         bundle.putBoolean("isShowTop", true);
         Intent intent = new Intent(this, WebViewActivity.class);
-        switch (v.getId()) {
-            case R.id.txvi_mainactivity_serviceAgreement:
-                // 《服务协议》
-                bundle.putString("URL", Constant.privacyPolicyUrl);
-                bundle.putString("TITLE", "服务协议");
-
-                intent.putExtras(bundle);
-                startActivity(intent);
-                break;
-            case R.id.txvi_mainactivity_privacyPolicy:
-                // 《隐私政策》
-                bundle.putString("URL", Constant.privacyPolicyUrl);
-                bundle.putString("TITLE", "隐私政策");
-
-                intent.putExtras(bundle);
-                startActivity(intent);
-                break;
+        if (v.getId() == R.id.txvi_mainactivity_serviceAgreement) {
+            // 《服务协议》
+            bundle.putString("URL", Constant.privacyPolicyUrl);
+            bundle.putString("TITLE", "服务协议");
+        } else if (v.getId() == R.id.txvi_mainactivity_privacyPolicy) {
+            // 《隐私政策》
+            bundle.putString("URL", Constant.privacyPolicyUrl);
+            bundle.putString("TITLE", "隐私政策");
         }
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

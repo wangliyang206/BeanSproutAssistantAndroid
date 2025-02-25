@@ -191,6 +191,7 @@ public class SplashActivity extends AppCompatActivity {
                         @Override
                         public void onNext(LoginResponse loginResponse) {
                             Log.i(TAG, "onNext");
+                            Intent mIntent = new Intent(SplashActivity.this, MainActivity.class);
                             if (loginResponse != null) {
                                 // 将账号密码以及常用信息保存到缓存中
                                 mAccountManager.updateAccountInfo(loginResponse);
@@ -199,12 +200,11 @@ public class SplashActivity extends AppCompatActivity {
 
                                 // 当用户使用自有账号登录时，可以这样统计：
                                 MobclickAgent.onProfileSignIn(loginResponse.getUserId());
-                            }
 
-                            Intent mIntent = new Intent(SplashActivity.this, MainActivity.class);
-                            mIntent.putExtra("mobile", loginResponse.getUserPhone());
-                            mIntent.putExtra("status", loginResponse.getStatus());
-                            mIntent.putExtra("daysRemaining", loginResponse.getDaysRemaining());
+                                mIntent.putExtra("mobile", loginResponse.getUserPhone());
+                                mIntent.putExtra("status", loginResponse.getStatus());
+                                mIntent.putExtra("daysRemaining", loginResponse.getDaysRemaining());
+                            }
                             startActivity(mIntent);
                             // 关闭自己
                             SplashActivity.this.finish();

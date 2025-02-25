@@ -1,11 +1,11 @@
 package com.wly.beansprout;
 
-import android.content.Intent;
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -30,7 +30,6 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
 
     /*----------------控件信息----------------*/
     private View mTopLayout;
-    private TextView txviTitle;                                                                             // 标题
     private ProgressWebView mWebView;
 
     /*----------------业务信息----------------*/
@@ -41,11 +40,6 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
     // 是否显示Top
     private boolean isShowTop;
     private final String TAG = "WebViewActivity";
-    /**
-     * 从哪个界面中跳转过来的(后续回退流程不一样)
-     * 4 代表 订单详情 - 支付操作
-     */
-    private int type = -1;
 
     @Override
     public void onResume() {
@@ -64,8 +58,10 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         if (mWebView != null) {
+            // 从父容器中移除WebView
+            ViewGroup parent = (ViewGroup) mWebView.getParent();
+            if (parent != null) parent.removeView(mWebView);
             mWebView.destroy();
-            mWebView = null;
         }
         super.onDestroy();
         clearWebViewCache();
@@ -80,7 +76,6 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
         Bundle bundle = this.getIntent().getExtras();
         if (bundle != null) {
             URL = bundle.getString("URL");
-            type = bundle.getInt("type", -1);
             isShowTop = bundle.getBoolean("isShowTop", false);
             title = bundle.getString("TITLE");
         }
@@ -91,14 +86,8 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
      * 设置状态栏
      */
     public void setStatusBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //SDK >= 21时, 取消状态栏的阴影
-            StatusBarCompat.translucentStatusBar(this, true);
-        } else {
-            //透明状态栏
-            StatusBarCompat.translucentStatusBar(this);
-        }
-
+        // 取消状态栏的阴影
+        StatusBarCompat.translucentStatusBar(this, true);
         StatusBarCompatUtils.cancelLightStatusBar(this);
     }
 
@@ -110,8 +99,9 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
         setStatusBar();
         // 初始化控件
         mTopLayout = findViewById(R.id.view_top_layout);
-        txviTitle = findViewById(R.id.txvi_title);
+        TextView txviTitle = findViewById(R.id.txvi_title);
         mWebView = findViewById(R.id.pwv_webView);
+        if (mWebView == null) throw new IllegalStateException("WebView not found in layout");
         findViewById(R.id.imgvi_back).setOnClickListener(this);
 
         getBundleValues();
@@ -124,18 +114,6 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
         txviTitle.setText(title);
 
         mWebView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.d(TAG, "###赤槿-shouldOverrideUrlLoading_url(" + url + ")###");
-
-                Bundle bundle = new Bundle();
-                bundle.putString("URL", url);
-
-                Intent intent = new Intent(WebViewActivity.this, WebViewActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                return true;
-            }
 
             @Override
             public void onPageStarted(WebView webView, String s, Bitmap bitmap) {
@@ -170,10 +148,17 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
         mWebView.setOnLongClickListener(v -> true);
 
         mWebView.setScrollbarFadingEnabled(true);
-        mWebView.addJavascriptInterface(this, "Android");
-        WebSettings webSetting = mWebView.getSettings();
-//        webSetting.setAllowFileAccess(true);
-        webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+        mWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
+        configureWebSettings(mWebView.getSettings());
+
+        mWebView.loadUrl(URL);
+    }
+
+    /**
+     * 提取WebView配置逻辑到单独方法
+     */
+    private void configureWebSettings(WebSettings webSetting) {
+        webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
         webSetting.setSupportZoom(true);
         webSetting.setBuiltInZoomControls(false);                                                   // 设置内置的缩放控件。若为false，则该WebView不可缩放
         webSetting.setUseWideViewPort(true);                                                        // 将图片调整到适合webview的大小
@@ -183,27 +168,15 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
         webSetting.setDomStorageEnabled(true);                                                      // 开启 DOM storage API 功能
         webSetting.setJavaScriptEnabled(true);                                                      // 如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
         webSetting.setGeolocationEnabled(true);
-//        webSetting.setAppCacheMaxSize(Long.MAX_VALUE);
         webSetting.setCacheMode(WebSettings.LOAD_DEFAULT);                                          // 缓存模式(不使用缓存 LOAD_CACHE_ELSE_NETWORK)
-
-        String cacheDirPath = getFilesDir().getAbsolutePath() + APP_CACAHE_DIRNAME;
-        webSetting.setDatabasePath(cacheDirPath);                                                   // 设置数据库缓存路径
-//        webSetting.setGeolocationDatabasePath(cacheDirPath);
-        // webSetting.setPageCacheCapacity(IX5WebSettings.DEFAULT_CACHE_CAPACITY);
-//        webSetting.setPluginState(WebSettings.PluginState.ON_DEMAND);
-        webSetting.setRenderPriority(WebSettings.RenderPriority.HIGH);
-        // webSetting.setPreFectch(true);
         webSetting.setBlockNetworkImage(true);
-
-        mWebView.loadUrl(URL);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.imgvi_back:                                                                   // 返回按钮
-                onBackPressed();
-                break;
+        if (v.getId() == R.id.imgvi_back) {
+            // 返回按钮
+            onBackPressed();
         }
     }
 
@@ -213,7 +186,7 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
      */
     @JavascriptInterface
     public void onClose() {
-        runOnUiThread(() -> onBackPressed());
+        runOnUiThread(this::onBackPressed);
 
     }
 
@@ -252,23 +225,18 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
 
     /**
      * 递归删除 文件/文件夹
-     *
-     * @param file
      */
     public void deleteFile(File file) {
-
-        if (file.exists()) {
-            if (file.isFile()) {
-                file.delete();
-            } else if (file.isDirectory()) {
-                File files[] = file.listFiles();
-                for (int i = 0; i < files.length; i++) {
-                    deleteFile(files[i]);
+        if (file == null) return;
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File child : files) {
+                    deleteFile(child);
                 }
             }
-            file.delete();
-        } else {
         }
+        file.delete();
     }
 
     /**
@@ -308,5 +276,21 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
         return deletedFiles;
+    }
+
+    /**
+     * 创建专用JS接口类
+     */
+    public class WebAppInterface {
+        private Context mContext;
+
+        public WebAppInterface(Context context) {
+            mContext = context;
+        }
+
+        @JavascriptInterface
+        public void onClose() {
+            ((WebViewActivity) mContext).runOnUiThread(WebViewActivity.this::onBackPressed);
+        }
     }
 }

@@ -37,7 +37,6 @@
         <activity
             android:name="com.wly.beansprout.SplashActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,18 +67,15 @@
         <activity
             android:name="com.wly.beansprout.RegisterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="user"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!-- 首页 -->
         <activity
-            android:name="com.wly.beansprout.MainActivity"
-            android:screenOrientation="portrait" />
+            android:name="com.wly.beansprout.MainActivity" />
 
         <activity
-            android:name="com.wly.beansprout.WebViewActivity"
-            android:screenOrientation="user"/>
+            android:name="com.wly.beansprout.WebViewActivity" />
 
         <service
             android:name="com.wly.beansprout.service.AutoTouchService"
