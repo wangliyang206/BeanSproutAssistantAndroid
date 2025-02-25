@@ -21,7 +21,3 @@ allprojects {
         maven { url 'https://repo1.maven.org/maven2/' }
     }
 }
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}

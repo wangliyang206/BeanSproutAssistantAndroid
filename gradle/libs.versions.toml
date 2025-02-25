@@ -1,0 +1,52 @@
+[versions]
+compileSdk = "34"
+minSdk = "24"
+appcompat = "1.3.1"
+annotation = "1.2.0"
+okhttp = "4.9.0"
+constraintlayout = "2.1.4"
+eventbus = "3.1.1"
+gson = "2.8.6"
+recyclerview = "1.2.1"
+rxjava = "2.2.18"
+rxandroid = "2.1.1"
+retrofit = "2.7.2"
+tray = "0.12.0"
+material = "1.4.0"
+rxbinding = "3.0.0"
+materialDialogsCore = "0.9.6.0"
+statusBarCompat = "2.3.3"
+umsdkCommon = "9.8.0"
+umsdkAsms = "1.8.6"
+umsdkAbtest = "+"
+umsdkApm = "+"
+
+[libraries]
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+eventbus = { group = "org.greenrobot", name = "eventbus", version.ref = "eventbus" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+rxjava = { group = "io.reactivex.rxjava2", name = "rxjava", version.ref = "rxjava" }
+rxandroid = { group = "io.reactivex.rxjava2", name = "rxandroid", version.ref = "rxandroid" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+adapter-rxjava2 = { group = "com.squareup.retrofit2", name = "adapter-rxjava2", version.ref = "retrofit" }
+converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+tray = { group = "net.grandcentrix.tray", name = "tray", version.ref = "tray" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+rxbinding = { group = "com.jakewharton.rxbinding3", name = "rxbinding", version.ref = "rxbinding" }
+material-dialogs-core = { group = "com.afollestad.material-dialogs", name = "core", version.ref = "materialDialogsCore" }
+status-bar-compat = { group = "com.github.niorgai", name = "StatusBarCompat", version.ref = "statusBarCompat" }
+umsdk-common = { group = "com.umeng.umsdk", name = "common", version.ref = "umsdkCommon" }
+umsdk-asms = { group = "com.umeng.umsdk", name = "asms", version.ref = "umsdkAsms" }
+umsdk-abtest = { group = "com.umeng.umsdk", name = "abtest", version.ref = "umsdkAbtest" }
+umsdk-apm = { group = "com.umeng.umsdk", name = "apm", version.ref = "umsdkApm" }
+
+
+[plugins]
+#android-application = { id = "com.android.application", version.ref = "agp" }
+#kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+#kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

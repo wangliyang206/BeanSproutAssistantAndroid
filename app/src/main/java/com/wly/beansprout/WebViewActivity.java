@@ -179,7 +179,6 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
         webSetting.setUseWideViewPort(true);                                                        // 将图片调整到适合webview的大小
         webSetting.setSupportMultipleWindows(false);                                                // 设置允许开启多窗口
         webSetting.setLoadWithOverviewMode(true);                                                   // 缩放至屏幕的大小
-        webSetting.setAppCacheEnabled(true);                                                        // 开启 Application Caches 功能
         webSetting.setDatabaseEnabled(true);                                                        // 开启 database storage API 功能
         webSetting.setDomStorageEnabled(true);                                                      // 开启 DOM storage API 功能
         webSetting.setJavaScriptEnabled(true);                                                      // 如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
@@ -188,7 +187,6 @@ public class WebViewActivity extends AppCompatActivity implements View.OnClickLi
         webSetting.setCacheMode(WebSettings.LOAD_DEFAULT);                                          // 缓存模式(不使用缓存 LOAD_CACHE_ELSE_NETWORK)
 
         String cacheDirPath = getFilesDir().getAbsolutePath() + APP_CACAHE_DIRNAME;
-        webSetting.setAppCachePath(cacheDirPath);                                                   // 设置 Application Caches 缓存目录
         webSetting.setDatabasePath(cacheDirPath);                                                   // 设置数据库缓存路径
 //        webSetting.setGeolocationDatabasePath(cacheDirPath);
         // webSetting.setPageCacheCapacity(IX5WebSettings.DEFAULT_CACHE_CAPACITY);
