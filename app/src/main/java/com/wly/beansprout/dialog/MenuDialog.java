@@ -32,7 +32,6 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
 
     private Button btReply;
     private Button btStop;
-    private RecyclerView rvPoints;
 
     private AddPointDialog addPointDialog;
     private AutomaticReplyScriptDialog autoReplyDialog;
@@ -73,7 +72,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
         btReply.setOnClickListener(this);
         btStop = findViewById(R.id.bt_stop);
         btStop.setOnClickListener(this);
-        rvPoints = findViewById(R.id.rv);
+        RecyclerView rvPoints = findViewById(R.id.rv);
         touchPointAdapter = new TouchPointAdapter();
         touchPointAdapter.setOnItemClickListener((view, position, touchPoint) -> {
             if (view.getId() == R.id.item_touch_point) {
@@ -87,12 +86,7 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
                     // 通知 动作服务，开启点赞功能
                     TouchEvent.postStartAction(touchPoint);
                     // 特殊处理，关闭所有，然后单独开启已选择的项
-                    for (TouchPoint info : touchPointAdapter.getTouchPointList()) {
-                        info.setStartClick(false);
-                    }
-                    touchPointAdapter.getTouchPointList().get(position).setStartClick(true);
-                    // 重新保存到 轻文件
-                    SpUtils.setTouchPoints(getContext(), touchPointAdapter.getTouchPointList());
+                    touchPointAdapter.startItemClick(getContext(), position);
                     if (listener != null) {
                         listener.onStartTouch(touchPoint.getX(), touchPoint.getY());
                     }
@@ -129,7 +123,13 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
             TouchEvent.postPauseAction();
         }
         if (touchPointAdapter != null) {
+            // 第一次加载时如果数据为空，则默认将开始事件恢复成待点击
             List<TouchPoint> touchPoints = SpUtils.getTouchPoints(getContext());
+            if (touchPointAdapter.getItemCount() == 0) {
+                for (TouchPoint info : touchPoints) {
+                    info.setStartClick(false);
+                }
+            }
             Log.d("啊实打实", GsonUtils.beanToJson(touchPoints));
             touchPointAdapter.setTouchPointList(touchPoints);
         }
@@ -137,46 +137,38 @@ public class MenuDialog extends BaseServiceDialog implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.bt_add:                                                                       // 添加触控点
-                DialogUtils.dismiss(addPointDialog);
-                addPointDialog = new AddPointDialog(getContext());
-                addPointDialog.setOnDismissListener(dialog -> MenuDialog.this.show());
-                addPointDialog.show();
-                dismiss();
-                break;
-            case R.id.bt_stop:                                                                      // 停止触控
-                // 如果是 “自动回复” ，则显示 话术功能。
-                btReply.setVisibility(functionType == 7 ? View.VISIBLE : View.GONE);
-                btStop.setVisibility(View.GONE);
-                TouchEvent.postStopAction();
-                ToastUtil.show("已停止触控");
+        if (v.getId() == R.id.bt_add) {                                                             // 添加触控点
+            DialogUtils.dismiss(addPointDialog);
+            addPointDialog = new AddPointDialog(getContext());
+            addPointDialog.setOnDismissListener(dialog -> MenuDialog.this.show());
+            addPointDialog.show();
+            dismiss();
+        } else if (v.getId() == R.id.bt_stop) {                                                     // 停止触控
+            // 如果是 “自动回复” ，则显示 话术功能。
+            btReply.setVisibility(functionType == 7 ? View.VISIBLE : View.GONE);
+            btStop.setVisibility(View.GONE);
+            TouchEvent.postStopAction();
+            ToastUtil.show("已停止触控");
 
-                // 改变界面
-                for (TouchPoint info : touchPointAdapter.getTouchPointList()) {
-                    info.setStartClick(false);
-                }
-                SpUtils.setTouchPoints(getContext(), touchPointAdapter.getTouchPointList());
-                touchPointAdapter.notifyDataSetChanged();
-                if (listener != null) {
-                    listener.onStopTouch();
-                }
-                break;
-            case R.id.bt_reply:                                                                     // 回复话术
-                DialogUtils.dismiss(autoReplyDialog);
-                autoReplyDialog = new AutomaticReplyScriptDialog(getContext());
-                autoReplyDialog.setOnDismissListener(dialog -> MenuDialog.this.show());
-                autoReplyDialog.show();
-                dismiss();
-                break;
-            case R.id.bt_exit:                                                                      // 退出助手
-                TouchEvent.postStopAction();
-                if (listener != null) {
-                    listener.onExitService();
-                }
-                break;
+            // 改变状态，刷新界面
+            touchPointAdapter.closeStartClick(getContext());
 
+            if (listener != null) {
+                listener.onStopTouch();
+            }
+        } else if (v.getId() == R.id.bt_reply) {                                                    // 回复话术
+            DialogUtils.dismiss(autoReplyDialog);
+            autoReplyDialog = new AutomaticReplyScriptDialog(getContext());
+            autoReplyDialog.setOnDismissListener(dialog -> MenuDialog.this.show());
+            autoReplyDialog.show();
+            dismiss();
+        } else if (v.getId() == R.id.bt_exit) {                                                     // 退出助手
+            TouchEvent.postStopAction();
+            if (listener != null) {
+                listener.onExitService();
+            }
         }
+
     }
 
     public void setFunctionType(int functionType, int luckybagTime) {

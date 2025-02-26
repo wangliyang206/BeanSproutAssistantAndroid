@@ -15,11 +15,26 @@ public class TouchPoint {
     // 抢福袋时间
     private int luckybagTime;
 
+    // 复制方法
+    public TouchPoint copy() {
+        return new TouchPoint(name, x, y, delay, isStartClick, functionType, luckybagTime);
+    }
+
     public TouchPoint(String name, int x, int y, int delay) {
         this.name = name;
         this.x = x;
         this.y = y;
         this.delay = delay;
+    }
+
+    public TouchPoint(String name, int x, int y, int delay, boolean isStartClick, int functionType, int luckybagTime) {
+        this.name = name;
+        this.x = x;
+        this.y = y;
+        this.delay = delay;
+        this.isStartClick = isStartClick;
+        this.functionType = functionType;
+        this.luckybagTime = luckybagTime;
     }
 
     public int getFunctionType() {
