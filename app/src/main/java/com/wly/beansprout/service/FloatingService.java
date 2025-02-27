@@ -94,7 +94,8 @@ public class FloatingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        layoutFloatingView = creatView(R.layout.layout_window);
+        layoutFloatingView = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.layout_window, null);
+
         viewChickenImage = layoutFloatingView.findViewById(R.id.imvi_layoutwindow_chicken);
         txviTime = layoutFloatingView.findViewById(R.id.txt_layoutwindow_time);
         //设置WindowManger布局参数以及相关属性
@@ -429,9 +430,5 @@ public class FloatingService extends Service {
         if (mWindowManager != null && view != null && view.isAttachedToWindow()) {
             mWindowManager.removeView(view);
         }
-    }
-
-    private <T extends View> T creatView(int layout) {
-        return (T) LayoutInflater.from(this).inflate(layout, null);
     }
 }
