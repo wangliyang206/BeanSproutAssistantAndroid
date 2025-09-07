@@ -648,10 +648,10 @@ public class AutoTouchService extends AccessibilityService {
                                 Log.d(TAG, "###已点击，团购福袋");
                                 // 等待3秒
                                 delayHandler.postDelayed(() -> {
-                                    Log.d(TAG, "###检测参与界面是否打开");
+
                                     findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "发送评论 参与抽奖", -1, getRootInActiveWindow(), buyInfo -> {
                                         if (buyInfo != null) {
-                                            Log.d(TAG, "###检测到弹出参与界面");
+                                            Log.d(TAG, "### 发送评论 参与抽奖");
                                             // 初始化点击事件
                                             onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
 
@@ -670,9 +670,56 @@ public class AutoTouchService extends AccessibilityService {
                                             });
 
                                         } else {
-                                            Log.d(TAG, "###没有检测到参与界面");
-                                            // 参与成功 等待开奖、即将开奖 无法参与、活动已结束等，直接关闭界面
-                                            emptyWindowClick();
+                                            Log.d(TAG, "### 发送评论");
+                                            findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "发送评论", -1, getRootInActiveWindow(), luckDrawNode -> {
+                                                if (luckDrawNode != null) {
+                                                    onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
+
+                                                        @Override
+                                                        public void onCompleted() {
+                                                            // 完成的回调
+                                                            Log.d(TAG, "###已点击，参与抽奖");
+                                                            mLuckyBagStep = 3;
+
+                                                            delayHandler.postDelayed(() -> {
+                                                                findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务 参与抽奖", -1, getRootInActiveWindow(), nodeInfo -> {
+                                                                    if (nodeInfo != null) {
+                                                                        onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
+
+                                                                            @Override
+                                                                            public void onCompleted() {
+                                                                                // 完成的回调
+                                                                                mLuckyBagStep = 4;
+                                                                                // 参与成功 等待开奖、即将开奖 无法参与、活动已结束等，直接关闭界面
+                                                                                emptyWindowClick();
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onCancelled() {
+                                                                                // 取消的回调
+                                                                            }
+                                                                        });
+
+                                                                    } else {
+                                                                        // 参与成功 等待开奖、即将开奖 无法参与、活动已结束等，直接关闭界面
+                                                                        emptyWindowClick();
+                                                                    }
+                                                                });
+                                                            }, 2000);
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled() {
+                                                            // 取消的回调
+                                                        }
+                                                    });
+                                                } else {
+                                                    // 参与成功 等待开奖、即将开奖 无法参与、活动已结束等，直接关闭界面
+                                                    emptyWindowClick();
+                                                }
+                                            });
+
+
                                         }
                                     });
                                 }, 3000);

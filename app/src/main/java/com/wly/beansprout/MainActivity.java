@@ -209,7 +209,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 开启打工鸡
      */
     private void onPenStart() {
-        ToastUtil.show(getString(R.string.app_name) + "已启用");
+        try {
+            ToastUtil.show(getString(R.string.app_name) + "已启用");
+        } catch (Exception ignored) {
+        }
         Intent mIntent = new Intent(MainActivity.this, FloatingService.class);
         mIntent.putExtra("functionType", getFunctionType());
         mIntent.putExtra("chickModel", getChickModel());
