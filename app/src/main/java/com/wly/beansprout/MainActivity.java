@@ -97,8 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 功能
         groupFunction = findViewById(R.id.ragr_function);
         groupFunction.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.cb_function_luckyBag) {
-                // 抢福袋
+            if (checkedId == R.id.cb_function_superLuckyBag) {
+                // 超级福袋
                 auxiliarySettings.setVisibility(View.VISIBLE);
             } else {
                 // 其它功能
@@ -126,8 +126,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         "体验用户(剩余" + getIntent().getIntExtra("daysRemaining", 0) + "天)");
         txviVersion.setText("V" + BuildConfig.VERSION_NAME);
 
-        // 抢福袋
-        RadioButton luckyBag = findViewById(R.id.cb_function_luckyBag);
+        // 超级福袋
+        RadioButton luckyBag = findViewById(R.id.cb_function_superLuckyBag);
         // 自动回复
         RadioButton floatingScreen = findViewById(R.id.cb_function_floatingScreen);
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
@@ -355,8 +355,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // 自动回复
             index = 7;
             value = "autoReply";
-        } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_luckyBag) {
-            // 抢福袋
+        } else if (groupFunction.getCheckedRadioButtonId() == R.id.cb_function_superLuckyBag) {
+            // 超级福袋
             index = 8;
             value = "luckyBag";
         }

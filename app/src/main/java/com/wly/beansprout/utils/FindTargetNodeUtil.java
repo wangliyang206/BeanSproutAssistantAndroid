@@ -126,6 +126,8 @@ public class FindTargetNodeUtil {
                         // 配置时间小于超级福袋时间，不允许参与
                         AutoTouchService.isAllowed = luckyBagTime >= Integer.parseInt(time);
                     }
+                } else if (tips.contains("生活服务-直播-福袋")) {
+                    AutoTouchService.isAllowed = true;
                 }
 
                 return true;

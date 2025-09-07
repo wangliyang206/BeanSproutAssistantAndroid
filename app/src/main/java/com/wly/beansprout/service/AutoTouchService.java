@@ -405,28 +405,20 @@ public class AutoTouchService extends AccessibilityService {
             // 提交任务到线程池
             mExecutor.execute(() -> {
                 AccessibilityNodeInfo foundNode = findNode.findTargetNode(getRootInActiveWindow(), "com.lynx.tasm.behavior.ui.view.UIView", "我知道了", -1);
-                Log.d(TAG, "###" + Thread.currentThread().getName() + "----------foundNode=" + (foundNode != null));
+//                Log.d(TAG, "###" + Thread.currentThread().getName() + "----------foundNode=" + (foundNode != null));
                 if (foundNode != null) {
                     Log.d(TAG, "###界面监听到【没有抽中福袋】界面");
                     // 点击我知道了
                     foundNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
 
                     // 使用精确手势点击
-                    // 初始化点击事件
-                    GestureDescription.Builder builder = new GestureDescription.Builder();
-
                     // 获取屏幕坐标
                     Rect bounds = new Rect();
                     foundNode.getBoundsInScreen(bounds);
-                    Path path = new Path();
-                    path.moveTo(bounds.centerX(), bounds.centerY());
+                    onAutoClickEvents(bounds.centerX(), bounds.centerY(), new AutoClickCallback() {
 
-                    // 50ms点击更接近真实操作
-                    builder.addStroke(new GestureDescription.StrokeDescription(path, 0, 50));
-                    dispatchGesture(builder.build(), new GestureResultCallback() {
                         @Override
-                        public void onCompleted(GestureDescription gestureDescription) {
-                            super.onCompleted(gestureDescription);
+                        public void onCompleted() {
                             // 完成的回调
                             Log.d(TAG, "###已点击，我知道了");
 
@@ -437,11 +429,10 @@ public class AutoTouchService extends AccessibilityService {
                         }
 
                         @Override
-                        public void onCancelled(GestureDescription gestureDescription) {
-                            super.onCancelled(gestureDescription);
+                        public void onCancelled() {
                             // 取消的回调
                         }
-                    }, null);
+                    });
 
                     foundNode.recycle(); // 必须回收节点
                 }
@@ -517,7 +508,7 @@ public class AutoTouchService extends AccessibilityService {
         findNode.findNode("com.lynx.tasm.behavior.ui.LynxFlattenUI", "超级福袋", luckyBagTime, getRootInActiveWindow(), luckyBagNode -> {
             if (luckyBagNode != null) {
                 // 检查到抢福袋控件，则模拟点击抢福袋
-                Log.d(TAG, "###找到 福袋 控件");
+                Log.d(TAG, "###检测到，超级福袋");
 
                 if (!isAllowed) {
                     Log.d(TAG, "###您设置了福袋卡点时间：" + luckyBagTime + "分钟；目前还没有到开抢时间。");
@@ -546,22 +537,16 @@ public class AutoTouchService extends AccessibilityService {
                         // 完成的回调
                         mLuckyBagStep = 2;
 
-                        Log.d(TAG, "###已点击，福袋控件");
+                        Log.d(TAG, "###已点击，超级福袋");
                         // 等待2秒
                         delayHandler.postDelayed(() -> {
                             findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "一键发表评论", -1, getRootInActiveWindow(), senCommentNode -> {
                                 if (senCommentNode != null) {
 
-                                    // 初始化点击事件
-                                    GestureDescription.Builder builder = new GestureDescription.Builder();
-                                    Path p = new Path();
-                                    p.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY());
-                                    builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
-                                    GestureDescription gesture = builder.build();
-                                    dispatchGesture(gesture, new GestureResultCallback() {
+                                    onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
+
                                         @Override
-                                        public void onCompleted(GestureDescription gestureDescription) {
-                                            super.onCompleted(gestureDescription);
+                                        public void onCompleted() {
                                             // 完成的回调
                                             Log.d(TAG, "###已点击，一键发表评论");
                                             mLuckyBagStep = 3;
@@ -576,11 +561,11 @@ public class AutoTouchService extends AccessibilityService {
                                         }
 
                                         @Override
-                                        public void onCancelled(GestureDescription gestureDescription) {
-                                            super.onCancelled(gestureDescription);
+                                        public void onCancelled() {
                                             // 取消的回调
                                         }
-                                    }, null);
+                                    });
+
                                 } else {
                                     // 没有找到控件或者已参与成功
                                     Log.d(TAG, "###没有找到【一键发表评论】");
@@ -589,16 +574,10 @@ public class AutoTouchService extends AccessibilityService {
                                     findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "参与抽奖", -1, getRootInActiveWindow(), luckDrawNode -> {
                                         if (luckDrawNode != null) {
 
-                                            // 初始化点击事件
-                                            GestureDescription.Builder builder = new GestureDescription.Builder();
-                                            Path p = new Path();
-                                            p.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY());
-                                            builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
-                                            GestureDescription gesture = builder.build();
-                                            dispatchGesture(gesture, new GestureResultCallback() {
+                                            onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
+
                                                 @Override
-                                                public void onCompleted(GestureDescription gestureDescription) {
-                                                    super.onCompleted(gestureDescription);
+                                                public void onCompleted() {
                                                     // 完成的回调
                                                     Log.d(TAG, "###已点击，参与抽奖");
                                                     mLuckyBagStep = 3;
@@ -613,11 +592,11 @@ public class AutoTouchService extends AccessibilityService {
                                                 }
 
                                                 @Override
-                                                public void onCancelled(GestureDescription gestureDescription) {
-                                                    super.onCancelled(gestureDescription);
+                                                public void onCancelled() {
                                                     // 取消的回调
                                                 }
-                                            }, null);
+                                            });
+
                                         } else {
                                             // 观看直播
                                             findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", -1, getRootInActiveWindow(), nodeInfo -> {
@@ -644,8 +623,72 @@ public class AutoTouchService extends AccessibilityService {
                     }
                 }, null);
             } else {
-                Log.d(TAG, "###没有找到 福袋 控件");
-                mLuckyBagStep = 0;
+                findNode.findNode("android.widget.Button", "生活服务-直播-福袋", -1, getRootInActiveWindow(), buyLuckyBag -> {
+                    if (buyLuckyBag != null) {
+                        // 检查到团购福袋控件，则模拟点击抢福袋
+                        Log.d(TAG, "###检测到，团购福袋");
+
+                        // 点击抢福袋控件
+                        buyLuckyBag.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+
+                        // 获取屏幕坐标
+                        Rect rect = new Rect();
+                        buyLuckyBag.getBoundsInScreen(rect);
+                        mLuckyBagX = rect.left;
+                        mLuckyBagY = rect.top;
+
+                        // 初始化点击事件
+                        onAutoClickEvents(mLuckyBagX, mLuckyBagY, new AutoClickCallback() {
+
+                            @Override
+                            public void onCompleted() {
+                                // 完成的回调
+                                mLuckyBagStep = 2;
+
+                                Log.d(TAG, "###已点击，团购福袋");
+                                // 等待3秒
+                                delayHandler.postDelayed(() -> {
+                                    Log.d(TAG, "###检测参与界面是否打开");
+                                    findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "发送评论 参与抽奖", -1, getRootInActiveWindow(), buyInfo -> {
+                                        if (buyInfo != null) {
+                                            Log.d(TAG, "###检测到弹出参与界面");
+                                            // 初始化点击事件
+                                            onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
+
+                                                @Override
+                                                public void onCompleted() {
+                                                    // 完成的回调
+                                                    Log.d(TAG, "###已点击，发送评论 参与抽奖");
+                                                    mLuckyBagStep = 3;
+                                                }
+
+                                                @Override
+                                                public void onCancelled() {
+                                                    // 取消的回调
+                                                    Log.d(TAG, "###团购福袋-参与界面，取消回调");
+                                                }
+                                            });
+
+                                        } else {
+                                            Log.d(TAG, "###没有检测到参与界面");
+                                            // 参与成功 等待开奖、即将开奖 无法参与、活动已结束等，直接关闭界面
+                                            emptyWindowClick();
+                                        }
+                                    });
+                                }, 3000);
+                            }
+
+                            @Override
+                            public void onCancelled() {
+                                // 取消的回调
+                                Log.d(TAG, "###团购福袋，取消回调");
+                            }
+                        });
+                    } else {
+                        Log.d(TAG, "###没有检测到，左上角的福袋！");
+                        mLuckyBagStep = 0;
+                    }
+                });
             }
         });
 
@@ -655,16 +698,10 @@ public class AutoTouchService extends AccessibilityService {
      * 当前是“开始观看直播任务”，执行关闭
      */
     private void startWatch() {
-        // 初始化点击事件
-        GestureDescription.Builder builder = new GestureDescription.Builder();
-        Path p = new Path();
-        p.moveTo(autoTouchPoint.getX(), autoTouchPoint.getY());
-        builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
-        GestureDescription gesture = builder.build();
-        dispatchGesture(gesture, new GestureResultCallback() {
+        onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
+
             @Override
-            public void onCompleted(GestureDescription gestureDescription) {
-                super.onCompleted(gestureDescription);
+            public void onCompleted() {
                 // 完成的回调
                 Log.d(TAG, "###已点击，开始观看直播任务");
                 mLuckyBagStep = 4;
@@ -674,11 +711,10 @@ public class AutoTouchService extends AccessibilityService {
             }
 
             @Override
-            public void onCancelled(GestureDescription gestureDescription) {
-                super.onCancelled(gestureDescription);
+            public void onCancelled() {
                 // 取消的回调
             }
-        }, null);
+        });
     }
 
     /**
@@ -687,26 +723,60 @@ public class AutoTouchService extends AccessibilityService {
     private void emptyWindowClick() {
         // 等待2秒
         delayHandler.postDelayed(() -> {
-            GestureDescription.Builder builder = new GestureDescription.Builder();
-            Path p = new Path();
-            p.moveTo(mLuckyBagX, mLuckyBagY);
-            builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
-            GestureDescription gesture = builder.build();
-            dispatchGesture(gesture, new GestureResultCallback() {
+            onAutoClickEvents(mLuckyBagX, mLuckyBagY, new AutoClickCallback() {
                 @Override
-                public void onCompleted(GestureDescription gestureDescription) {
-                    super.onCompleted(gestureDescription);
+                public void onCompleted() {
                     // 完成的回调
                     Log.d(TAG, "###已点击，空白界面");
                 }
 
                 @Override
-                public void onCancelled(GestureDescription gestureDescription) {
-                    super.onCancelled(gestureDescription);
+                public void onCancelled() {
                     // 取消的回调
                 }
-            }, null);
+            });
+
         }, 2000);
+    }
+
+    /**
+     * 自动点击事件
+     *
+     * @param x          View 的X坐标
+     * @param y          View 的Y坐标
+     * @param onCallback 点击事件的回调
+     */
+    private void onAutoClickEvents(int x, int y, AutoClickCallback onCallback) {
+        GestureDescription.Builder builder = new GestureDescription.Builder();
+        Path p = new Path();
+        p.moveTo(x, y);
+        builder.addStroke(new GestureDescription.StrokeDescription(p, 0L, 500L));
+        GestureDescription gesture = builder.build();
+        dispatchGesture(gesture, new GestureResultCallback() {
+            @Override
+            public void onCompleted(GestureDescription gestureDescription) {
+                super.onCompleted(gestureDescription);
+                // 完成的回调
+                if (onCallback != null) {
+                    onCallback.onCompleted();
+                }
+            }
+
+            @Override
+            public void onCancelled(GestureDescription gestureDescription) {
+                super.onCancelled(gestureDescription);
+                // 取消的回调
+                if (onCallback != null) {
+                    onCallback.onCancelled();
+                }
+            }
+        }, null);
+    }
+
+    private interface AutoClickCallback {
+        void onCompleted();
+
+        void onCancelled();
     }
 
     @Override

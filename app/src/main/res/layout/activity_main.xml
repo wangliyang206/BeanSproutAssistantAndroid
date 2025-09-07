@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -58,411 +59,402 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/layout_bg_shape"
         android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:text="设置"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/layout_bg_shape"
-            android:orientation="vertical">
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- 专属 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="专属："
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <RadioGroup
+                android:id="@+id/ragr_exclusive"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="3dp">
+
+                <RadioButton
+                    android:id="@+id/cb_exclusive_tiktok"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:tag="1"
+                    android:text="抖音"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/cb_exclusive_kwai"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:tag="2"
+                    android:text="快手"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/cb_exclusive_other"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:tag="3"
+                    android:text="其它"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <!-- 功能 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:text="设置"
+                android:text="功能："
                 android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="14sp" />
 
-            <LinearLayout
+            <com.wly.beansprout.view.GridRadioGroup
+                android:id="@+id/ragr_function"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                app:columnNum="3">
 
-                <!-- 专属 -->
-                <TextView
+                <RadioButton
+                    android:id="@+id/cb_function_singleclick"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="专属："
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:text="轻点触发"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
-                <RadioGroup
-                    android:id="@+id/ragr_exclusive"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="3dp">
-
-                    <RadioButton
-                        android:id="@+id/cb_exclusive_tiktok"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:checked="true"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="1"
-                        android:text="音短视频"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-
-                    <RadioButton
-                        android:id="@+id/cb_exclusive_kwai"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="2"
-                        android:text="快短视频"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-
-                    <RadioButton
-                        android:id="@+id/cb_exclusive_other"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="3"
-                        android:text="其它"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-                </RadioGroup>
-            </LinearLayout>
-
-            <!-- 功能 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
+                <RadioButton
+                    android:id="@+id/cb_function_like"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="功能："
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:text="直播点赞"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
-                <com.wly.beansprout.view.GridRadioGroup
-                    android:id="@+id/ragr_function"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    app:columnNum="3">
-
-                    <RadioButton
-                        android:id="@+id/cb_function_singleclick"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:text="轻点触发"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-
-                    <RadioButton
-                        android:id="@+id/cb_function_like"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:checked="true"
-                        android:gravity="center"
-                        android:text="直播点赞"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-
-                    <RadioButton
-                        android:id="@+id/cb_function_slidedDown"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:text="向下滑动"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-
-                    <RadioButton
-                        android:id="@+id/cb_function_slideUpAndDown"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:paddingTop="5dp"
-                        android:text="向上滑动"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-
-                    <RadioButton
-                        android:id="@+id/cb_function_slidingLeft"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:paddingTop="5dp"
-                        android:text="向左滑动"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-
-                    <RadioButton
-                        android:id="@+id/cb_function_slidingRight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:paddingTop="5dp"
-                        android:text="向右滑动"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-
-                    <RadioButton
-                        android:id="@+id/cb_function_floatingScreen"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:paddingTop="5dp"
-                        android:text="自动回复"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-
-                    <RadioButton
-                        android:id="@+id/cb_function_luckyBag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:paddingTop="5dp"
-                        android:text="抢福袋"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
-                </com.wly.beansprout.view.GridRadioGroup>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/lila_auxiliary_settings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <!-- 辅助设置 -->
-                <TextView
+                <RadioButton
+                    android:id="@+id/cb_function_slidedDown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="设置时间："
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:text="向下滑动"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
-                <com.wly.beansprout.view.GridRadioGroup
-                    android:id="@+id/group_luckybag_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    app:columnNum="3">
-
-                    <RadioButton
-                        android:id="@+id/radio_luckybagtime_one"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:checked="true"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="999"
-                        android:text="不设置"
-                        android:textColor="@android:color/black"
-                        android:textSize="12sp" />
-
-                    <RadioButton
-                        android:id="@+id/radio_luckybagtime_two"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="998"
-                        android:text="5~10随机"
-                        android:textColor="@android:color/black"
-                        android:textSize="12sp" />
-
-                    <RadioButton
-                        android:id="@+id/radio_luckybagtime_three"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="997"
-                        android:text="0~5随机"
-                        android:textColor="@android:color/black"
-                        android:textSize="12sp" />
-
-                    <RadioButton
-                        android:id="@+id/radio_luckybagtime_four"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="5"
-                        android:text="5分钟"
-                        android:textColor="@android:color/black"
-                        android:textSize="12sp" />
-
-                    <RadioButton
-                        android:id="@+id/radio_luckybagtime_five"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="1"
-                        android:text="1分钟"
-                        android:textColor="@android:color/black"
-                        android:textSize="12sp" />
-
-                    <RadioButton
-                        android:id="@+id/radio_luckybagtime_six"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="0"
-                        android:text="小于1分"
-                        android:textColor="@android:color/black"
-                        android:textSize="12sp" />
-                </com.wly.beansprout.view.GridRadioGroup>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <!-- 模型 -->
-                <TextView
+                <RadioButton
+                    android:id="@+id/cb_function_slideUpAndDown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="模型："
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:paddingTop="5dp"
+                    android:text="向上滑动"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
-                <RadioGroup
-                    android:id="@+id/ragr_animation"
-                    android:layout_width="match_parent"
+                <RadioButton
+                    android:id="@+id/cb_function_slidingLeft"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="3dp">
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:paddingTop="5dp"
+                    android:text="向左滑动"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
 
-                    <RadioButton
-                        android:id="@+id/cb_animation_goldenHairedChick"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="1"
-                        android:text="功德小鸡"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
+                <RadioButton
+                    android:id="@+id/cb_function_slidingRight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:paddingTop="5dp"
+                    android:text="向右滑动"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
 
-                    <RadioButton
-                        android:id="@+id/cb_animation_cuteChicken"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:button="@drawable/checkbox_checked_style"
-                        android:checked="true"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:tag="2"
-                        android:text="跳绳小鸡"
-                        android:textColor="@android:color/black"
-                        android:textSize="13sp" />
+                <RadioButton
+                    android:id="@+id/cb_function_floatingScreen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:paddingTop="5dp"
+                    android:text="自动回复"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
 
-                </RadioGroup>
-            </LinearLayout>
+                <RadioButton
+                    android:id="@+id/cb_function_superLuckyBag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:paddingTop="5dp"
+                    android:text="超级福袋"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+            </com.wly.beansprout.view.GridRadioGroup>
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_start"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/shape_bt_home"
-            android:gravity="center"
-            android:onClick="onStartClick"
-            android:text="开始"
-            android:textColor="@android:color/white"
-            android:textSize="36sp" />
+        <LinearLayout
+            android:id="@+id/lila_auxiliary_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <!-- 辅助设置 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="设置时间："
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <com.wly.beansprout.view.GridRadioGroup
+                android:id="@+id/group_luckybag_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:columnNum="3">
+
+                <RadioButton
+                    android:id="@+id/radio_luckybagtime_one"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:tag="999"
+                    android:text="不设置"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/radio_luckybagtime_two"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:tag="998"
+                    android:text="5~10随机"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/radio_luckybagtime_three"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:tag="997"
+                    android:text="0~5随机"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/radio_luckybagtime_four"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:tag="5"
+                    android:text="5分钟"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/radio_luckybagtime_five"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:tag="1"
+                    android:text="1分钟"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/radio_luckybagtime_six"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:tag="0"
+                    android:text="小于1分"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+            </com.wly.beansprout.view.GridRadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- 模型 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="模型："
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <RadioGroup
+                android:id="@+id/ragr_animation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="3dp">
+
+                <RadioButton
+                    android:id="@+id/cb_animation_goldenHairedChick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:tag="1"
+                    android:text="功德小鸡"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/cb_animation_cuteChicken"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:button="@drawable/checkbox_checked_style"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:tag="2"
+                    android:text="跳绳小鸡"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+            </RadioGroup>
+        </LinearLayout>
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_start"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/shape_bt_home"
+        android:gravity="center"
+        android:onClick="onStartClick"
+        android:text="开始"
+        android:textColor="@android:color/white"
+        android:textSize="32sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <TextView
         android:id="@+id/txvi_version"
