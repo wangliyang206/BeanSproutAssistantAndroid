@@ -538,7 +538,7 @@ public class AutoTouchService extends AccessibilityService {
                         mLuckyBagStep = 2;
 
                         Log.d(TAG, "###已点击，超级福袋");
-                        // 等待2秒
+                        // 等待3秒
                         delayHandler.postDelayed(() -> {
                             findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "一键发表评论", -1, getRootInActiveWindow(), senCommentNode -> {
                                 if (senCommentNode != null) {
@@ -612,7 +612,7 @@ public class AutoTouchService extends AccessibilityService {
                                     });
                                 }
                             });
-                        }, 2000);
+                        }, 3000);
                     }
 
                     @Override
@@ -768,7 +768,7 @@ public class AutoTouchService extends AccessibilityService {
      * 点击空白界面
      */
     private void emptyWindowClick() {
-        // 等待2秒
+        // 等待3秒
         delayHandler.postDelayed(() -> {
             onAutoClickEvents(mLuckyBagX, mLuckyBagY, new AutoClickCallback() {
                 @Override
