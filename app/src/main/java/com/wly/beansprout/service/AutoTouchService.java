@@ -628,6 +628,12 @@ public class AutoTouchService extends AccessibilityService {
                         // 检查到团购福袋控件，则模拟点击抢福袋
                         Log.d(TAG, "###检测到，团购福袋");
 
+                        if (!isAllowed) {
+                            Log.d(TAG, "###您设置了福袋卡点时间：" + luckyBagTime + "分钟；目前还没有到开抢时间。");
+                            mLuckyBagStep = 0;
+                            return;
+                        }
+
                         // 点击抢福袋控件
                         buyLuckyBag.performAction(AccessibilityNodeInfo.ACTION_CLICK);
 

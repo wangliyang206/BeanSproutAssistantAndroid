@@ -105,13 +105,11 @@ public class FindTargetNodeUtil {
     private boolean isTargetNode(AccessibilityNodeInfo rootNode, String className, String tips, int luckyBagTime) {
         if (TextUtils.isEmpty(tips)) {
             // 不需要匹配提示词
-            if (rootNode.getClassName().equals(className)) {
-                return true;
-            }
+            return rootNode.getClassName().equals(className);
 
         } else {
             // 需要匹配提示词
-            if (rootNode.getClassName().equals(className) && rootNode.getContentDescription().toString().contains(tips)) {
+            if (rootNode != null && rootNode.getClassName().equals(className) && rootNode.getContentDescription().toString().contains(tips)) {
                 // 如果是【超级福袋】的话，匹配一下时间
                 if (tips.contains("超级福袋")) {
                     // 获取时间，格式：超级福袋 3分56秒 按钮
