@@ -7,8 +7,8 @@ android {
         applicationId "com.wly.beansprout"
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode 149
-        versionName "1.4.9"
+        versionCode 150
+        versionName "1.5.0"
     }
 
     //编译可选项参数

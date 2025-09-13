@@ -109,26 +109,31 @@ public class FindTargetNodeUtil {
 
         } else {
             // 需要匹配提示词
-            if (rootNode != null && rootNode.getClassName().equals(className) && rootNode.getContentDescription().toString().contains(tips)) {
-                // 如果是【超级福袋】的话，匹配一下时间
-                if (tips.contains("超级福袋")) {
-                    // 获取时间，格式：超级福袋 3分56秒 按钮
-                    String time = rootNode.getContentDescription().toString();
-                    time = time.substring(time.indexOf("袋") + 2, time.lastIndexOf("分"));
+            // 由于在停止抢福袋时会报异常，这里为了统一处理，直接采用异常捕获方式
 
-                    Log.d(TAG, "###福袋时间=" + time + "分钟");
-                    if (luckyBagTime == -1 || luckyBagTime == 999) {
-                        // 不设置时间，要求立即参与
+            try {
+                if (rootNode.getClassName().equals(className) && rootNode.getContentDescription().toString().contains(tips)) {
+                    // 如果是【超级福袋】的话，匹配一下时间
+                    if (tips.contains("超级福袋")) {
+                        // 获取时间，格式：超级福袋 3分56秒 按钮
+                        String time = rootNode.getContentDescription().toString();
+                        time = time.substring(time.indexOf("袋") + 2, time.lastIndexOf("分"));
+
+                        Log.d(TAG, "###福袋时间=" + time + "分钟");
+                        if (luckyBagTime == -1 || luckyBagTime == 999) {
+                            // 不设置时间，要求立即参与
+                            AutoTouchService.isAllowed = true;
+                        } else {
+                            // 配置时间小于超级福袋时间，不允许参与
+                            AutoTouchService.isAllowed = luckyBagTime >= Integer.parseInt(time);
+                        }
+                    } else if (tips.contains("生活服务-直播-福袋")) {
                         AutoTouchService.isAllowed = true;
-                    } else {
-                        // 配置时间小于超级福袋时间，不允许参与
-                        AutoTouchService.isAllowed = luckyBagTime >= Integer.parseInt(time);
                     }
-                } else if (tips.contains("生活服务-直播-福袋")) {
-                    AutoTouchService.isAllowed = true;
-                }
 
-                return true;
+                    return true;
+                }
+            } catch (Exception ignored) {
             }
         }
 

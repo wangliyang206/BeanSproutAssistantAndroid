@@ -114,8 +114,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         groupAnimation = findViewById(R.id.ragr_animation);
         // 版本号
         TextView txviVersion = findViewById(R.id.txvi_version);
-        // 服务政策 与 隐私协议
+        // 服务政策、使用教程、隐私协议
         findViewById(R.id.txvi_mainactivity_serviceAgreement).setOnClickListener(this);
+        findViewById(R.id.txvi_mainactivity_usetutorial).setOnClickListener(this);
         findViewById(R.id.txvi_mainactivity_privacyPolicy).setOnClickListener(this);
 
         // 显示用户名、手机号、状态
@@ -447,6 +448,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 intent.putExtras(bundle);
                 startActivity(intent);
+                break;
+            case R.id.txvi_mainactivity_usetutorial:
+                // 《使用教程》
+                Intent videoIntent = new Intent(this, VideoPlayerActivity.class);
+                startActivity(videoIntent);
                 break;
             case R.id.txvi_mainactivity_privacyPolicy:
                 // 《隐私政策》
