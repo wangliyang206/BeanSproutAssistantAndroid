@@ -32,14 +32,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 无障碍服务-自动点赞
+ * 无障碍服务-自主操作服务
  *
  * @date 2024/4/26 16:23
  */
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class AutoTouchService extends AccessibilityService {
 
     private final String TAG = "AutoTouchService+++";
+    // 团购福袋控件路径
+    private final String TG_CLASS_PATH = "com.lynx.tasm.behavior.ui.view.UIView";
+    // 超级福袋控件路径
+    private final String CJ_CLASS_PATH = "com.lynx.tasm.behavior.ui.LynxFlattenUI";
     // 自动点击事件
     private TouchPoint autoTouchPoint;
     // 创建一个Handler，它与当前线程（通常是UI线程）的Looper关联
@@ -404,7 +407,7 @@ public class AutoTouchService extends AccessibilityService {
         if (packageName.contains(TouchEventManager.getInstance().getAppPackageName()) && type == 8 && mLuckyBagStep >= 2) {
             // 提交任务到线程池
             mExecutor.execute(() -> {
-                AccessibilityNodeInfo foundNode = findNode.findTargetNode(getRootInActiveWindow(), "com.lynx.tasm.behavior.ui.view.UIView", "我知道了", -1);
+                AccessibilityNodeInfo foundNode = findNode.findTargetNode(getRootInActiveWindow(), CJ_CLASS_PATH, "我知道了", -1);
 //                Log.d(TAG, "###" + Thread.currentThread().getName() + "----------foundNode=" + (foundNode != null));
                 if (foundNode != null) {
                     Log.d(TAG, "###界面监听到【没有抽中福袋】界面");
@@ -505,7 +508,7 @@ public class AutoTouchService extends AccessibilityService {
      */
     private void grabLuckyBag() {
         mLuckyBagStep = 1;
-        findNode.findNode("com.lynx.tasm.behavior.ui.LynxFlattenUI", "超级福袋", luckyBagTime, getRootInActiveWindow(), luckyBagNode -> {
+        findNode.findNode(CJ_CLASS_PATH, "超级福袋", luckyBagTime, getRootInActiveWindow(), luckyBagNode -> {
             if (luckyBagNode != null) {
                 // 检查到抢福袋控件，则模拟点击抢福袋
                 Log.d(TAG, "###检测到，超级福袋");
@@ -540,7 +543,7 @@ public class AutoTouchService extends AccessibilityService {
                         Log.d(TAG, "###已点击，超级福袋");
                         // 等待3秒
                         delayHandler.postDelayed(() -> {
-                            findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "一键发表评论", -1, getRootInActiveWindow(), senCommentNode -> {
+                            findNode.findNode(CJ_CLASS_PATH, "一键发表评论", -1, getRootInActiveWindow(), senCommentNode -> {
                                 if (senCommentNode != null) {
 
                                     onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
@@ -552,7 +555,7 @@ public class AutoTouchService extends AccessibilityService {
                                             mLuckyBagStep = 3;
 
                                             delayHandler.postDelayed(() -> {
-                                                findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", -1, getRootInActiveWindow(), startTaskNode -> {
+                                                findNode.findNode(CJ_CLASS_PATH, "开始观看直播任务", -1, getRootInActiveWindow(), startTaskNode -> {
                                                     if (startTaskNode != null) {
                                                         startWatch();
                                                     }
@@ -571,7 +574,7 @@ public class AutoTouchService extends AccessibilityService {
                                     Log.d(TAG, "###没有找到【一键发表评论】");
 
                                     // 参与抽奖
-                                    findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "参与抽奖", -1, getRootInActiveWindow(), luckDrawNode -> {
+                                    findNode.findNode(CJ_CLASS_PATH, "参与抽奖", -1, getRootInActiveWindow(), luckDrawNode -> {
                                         if (luckDrawNode != null) {
 
                                             onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
@@ -583,7 +586,7 @@ public class AutoTouchService extends AccessibilityService {
                                                     mLuckyBagStep = 3;
 
                                                     delayHandler.postDelayed(() -> {
-                                                        findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", -1, getRootInActiveWindow(), nodeInfo -> {
+                                                        findNode.findNode(CJ_CLASS_PATH, "开始观看直播任务", -1, getRootInActiveWindow(), nodeInfo -> {
                                                             if (nodeInfo != null) {
                                                                 startWatch();
                                                             }
@@ -599,7 +602,7 @@ public class AutoTouchService extends AccessibilityService {
 
                                         } else {
                                             // 观看直播
-                                            findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务", -1, getRootInActiveWindow(), nodeInfo -> {
+                                            findNode.findNode(CJ_CLASS_PATH, "开始观看直播任务", -1, getRootInActiveWindow(), nodeInfo -> {
                                                 if (nodeInfo != null) {
                                                     // 开始观看直播任务
                                                     startWatch();
@@ -655,7 +658,7 @@ public class AutoTouchService extends AccessibilityService {
                                 // 等待3秒
                                 delayHandler.postDelayed(() -> {
 
-                                    findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "发送评论 参与抽奖", -1, getRootInActiveWindow(), buyInfo -> {
+                                    findNode.findNode(TG_CLASS_PATH, "发送评论 参与抽奖", -1, getRootInActiveWindow(), buyInfo -> {
                                         if (buyInfo != null) {
                                             Log.d(TAG, "### 发送评论 参与抽奖");
                                             // 初始化点击事件
@@ -677,7 +680,7 @@ public class AutoTouchService extends AccessibilityService {
 
                                         } else {
                                             Log.d(TAG, "### 发送评论");
-                                            findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "发送评论", -1, getRootInActiveWindow(), luckDrawNode -> {
+                                            findNode.findNode(TG_CLASS_PATH, "发送评论", -1, getRootInActiveWindow(), luckDrawNode -> {
                                                 if (luckDrawNode != null) {
                                                     onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
 
@@ -688,7 +691,7 @@ public class AutoTouchService extends AccessibilityService {
                                                             mLuckyBagStep = 3;
 
                                                             delayHandler.postDelayed(() -> {
-                                                                findNode.findNode("com.lynx.tasm.behavior.ui.view.UIView", "开始观看直播任务 参与抽奖", -1, getRootInActiveWindow(), nodeInfo -> {
+                                                                findNode.findNode(TG_CLASS_PATH, "开始观看直播任务 参与抽奖", -1, getRootInActiveWindow(), nodeInfo -> {
                                                                     if (nodeInfo != null) {
                                                                         onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
 

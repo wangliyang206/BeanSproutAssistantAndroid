@@ -10483,7 +10483,6 @@ androidx.appcompat.app.ActionBar:
     public abstract int getTabCount()
     public abstract int getHeight()
     public abstract void show()
-    public abstract void hide()
     public abstract boolean isShowing()
     public void setHomeButtonEnabled(boolean)
     public boolean isTitleTruncated()
@@ -10647,7 +10646,6 @@ androidx.appcompat.app.ToolbarActionBar:
     public int getTabCount()
     public int getHeight()
     public void show()
-    public void hide()
     public boolean isShowing()
 androidx.core.hardware.fingerprint.FingerprintManagerCompat$AuthenticationResult
 androidx.fragment.app.Fragment$SavedState:
@@ -11303,7 +11301,6 @@ androidx.appcompat.app.WindowDecorActionBar:
     public androidx.appcompat.app.ActionBar$Tab getSelectedTab()
     public int getHeight()
     public void show()
-    public void hide()
     public boolean isHideOnContentScrollEnabled()
     public int getHideOffset()
     public void setHideOffset(int)
