@@ -5,7 +5,6 @@ import android.accessibilityservice.GestureDescription;
 import android.annotation.SuppressLint;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,8 +12,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-
-import androidx.annotation.RequiresApi;
 
 import com.wly.beansprout.bean.TouchEvent;
 import com.wly.beansprout.bean.TouchPoint;
@@ -75,6 +72,9 @@ public class AutoTouchService extends AccessibilityService {
      * 查找目标节点 对象
      */
     private FindTargetNodeUtil findNode;
+
+    // 是否是团购福袋
+    private boolean isTgLuckyBag = false;
 
     @Override
     protected void onServiceConnected() {
@@ -407,7 +407,7 @@ public class AutoTouchService extends AccessibilityService {
         if (packageName.contains(TouchEventManager.getInstance().getAppPackageName()) && type == 8 && mLuckyBagStep >= 2) {
             // 提交任务到线程池
             mExecutor.execute(() -> {
-                AccessibilityNodeInfo foundNode = findNode.findTargetNode(getRootInActiveWindow(), CJ_CLASS_PATH, "我知道了", -1);
+                AccessibilityNodeInfo foundNode = findNode.findTargetNode(getRootInActiveWindow(), isTgLuckyBag ? TG_CLASS_PATH : CJ_CLASS_PATH, "我知道了", -1);
 //                Log.d(TAG, "###" + Thread.currentThread().getName() + "----------foundNode=" + (foundNode != null));
                 if (foundNode != null) {
                     Log.d(TAG, "###界面监听到【没有抽中福袋】界面");
@@ -518,6 +518,8 @@ public class AutoTouchService extends AccessibilityService {
                     mLuckyBagStep = 0;
                     return;
                 }
+
+                isTgLuckyBag = false;
                 // 点击抢福袋控件
                 luckyBagNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
 
@@ -637,6 +639,7 @@ public class AutoTouchService extends AccessibilityService {
                             return;
                         }
 
+                        isTgLuckyBag = true;
                         // 点击抢福袋控件
                         buyLuckyBag.performAction(AccessibilityNodeInfo.ACTION_CLICK);
 
