@@ -73,7 +73,9 @@ public class AutoTouchService extends AccessibilityService {
      */
     private FindTargetNodeUtil findNode;
 
-    // 是否是团购福袋
+    /**
+     * 是否是团购福袋
+     */
     private boolean isTgLuckyBag = false;
 
     @Override
@@ -407,7 +409,7 @@ public class AutoTouchService extends AccessibilityService {
         if (packageName.contains(TouchEventManager.getInstance().getAppPackageName()) && type == 8 && mLuckyBagStep >= 2) {
             // 提交任务到线程池
             mExecutor.execute(() -> {
-                AccessibilityNodeInfo foundNode = findNode.findTargetNode(getRootInActiveWindow(), isTgLuckyBag ? TG_CLASS_PATH : CJ_CLASS_PATH, "我知道了", -1);
+                AccessibilityNodeInfo foundNode = findNode.findTargetNode(getRootInActiveWindow(), TG_CLASS_PATH, "我知道了", -1);
 //                Log.d(TAG, "###" + Thread.currentThread().getName() + "----------foundNode=" + (foundNode != null));
                 if (foundNode != null) {
                     Log.d(TAG, "###界面监听到【没有抽中福袋】界面");
@@ -545,7 +547,7 @@ public class AutoTouchService extends AccessibilityService {
                         Log.d(TAG, "###已点击，超级福袋");
                         // 等待3秒
                         delayHandler.postDelayed(() -> {
-                            findNode.findNode(CJ_CLASS_PATH, "一键发表评论", -1, getRootInActiveWindow(), senCommentNode -> {
+                            findNode.findNode(TG_CLASS_PATH, "一键发表评论", -1, getRootInActiveWindow(), senCommentNode -> {
                                 if (senCommentNode != null) {
 
                                     onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
@@ -557,7 +559,7 @@ public class AutoTouchService extends AccessibilityService {
                                             mLuckyBagStep = 3;
 
                                             delayHandler.postDelayed(() -> {
-                                                findNode.findNode(CJ_CLASS_PATH, "开始观看直播任务", -1, getRootInActiveWindow(), startTaskNode -> {
+                                                findNode.findNode(TG_CLASS_PATH, "开始观看直播任务", -1, getRootInActiveWindow(), startTaskNode -> {
                                                     if (startTaskNode != null) {
                                                         startWatch();
                                                     }
@@ -576,7 +578,7 @@ public class AutoTouchService extends AccessibilityService {
                                     Log.d(TAG, "###没有找到【一键发表评论】");
 
                                     // 参与抽奖
-                                    findNode.findNode(CJ_CLASS_PATH, "参与抽奖", -1, getRootInActiveWindow(), luckDrawNode -> {
+                                    findNode.findNode(TG_CLASS_PATH, "参与抽奖", -1, getRootInActiveWindow(), luckDrawNode -> {
                                         if (luckDrawNode != null) {
 
                                             onAutoClickEvents(autoTouchPoint.getX(), autoTouchPoint.getY(), new AutoClickCallback() {
@@ -588,7 +590,7 @@ public class AutoTouchService extends AccessibilityService {
                                                     mLuckyBagStep = 3;
 
                                                     delayHandler.postDelayed(() -> {
-                                                        findNode.findNode(CJ_CLASS_PATH, "开始观看直播任务", -1, getRootInActiveWindow(), nodeInfo -> {
+                                                        findNode.findNode(TG_CLASS_PATH, "开始观看直播任务", -1, getRootInActiveWindow(), nodeInfo -> {
                                                             if (nodeInfo != null) {
                                                                 startWatch();
                                                             }
@@ -604,7 +606,7 @@ public class AutoTouchService extends AccessibilityService {
 
                                         } else {
                                             // 观看直播
-                                            findNode.findNode(CJ_CLASS_PATH, "开始观看直播任务", -1, getRootInActiveWindow(), nodeInfo -> {
+                                            findNode.findNode(TG_CLASS_PATH, "开始观看直播任务", -1, getRootInActiveWindow(), nodeInfo -> {
                                                 if (nodeInfo != null) {
                                                     // 开始观看直播任务
                                                     startWatch();

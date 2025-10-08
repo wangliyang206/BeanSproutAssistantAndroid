@@ -11673,6 +11673,7 @@ com.wly.beansprout.service.AutoTouchService:
     public final java.lang.String TAG
     public final java.lang.String TG_CLASS_PATH
     public final java.lang.String CJ_CLASS_PATH
+    public boolean isTgLuckyBag
 androidx.core.text.PrecomputedTextCompat$Params:
     public final android.text.PrecomputedText$Params mWrapped
 androidx.constraintlayout.motion.widget.MotionLayout:
