@@ -29,6 +29,7 @@ import com.wly.beansprout.utils.AccessibilityUtil;
 import com.wly.beansprout.utils.CommonUtils;
 import com.wly.beansprout.utils.ToastUtil;
 import com.wly.beansprout.utils.WindowUtils;
+import com.wly.beansprout.view.FlexboxRadioGroup;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -48,13 +49,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final String STRING_OPEN = "已开启";
 
     // 功能
-    private RadioGroup groupFunction;
+    private FlexboxRadioGroup groupFunction;
     // 动画
     private RadioGroup groupAnimation;
     // 开始
     private TextView tvStart;
     // 卡福袋时间
-    private RadioGroup groupLuckybagTime;
+    private FlexboxRadioGroup groupLuckybagTime;
 
     @Override
     protected void onDestroy() {

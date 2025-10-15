@@ -15,6 +15,13 @@ import com.wly.beansprout.R;
  * @Description: 多行显示
  * @Author: WLY
  * @CreateDate: 2024/7/11 12:13
+ *
+ * <com.wly.beansprout.view.GridRadioGroup
+ *                 android:id="@+id/ragr_function"
+ *                 android:layout_width="match_parent"
+ *                 android:layout_height="wrap_content"
+ *                 app:columnNum="3">
+ *
  */
 public class GridRadioGroup extends RadioGroup {
 

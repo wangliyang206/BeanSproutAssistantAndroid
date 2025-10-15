@@ -160,19 +160,23 @@
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
-            <com.wly.beansprout.view.GridRadioGroup
+            <com.wly.beansprout.view.FlexboxRadioGroup
                 android:id="@+id/ragr_function"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:columnNum="3">
+                app:flexDirection="row"
+                app:flexWrap="wrap"
+                app:justifyContent="flex_start">
 
                 <RadioButton
                     android:id="@+id/cb_function_singleclick"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
+                    android:padding="5dp"
                     android:text="轻点触发"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
@@ -181,11 +185,12 @@
                     android:id="@+id/cb_function_like"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:checked="true"
                     android:gravity="center"
+                    android:padding="5dp"
                     android:text="直播点赞"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
@@ -194,10 +199,11 @@
                     android:id="@+id/cb_function_slidedDown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
+                    android:padding="5dp"
                     android:text="向下滑动"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
@@ -206,11 +212,11 @@
                     android:id="@+id/cb_function_slideUpAndDown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
-                    android:paddingTop="5dp"
+                    android:padding="5dp"
                     android:text="向上滑动"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
@@ -219,11 +225,11 @@
                     android:id="@+id/cb_function_slidingLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
-                    android:paddingTop="5dp"
+                    android:padding="5dp"
                     android:text="向左滑动"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
@@ -232,11 +238,11 @@
                     android:id="@+id/cb_function_slidingRight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
-                    android:paddingTop="5dp"
+                    android:padding="5dp"
                     android:text="向右滑动"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
@@ -245,11 +251,11 @@
                     android:id="@+id/cb_function_floatingScreen"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
-                    android:paddingTop="5dp"
+                    android:padding="5dp"
                     android:text="自动回复"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
@@ -258,15 +264,15 @@
                     android:id="@+id/cb_function_superLuckyBag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
-                    android:paddingTop="5dp"
+                    android:padding="5dp"
                     android:text="超级福袋"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
-            </com.wly.beansprout.view.GridRadioGroup>
+            </com.wly.beansprout.view.FlexboxRadioGroup>
 
         </LinearLayout>
 
@@ -289,16 +295,19 @@
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
-            <com.wly.beansprout.view.GridRadioGroup
+            <com.wly.beansprout.view.FlexboxRadioGroup
                 android:id="@+id/group_luckybag_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:columnNum="3">
+                app:flexDirection="row"
+                app:flexWrap="wrap"
+                app:justifyContent="flex_start">
 
                 <RadioButton
                     android:id="@+id/radio_luckybagtime_one"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:checked="true"
@@ -313,7 +322,7 @@
                     android:id="@+id/radio_luckybagtime_two"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
@@ -327,7 +336,7 @@
                     android:id="@+id/radio_luckybagtime_three"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
@@ -341,7 +350,7 @@
                     android:id="@+id/radio_luckybagtime_four"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
@@ -355,7 +364,7 @@
                     android:id="@+id/radio_luckybagtime_five"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
@@ -369,7 +378,7 @@
                     android:id="@+id/radio_luckybagtime_six"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@null"
                     android:button="@drawable/checkbox_checked_style"
                     android:gravity="center"
@@ -378,7 +387,7 @@
                     android:text="小于1分"
                     android:textColor="@android:color/black"
                     android:textSize="12sp" />
-            </com.wly.beansprout.view.GridRadioGroup>
+            </com.wly.beansprout.view.FlexboxRadioGroup>
         </LinearLayout>
 
         <LinearLayout
