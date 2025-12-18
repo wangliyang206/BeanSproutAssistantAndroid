@@ -3,44 +3,60 @@ package com.wly.beansprout
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.tooling.preview.Preview
-import com.wly.beansprout.ui.theme.MyApplicationTheme
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowInsetsControllerCompat
+import com.wly.beansprout.model.SplashViewModel
+import com.wly.beansprout.ui.MainLayout
 
 class MainActivity : ComponentActivity() {
+    private val viewModel: SplashViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 必须在 super.onCreate 之前安装
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        setContent {
-            MyApplicationTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
+
+        // 将应用的内容延伸到屏幕的边缘，并隐藏或透明处理状态栏和导航栏。
+        enableEdgeToEdge()
+
+        // 启动数据加载任务
+        viewModel.startLoadingTasks()
+        // 设置闪屏保持条件（核心逻辑）
+        splashScreen.setKeepOnScreenCondition {
+            viewModel.isLoading // 直接访问 ViewModel 的状态
+        }
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+            // 示例：图标缩放动画
+            val icon = splashScreenView.iconView
+            icon.animate()
+                ?.setDuration(500)
+                ?.scaleX(0.5f)
+                ?.scaleY(0.5f)
+                ?.alpha(0f)
+                ?.withEndAction {
+                    splashScreenView.remove() // 必须调用
                 }
+                ?.start()
+        }
+        setContent {
+            MainLayout()
+            // 主界面恢复为白色字体
+            DisposableEffect(Unit) {
+                val controller = WindowInsetsControllerCompat(window, window.decorView)
+                controller.isAppearanceLightStatusBars = false
+                onDispose { }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
+/** 预览 */
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    MyApplicationTheme {
-        Greeting("Android")
-    }
+    MainLayout()
 }
