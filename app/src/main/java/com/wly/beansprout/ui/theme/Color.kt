@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * 颜色文件
+ * 说明：自定义颜色的格式为 Color(0xFFxxxxxx)
  * @author wly
  * @date 2025/03/05 15:06
  */
@@ -45,3 +46,6 @@ val Green = Color(0xFFADD7B9)
 
 val Shadow5 = Color(0xff4b30ed)
 val Neutral1 = Color(0xbdffffff)
+
+val BtnPress = Color(0xFF008577)
+val HomeBackground = Color(0xFFFAFAF9)
