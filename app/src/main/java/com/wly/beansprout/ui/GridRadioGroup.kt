@@ -1,8 +1,11 @@
 package com.wly.beansprout.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,6 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 /**
@@ -18,25 +23,22 @@ import androidx.compose.ui.unit.dp
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun GridRadioGroup(modifier: Modifier = Modifier) {
-    // 1. 10个选项的数据源（可自定义文本）
-    val radioOptions = listOf(
-        "选项1", "选项2", "选项3", "选项4", "选项5",
-        "选项6", "选项7", "选项8", "选项9", "选项10"
-    )
-
+fun GridRadioGroup(radioOptions: List<String>, modifier: Modifier = Modifier) {
     // 2. 互斥状态管理：保存当前选中的选项索引（-1表示未选中）
     var selectedIndex by remember { mutableStateOf(0) }
     // 3. FlowRow自动换行布局（核心）
     FlowRow(
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp), // 水平间距
-        verticalArrangement = Arrangement.spacedBy(8.dp)    // 垂直间距
+        modifier = modifier
+            .padding(horizontal = 1.dp, vertical = 1.dp),
+        // 水平间距
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        // 垂直间距
+        verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         // 遍历生成10个互斥RadioButton
         radioOptions.forEachIndexed { index, optionText ->
             // 单个RadioButton+文本组合
-            androidx.compose.foundation.layout.Row(
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(horizontal = 4.dp)
             ) {
@@ -50,4 +52,15 @@ fun GridRadioGroup(modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GridRadioGroupPreview() {
+    // 1. 10个选项的数据源（可自定义文本）
+    val radioOptions = listOf(
+        "轻点触发", "直播点赞", "向下滑动", "向上滑动", "向左滑动",
+        "向右滑动", "自动回复", "抢福袋"
+    )
+    GridRadioGroup(radioOptions)
 }

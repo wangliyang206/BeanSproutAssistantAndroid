@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 /**
  * 单选按钮
@@ -29,7 +30,9 @@ fun RadioButtonLayout(name: String, selected: Boolean, onClick: (() -> Unit)?) {
         )
 
         Text(
-            text = name, modifier = Modifier
+            text = name,
+            fontSize = 13.sp,
+            modifier = Modifier
                 .padding(end = 5.dp)
                 .clickable {
                     onClick?.invoke()

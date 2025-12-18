@@ -1,12 +1,12 @@
 package com.wly.beansprout.ui
 
-import android.widget.RadioButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -26,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.wly.beansprout.R
 import com.wly.beansprout.ui.theme.BtnPress
@@ -111,7 +110,7 @@ fun MainLayout() {
                         // 标题
                         Text(
                             text = "设置",
-                            fontSize = 20.sp,
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -119,7 +118,34 @@ fun MainLayout() {
                                 .wrapContentWidth(Alignment.CenterHorizontally)
                         )
 
-                        GridRadioGroup()
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .padding(start = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "专属：", fontSize = 14.sp)
+                            val oneOpt = listOf(
+                                "抖音", "快手", "其它"
+                            )
+                            GridRadioGroup(oneOpt)
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, top = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "功能：", fontSize = 14.sp)
+                            // 1. 10个选项的数据源（可自定义文本）
+                            val radioOptions = listOf(
+                                "轻点触发", "直播点赞", "向下滑动", "向上滑动", "向左滑动",
+                                "向右滑动", "自动回复", "抢福袋"
+                            )
+                            GridRadioGroup(radioOptions)
+                        }
                     }
 
                 }
@@ -127,6 +153,7 @@ fun MainLayout() {
                 // 底部
                 Text(
                     text = "V1.3.1测试版",
+                    fontSize = 14.sp,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 10.dp)
@@ -140,6 +167,6 @@ fun MainLayout() {
 
 @Preview(showBackground = true)
 @Composable
-fun ShowPreview() {
+fun MainLayoutPreview() {
     MainLayout()
 }
