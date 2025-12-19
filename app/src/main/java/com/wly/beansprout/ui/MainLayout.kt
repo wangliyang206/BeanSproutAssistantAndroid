@@ -38,6 +38,9 @@ import com.wly.beansprout.ui.theme.BtnColor
 import com.wly.beansprout.ui.theme.HomeBackground
 import com.wly.beansprout.ui.theme.JetNewsTheme
 
+/**
+ * 主界面
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainLayout() {
@@ -85,6 +88,9 @@ fun MainLayout() {
                             .background(Color.White),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        // 分割线
+                        Spacer(modifier = Modifier.padding(10.dp))
+
                         // 标题
                         Text(
                             text = "设置",
@@ -92,9 +98,11 @@ fun MainLayout() {
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 20.dp)
                                 .wrapContentWidth(Alignment.CenterHorizontally)
                         )
+
+                        // 分割线
+                        Spacer(modifier = Modifier.padding(10.dp))
 
                         // 专属
                         Row(
@@ -156,6 +164,9 @@ fun MainLayout() {
                             )
                             GridRadioGroup(oneOpt)
                         }
+
+                        // 分割线
+                        Spacer(modifier = Modifier.padding(5.dp))
                     }
 
                     // 分割线
