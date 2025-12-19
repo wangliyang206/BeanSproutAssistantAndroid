@@ -23,7 +23,7 @@ val Red200 = Color(0xfff297a2)
 val Red300 = Color(0xffea6d7e)
 
 // 16进制表示颜色 ff表示全透明度
-val Red700 = Color(0xffdd0d3c)
+val Red700 = Color(0xFF008577)
 val Red800 = Color(0xffd00036)
 val Red900 = Color(0xffc20029)
 
@@ -47,5 +47,5 @@ val Green = Color(0xFFADD7B9)
 val Shadow5 = Color(0xff4b30ed)
 val Neutral1 = Color(0xbdffffff)
 
-val BtnPress = Color(0xFF008577)
+val BtnColor = Color(0xFF008577)
 val HomeBackground = Color(0xFFFAFAF9)
