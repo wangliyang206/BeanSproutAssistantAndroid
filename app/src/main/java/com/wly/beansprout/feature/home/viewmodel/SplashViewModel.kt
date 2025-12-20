@@ -1,4 +1,4 @@
-package com.wly.beansprout.model
+package com.wly.beansprout.feature.home.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

@@ -1,4 +1,4 @@
-package com.wly.beansprout.ui.theme
+package com.wly.beansprout.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,4 +1,4 @@
-package com.wly.beansprout.ui
+package com.wly.beansprout.presentation
 
 import android.content.Context
 import android.content.Intent

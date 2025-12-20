@@ -147,18 +147,42 @@ android {
 }
 
 dependencies {
+    // Jetpack Core
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+
+    // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.core)
+    implementation(libs.androidx.material.icons.outlined)
+
+    // Navigation
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.core.splashscreen)
+
+    // 协程
+    implementation(libs.kotlinx.coroutines)
+
+    // 网络请求
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okHttp3.logging.interceptor)
+    implementation(libs.javax.inject)
+
+    // UI
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.compose.ui.googlefonts)
-    implementation(libs.constraintlayout.compose)
+    implementation(libs.androidx.constraintlayout.compose)
+
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
+
+    // 测试
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

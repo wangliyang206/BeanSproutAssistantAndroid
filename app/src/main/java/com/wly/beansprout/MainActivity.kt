@@ -10,8 +10,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowInsetsControllerCompat
-import com.wly.beansprout.model.SplashViewModel
-import com.wly.beansprout.ui.MainLayout
+import com.wly.beansprout.feature.home.viewmodel.SplashViewModel
+import com.wly.beansprout.presentation.MainLayout
 
 class MainActivity : ComponentActivity() {
     private val viewModel: SplashViewModel by viewModels()

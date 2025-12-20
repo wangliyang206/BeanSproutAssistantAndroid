@@ -1,4 +1,4 @@
-package com.wly.beansprout.ui.theme
+package com.wly.beansprout.presentation.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

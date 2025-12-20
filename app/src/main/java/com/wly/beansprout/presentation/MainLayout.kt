@@ -1,4 +1,4 @@
-package com.wly.beansprout.ui
+package com.wly.beansprout.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,10 +33,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.wly.beansprout.BuildConfig
 import com.wly.beansprout.R
-import com.wly.beansprout.ui.theme.BtnColor
-import com.wly.beansprout.ui.theme.HomeBackground
-import com.wly.beansprout.ui.theme.JetNewsTheme
+import com.wly.beansprout.presentation.components.GridRadioGroup
+import com.wly.beansprout.presentation.theme.BtnColor
+import com.wly.beansprout.presentation.theme.HomeBackground
+import com.wly.beansprout.presentation.theme.JetNewsTheme
 
 /**
  * 主界面
@@ -247,7 +249,7 @@ fun HomeTop() {
 @Composable
 fun HomeBottom() {
     Text(
-        text = "V1.3.1测试版",
+        text = "V${BuildConfig.VERSION_NAME}",
         fontSize = 14.sp,
         modifier = Modifier
             .fillMaxWidth()
