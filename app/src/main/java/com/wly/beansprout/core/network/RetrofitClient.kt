@@ -13,7 +13,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class RetrofitClient @Inject constructor() {
-    private val BASE_URL = "https://mock-api.example.com/" // 替换为真实BaseUrl
+    private val BASE_URL = "http://www.dagongji.xin/" // 替换为真实BaseUrl
 
     val apiService: ApiService by lazy {
         Retrofit.Builder()
