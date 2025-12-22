@@ -10,13 +10,15 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.io.IOException
+import javax.inject.Inject
 
 /**
  * DataStore 操作封装
  */
-class LoginPreferences(
+class LoginPreferences @Inject constructor(
     private val loginDataStore: DataStore<Preferences> // 注入 DataStore 实例
 ) {
+
     // 读取登录信息（Flow：可观察数据变化）
     val userInfoFlow: Flow<UserInfo> = loginDataStore.data
         // 捕获 IO 异常（如存储文件损坏）

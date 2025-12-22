@@ -1,10 +1,8 @@
 package com.wly.beansprout.feature.splash.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.core.splashscreen.SplashScreen
-import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.wly.beansprout.feature.splash.viewmodel.SplashViewModel
 
@@ -16,8 +14,8 @@ fun SplashScreen(
     navController: NavController,
     splashScreen: SplashScreen
 ) {
-    // 获取 ViewModel
-    val viewModel: SplashViewModel = viewModel()
+    // 使用 hiltViewModel() 获取 ViewModel，支持依赖注入
+    val viewModel: SplashViewModel = hiltViewModel()
 
     // 启动数据加载任务
     viewModel.startLoadingTasks()

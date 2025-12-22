@@ -2,6 +2,7 @@ package com.wly.beansprout.data.repository
 
 import com.wly.beansprout.core.datastore.LoginPreferences
 import com.wly.beansprout.core.network.ApiService
+import com.wly.beansprout.core.network.RetrofitClient
 import com.wly.beansprout.data.model.BaseRequest
 import com.wly.beansprout.data.model.UserInfo
 import kotlinx.coroutines.flow.first
@@ -11,7 +12,7 @@ import javax.inject.Inject
  * 登录相关数据逻辑
  */
 class LoginRepository @Inject constructor(
-    private val apiService: ApiService,
+    private val retrofitClient: RetrofitClient,
     private val userPrefs: LoginPreferences
 ) : BaseRepository() {
 
@@ -22,7 +23,7 @@ class LoginRepository @Inject constructor(
 
         // 发送登录请求
         val userData: UserInfo = requestNetwork {
-            apiService.validToken(
+            retrofitClient.apiService.validToken(
                 BaseRequest(
                     token = userPrefs.userInfoFlow.first().token,
                     data = requestData
@@ -48,7 +49,7 @@ class LoginRepository @Inject constructor(
 
         // 发送登录请求
         val userData: UserInfo = requestNetwork {
-            apiService.login(BaseRequest(data = requestData))
+            retrofitClient.apiService.login(BaseRequest(data = requestData))
         }
 
         operateLocal {
