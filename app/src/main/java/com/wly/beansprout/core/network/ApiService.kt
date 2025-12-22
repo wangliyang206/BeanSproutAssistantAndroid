@@ -13,4 +13,8 @@ interface ApiService {
     // 登录接口
     @POST("member/login")
     suspend fun login(@Body request: BaseRequest<Map<String, String>>): BaseResponse<UserInfo>
+
+    // 验证Token
+    @POST("member/validToken")
+    suspend fun validToken(@Body request: BaseRequest<Map<String, String>>): BaseResponse<UserInfo>
 }

@@ -1,4 +1,4 @@
-package com.wly.beansprout.presentation
+package com.wly.beansprout.feature.home.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.wly.beansprout.BuildConfig
 import com.wly.beansprout.R
 import com.wly.beansprout.presentation.components.GridRadioGroup
@@ -45,7 +47,9 @@ import com.wly.beansprout.presentation.theme.JetNewsTheme
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainLayout() {
+fun HomeScreen(
+    navController: NavController
+) {
     JetNewsTheme {
         // 添加状态管理
         var selectedExclusive by remember { mutableStateOf(0) }
@@ -204,7 +208,8 @@ fun MainLayout() {
 @Preview(showBackground = true)
 @Composable
 fun MainLayoutPreview() {
-    MainLayout()
+    val navController = rememberNavController()
+    HomeScreen(navController)
 }
 
 /**
