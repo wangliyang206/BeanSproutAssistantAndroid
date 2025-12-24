@@ -197,3 +197,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
 }
+
+// 配置Hilt
+kapt {
+    //  错误类型
+    correctErrorTypes = true
+}

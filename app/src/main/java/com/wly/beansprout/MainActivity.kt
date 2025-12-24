@@ -10,6 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 /**
  * APP入口
  */
+// 添加 hit 注解
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
