@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.wly.beansprout.feature.home.ui.HomeScreen
+import com.wly.beansprout.feature.login.ui.LoginScreen
 import com.wly.beansprout.feature.splash.ui.SplashScreen
 
 /**
@@ -29,8 +30,7 @@ fun AppNavGraph(
 
         // 登录页
         composable(NavRoutes.Login.route) {
-//            val viewModel = hiltViewModel<LoginViewModel>()
-//            LoginScreen(navController, viewModel)
+            LoginScreen(navController)
         }
 
         // 注册页

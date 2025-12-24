@@ -19,16 +19,31 @@ class SplashViewModel @Inject constructor(
     var isLoading by mutableStateOf(true)
         private set
 
+    // 导航状态：null-未决定, true-首页, false-登录页
+    var navigateToHome by mutableStateOf<Boolean?>(null)
+        private set
+
+
     // 启动数据加载（在 Activity 的 onCreate 中调用）
     fun startLoadingTasks() {
         viewModelScope.launch {
             try {
-                // 调用 LoginRepository 的 validToken 方法（suspend 函数）
-                val userInfo = loginRepository.validToken()
-                // 可以根据返回的 userInfo 做进一步处理（如验证令牌有效性）
+                // 1. 先检查本地是否有Token
+                val userInfo = loginRepository.checkAutoLogin()
+                if (userInfo.token.isBlank()) {
+                    // 无Token，直接跳登录
+                    navigateToHome = false
+                    return@launch
+                }
+
+                // 2. 有Token，验证有效性
+                loginRepository.validToken()
+                // 验证成功，跳首页
+                navigateToHome = true
             } catch (e: Exception) {
-                // 处理异常（如令牌无效、网络错误等）
+                // 任何异常都跳登录（包括Token无效、网络错误等）
                 e.printStackTrace()
+                navigateToHome = false
             } finally {
                 // 无论成功/失败，最终都结束加载，关闭闪屏
                 isLoading = false
