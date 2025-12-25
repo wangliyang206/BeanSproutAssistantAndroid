@@ -29,7 +29,7 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 // 1. 先检查本地是否有Token
-                val userInfo = loginRepository.checkAutoLogin()
+                val userInfo = loginRepository.getUserInfo()
                 if (userInfo.token.isBlank()) {
                     // 无Token，直接跳登录
                     navigateToHome = false

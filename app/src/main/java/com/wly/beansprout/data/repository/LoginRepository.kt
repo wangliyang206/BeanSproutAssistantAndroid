@@ -68,8 +68,8 @@ class LoginRepository @Inject constructor(
 
     }
 
-    // 检查自动登录
-    suspend fun checkAutoLogin(): UserInfo {
+    // 获取本地用户信息
+    suspend fun getUserInfo(): UserInfo {
         return operateLocal {
             // 读取本地用户信息
             userPrefs.userInfoFlow.first()
