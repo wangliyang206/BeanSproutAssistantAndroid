@@ -178,6 +178,8 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.compose.ui.googlefonts)
     implementation(libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.material.icons.core)
+    implementation(libs.androidx.material.icons.extended)
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)

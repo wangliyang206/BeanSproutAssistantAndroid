@@ -1,6 +1,5 @@
 package com.wly.beansprout.feature.splash.ui
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.splashscreen.SplashScreen
@@ -8,7 +7,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.wly.beansprout.feature.splash.viewmodel.SplashViewModel
 import com.wly.beansprout.presentation.navigation.NavRoutes
-import kotlinx.coroutines.delay
 
 /**
  * 闪页

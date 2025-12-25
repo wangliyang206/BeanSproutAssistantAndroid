@@ -1,4 +1,4 @@
-package com.wly.beansprout.presentation.components
+package com.wly.beansprout.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi

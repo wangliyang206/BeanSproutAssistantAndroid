@@ -1,4 +1,4 @@
-package com.wly.beansprout.presentation.components
+package com.wly.beansprout.presentation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -6,7 +6,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -14,6 +13,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.wly.beansprout.presentation.theme.BtnColor
 
 /**
  * 封装一个通用的TopBar
@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun CommTopBar(
     title: String,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)? = null,
     content: @Composable (Modifier) -> Unit = {}
 ) {
     Scaffold(
@@ -32,23 +32,25 @@ fun CommTopBar(
                     Text(text = title)
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary, // 背景色
+                    containerColor = BtnColor,           // 背景色
                     titleContentColor = Color.White,     // 标题颜色
-                    navigationIconContentColor = Color.White,
                     actionIconContentColor = Color.White // 图标颜色
                 ),
                 navigationIcon = {
-                    // 返回按钮
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "返回",
-                            tint = Color.White
-                        )
+                    // 只有当 onBack 不为 null 时才显示返回按钮
+                    if (onBack != null) {
+                        // 返回按钮
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "返回",
+                                tint = Color.White
+                            )
+                        }
                     }
                 }
             )
-        },
+        }
     ) { innerPadding ->
         content(Modifier.padding(innerPadding))
     }

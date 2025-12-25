@@ -14,10 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +34,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.wly.beansprout.BuildConfig
 import com.wly.beansprout.R
-import com.wly.beansprout.presentation.components.GridRadioGroup
+import com.wly.beansprout.presentation.CommTopBar
+import com.wly.beansprout.presentation.GridRadioGroup
 import com.wly.beansprout.presentation.theme.BtnColor
 import com.wly.beansprout.presentation.theme.HomeBackground
 import com.wly.beansprout.presentation.theme.JetNewsTheme
@@ -45,7 +43,6 @@ import com.wly.beansprout.presentation.theme.JetNewsTheme
 /**
  * 主界面
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavController
@@ -55,153 +52,144 @@ fun HomeScreen(
         var selectedExclusive by remember { mutableStateOf(0) }
 
         // 顶部 标题
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text(text = stringResource(id = R.string.app_name)) },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = BtnColor,           // 背景色
-                        titleContentColor = Color.White,     // 标题颜色
-                        actionIconContentColor = Color.White // 图标颜色
-                    )
-                )
-            },
-        ) { innerPadding ->
-            // 内容
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .background(HomeBackground)
-            ) {
-                // 顶部
-                HomeTop()
-
-                // 中间
+        CommTopBar(
+            title = stringResource(id = R.string.app_name),
+            onBack = {},
+            content = { modifier ->
+                // 内容
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    // 设置垂直居中
-                    verticalArrangement = Arrangement.Center,
-                    // 设置水平居中
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = modifier
+                        .background(HomeBackground)
                 ) {
+                    // 顶部
+                    HomeTop()
 
+                    // 中间
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth(0.9f)
-                            .clip(RoundedCornerShape(8.dp)) // 添加圆角
-                            .background(Color.White),
+                            .fillMaxWidth()
+                            .weight(1f),
+                        // 设置垂直居中
+                        verticalArrangement = Arrangement.Center,
+                        // 设置水平居中
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // 分割线
-                        Spacer(modifier = Modifier.padding(10.dp))
 
-                        // 标题
-                        Text(
-                            text = "设置",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentWidth(Alignment.CenterHorizontally)
-                        )
-
-                        // 分割线
-                        Spacer(modifier = Modifier.padding(10.dp))
-
-                        // 专属
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .padding(start = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .fillMaxWidth(0.9f)
+                                .clip(RoundedCornerShape(8.dp)) // 添加圆角
+                                .background(Color.White),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "专属：", fontSize = 14.sp)
-                            val oneOpt = listOf(
-                                "抖音", "快手", "其它"
-                            )
-                            GridRadioGroup(oneOpt) { selected ->
-                                // 处理专属选择变化
-                                selectedExclusive = selected
-                            }
-                        }
+                            // 分割线
+                            Spacer(modifier = Modifier.padding(10.dp))
 
-                        // 功能
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 10.dp, top = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = "功能：", fontSize = 14.sp)
-                            // 1. 初始化选项的数据源
-                            val baseRadioOptions = listOf(
-                                "轻点触发",
-                                "直播点赞",
-                                "向下滑动",
-                                "向上滑动",
-                                "向左滑动",
-                                "向右滑动",
-                                "自动回复"
+                            // 标题
+                            Text(
+                                text = "设置",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentWidth(Alignment.CenterHorizontally)
                             )
 
-                            val radioOptions = if (selectedExclusive == 0) {
-                                baseRadioOptions + "抢福袋"
-                            } else {
-                                baseRadioOptions
+                            // 分割线
+                            Spacer(modifier = Modifier.padding(10.dp))
+
+                            // 专属
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .padding(start = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "专属：", fontSize = 14.sp)
+                                val oneOpt = listOf(
+                                    "抖音", "快手", "其它"
+                                )
+                                GridRadioGroup(oneOpt) { selected ->
+                                    // 处理专属选择变化
+                                    selectedExclusive = selected
+                                }
                             }
 
-                            GridRadioGroup(radioOptions, 0)
-                        }
+                            // 功能
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 10.dp, top = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "功能：", fontSize = 14.sp)
+                                // 1. 初始化选项的数据源
+                                val baseRadioOptions = listOf(
+                                    "轻点触发",
+                                    "直播点赞",
+                                    "向下滑动",
+                                    "向上滑动",
+                                    "向左滑动",
+                                    "向右滑动",
+                                    "自动回复"
+                                )
 
-                        // 模型
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .padding(start = 10.dp, top = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = "模型：", fontSize = 14.sp)
-                            val oneOpt = listOf(
-                                "功德小鸡", "跳绳小鸡"
-                            )
-                            GridRadioGroup(oneOpt)
+                                val radioOptions = if (selectedExclusive == 0) {
+                                    baseRadioOptions + "抢福袋"
+                                } else {
+                                    baseRadioOptions
+                                }
+
+                                GridRadioGroup(radioOptions, 0)
+                            }
+
+                            // 模型
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .padding(start = 10.dp, top = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "模型：", fontSize = 14.sp)
+                                val oneOpt = listOf(
+                                    "功德小鸡", "跳绳小鸡"
+                                )
+                                GridRadioGroup(oneOpt)
+                            }
+
+                            // 分割线
+                            Spacer(modifier = Modifier.padding(5.dp))
                         }
 
                         // 分割线
-                        Spacer(modifier = Modifier.padding(5.dp))
+                        Spacer(modifier = Modifier.padding(20.dp))
+
+                        // 开始按钮
+                        Button(
+                            modifier = Modifier
+                                // 宽度为屏幕的70%
+                                .fillMaxWidth(0.5f)
+                                // 高度与宽度一致
+                                .aspectRatio(1f),
+                            onClick = { /*TODO*/ },
+                            // 设置为圆形
+                            shape = CircleShape
+                        ) {
+                            Text(
+                                text = "开始", fontSize = 30.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
                     }
 
-                    // 分割线
-                    Spacer(modifier = Modifier.padding(20.dp))
-
-                    // 开始按钮
-                    Button(
-                        modifier = Modifier
-                            // 宽度为屏幕的70%
-                            .fillMaxWidth(0.5f)
-                            // 高度与宽度一致
-                            .aspectRatio(1f),
-                        onClick = { /*TODO*/ },
-                        // 设置为圆形
-                        shape = CircleShape
-                    ) {
-                        Text(
-                            text = "开始", fontSize = 30.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
+                    // 底部
+                    HomeBottom()
                 }
-
-                // 底部
-                HomeBottom()
             }
-
-        }
+        )
     }
 }
 
