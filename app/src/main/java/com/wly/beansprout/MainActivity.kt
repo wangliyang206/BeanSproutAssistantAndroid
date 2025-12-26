@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.wly.beansprout.presentation.navigation.AppNavGraph
 import dagger.hilt.android.AndroidEntryPoint
+import android.os.Process
 
 /**
  * APP入口
@@ -25,5 +26,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppNavGraph(splashScreen)
         }
+    }
+
+    // 暴露退出应用的方法
+    fun exitApp() {
+        finishAffinity()
+        Process.killProcess(Process.myPid())
     }
 }

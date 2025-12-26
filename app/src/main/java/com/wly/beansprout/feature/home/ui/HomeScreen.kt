@@ -1,5 +1,6 @@
 package com.wly.beansprout.feature.home.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,9 +34,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.wly.beansprout.BuildConfig
+import com.wly.beansprout.MainActivity
 import com.wly.beansprout.R
+import com.wly.beansprout.core.utils.ToastUtils.showToast
 import com.wly.beansprout.presentation.CommTopBar
 import com.wly.beansprout.presentation.GridRadioGroup
+import com.wly.beansprout.presentation.navigation.NavRoutes
 import com.wly.beansprout.presentation.theme.BtnColor
 import com.wly.beansprout.presentation.theme.HomeBackground
 import com.wly.beansprout.presentation.theme.JetNewsTheme
@@ -47,6 +51,12 @@ import com.wly.beansprout.presentation.theme.JetNewsTheme
 fun HomeScreen(
     navController: NavController
 ) {
+    val context = LocalContext.current // Compose中获取上下文
+    // 安全转换为Activity（避免空指针）
+    val activity = context as? MainActivity
+    // 上次回退点击时间
+    var lastBackPressTime by remember { mutableStateOf(0L) }
+
     JetNewsTheme {
         // 添加状态管理
         var selectedExclusive by remember { mutableStateOf(0) }
@@ -191,6 +201,21 @@ fun HomeScreen(
             }
         )
     }
+
+    // 拦截首页的回退事件
+    BackHandler(
+        enabled = navController.currentBackStackEntry?.destination?.route == NavRoutes.Home.route,
+        onBack = {
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastBackPressTime < 2000) {
+                // 调用Activity的退出方法
+                activity?.exitApp()
+            } else {
+                lastBackPressTime = currentTime
+                showToast(context, "再按一次返回键退出应用") // 改用Toast提示
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true)

@@ -11,7 +11,7 @@ import androidx.navigation.NavController
 @Composable
 fun RegisterScreen(
     navController: NavController
-){
+) {
     Column {
         Text(text = "注册页")
     }

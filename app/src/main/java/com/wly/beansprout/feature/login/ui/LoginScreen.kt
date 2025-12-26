@@ -1,5 +1,7 @@
 package com.wly.beansprout.feature.login.ui
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
@@ -46,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.wly.beansprout.presentation.dialog.CommonDialog
 import com.wly.beansprout.presentation.navigation.NavRoutes
 import com.wly.beansprout.presentation.theme.BtnColor
 import com.wly.beansprout.presentation.theme.JetNewsTheme
@@ -57,11 +61,17 @@ import com.wly.beansprout.presentation.theme.JetNewsTheme
 fun LoginScreen(
     navController: NavController
 ) {
+    // 获取当前Activity上下文
+    val context = LocalContext.current
+    val activity = context as Activity
+
     // 状态管理
     var phoneNumber by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var isAgreeProtocol by remember { mutableStateOf(false) }
+    var showExitDialog by remember { mutableStateOf(false) }
+
 
     // 登录按钮是否可点击（手机号+密码非空 + 同意协议）
     val isLoginEnable = phoneNumber.isNotBlank() && password.isNotBlank() && isAgreeProtocol
@@ -84,7 +94,7 @@ fun LoginScreen(
                 ) {
                     IconButton(
                         onClick = {
-
+                            showExitDialog = true
                         },
                         modifier = Modifier.align(Alignment.TopStart)
                     ) {
@@ -232,6 +242,38 @@ fun LoginScreen(
         }
     }
 
+    // 退出确认对话框
+    CommonDialog(
+        showDialog = showExitDialog,
+        onDismissRequest = { showExitDialog = false },
+        title = "温馨提示",
+        content = {
+            Text(
+                text = "你真的要退出吗？",
+                fontSize = 16.sp,
+                color = Color.Black
+            )
+        },
+        confirmText = "确认",
+        onConfirmClick = {
+            // 步骤1：关闭当前Activity
+            activity.finish()
+            // 可选：清除任务栈，防止返回键重新打开
+            activity.finishAffinity()
+        },
+        cancelText = "取消",
+        onCancelClick = {
+            showExitDialog = false
+        }
+    )
+
+    // 拦截登录页的回退事件
+    BackHandler(
+        enabled = navController.currentBackStackEntry?.destination?.route == NavRoutes.Login.route, // 仅登录页生效
+        onBack = {
+            showExitDialog = true
+        }
+    )
 }
 
 /**
