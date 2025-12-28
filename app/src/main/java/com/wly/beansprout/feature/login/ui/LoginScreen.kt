@@ -2,330 +2,111 @@ package com.wly.beansprout.feature.login.ui
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.wly.beansprout.presentation.dialog.CommonDialog
+import com.wly.beansprout.feature.login.viewmodel.LoginViewModel
 import com.wly.beansprout.presentation.navigation.NavRoutes
-import com.wly.beansprout.presentation.theme.BtnColor
-import com.wly.beansprout.presentation.theme.JetNewsTheme
+import kotlinx.coroutines.flow.collectLatest
 
 /**
- * 登录页
+ * 登录页-入口
  */
 @Composable
 fun LoginScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
-    // 获取当前Activity上下文
+    // 使用 collectAsState 将 StateFlow 转换为 Compose 状态
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val activity = context as Activity
 
-    // 状态管理
-    var phoneNumber by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-    var isAgreeProtocol by remember { mutableStateOf(false) }
-    var showExitDialog by remember { mutableStateOf(false) }
-
-
-    // 登录按钮是否可点击（手机号+密码非空 + 同意协议）
-    val isLoginEnable = phoneNumber.isNotBlank() && password.isNotBlank() && isAgreeProtocol
-
-    JetNewsTheme {
-        // 顶部 标题
-        Scaffold { innerPadding ->
-            // 整体布局
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // 顶部关闭按钮
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)
-                ) {
-                    IconButton(
-                        onClick = {
-                            showExitDialog = true
-                        },
-                        modifier = Modifier.align(Alignment.TopStart)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "关闭",
-                            tint = Color.Black
-                        )
+    // 处理 ViewModel 发出的事件
+    LaunchedEffect(Unit) {
+        viewModel.events.collectLatest { event ->
+            when (event) {
+                is LoginEvent.LoginSuccess -> {
+                    // 登录成功后的处理，例如导航到主页
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Login.route) {
+                            inclusive = true
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(40.dp))
-
-                // 标题文本
-                Text(
-                    text = "您好，",
-                    fontSize = 28.sp,
-                    color = Color.Black,
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .align(Alignment.Start)
-                )
-
-                // 副标题
-                Text(
-                    text = "欢迎使用打工鸡辅助助手",
-                    fontSize = 16.sp,
-                    color = Color.Gray,
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(start = 16.dp, bottom = 40.dp)
-                )
-
-                // 手机号输入框
-                OutlinedTextField(
-                    value = phoneNumber,
-                    onValueChange = { phoneNumber = it },
-                    label = { Text("手机号") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    shape = RoundedCornerShape(0.dp), // 下划线样式（去掉圆角）
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color.Gray,
-                        focusedLabelColor = Color.Black,
-                        unfocusedLabelColor = Color.Gray
-                    )
-                )
-
-                // 密码输入框
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("密码") },
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    trailingIcon = {
-                        val icon =
-                            if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility
-                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                            Icon(imageVector = icon, contentDescription = "切换密码可见性")
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 30.dp),
-                    shape = RoundedCornerShape(0.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color.Gray,
-                        focusedLabelColor = Color.Black,
-                        unfocusedLabelColor = Color.Gray
-                    )
-                )
-
-                // 登录按钮
-                Button(
-                    onClick = {
-//                        onLoginClick(phoneNumber, password)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp)
-                        .height(50.dp),
-                    shape = RoundedCornerShape(10.dp), // 直角按钮
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = BtnColor, // 深绿色（匹配设计）
-                        disabledContainerColor = BtnColor.copy(alpha = 0.5f)
-                    ),
-                    enabled = isLoginEnable
-                ) {
-                    Text(
-                        text = "登录",
-                        fontSize = 18.sp,
-                        color = Color.White
-                    )
+                is LoginEvent.LoginFailed -> {
+                    // 登录失败，错误信息已在 UI 状态中更新
+                    // 可以在这里添加额外的处理，如显示 Toast
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // 协议勾选框
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Checkbox(
-                        checked = isAgreeProtocol,
-                        onCheckedChange = { isAgreeProtocol = it },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = BtnColor,
-                            uncheckedColor = Color.Gray
-                        )
-                    )
-                    // 协议文本（带可点击的服务协议/隐私协议）
-                    ProtocolText(
-                        onServiceAgreementClick = {
-
-                        },
-                        onPrivacyAgreementClick = {
-
-                        }
-                    )
+                is LoginEvent.NavigateToRegister -> {
+                    navController.navigate(NavRoutes.Register.route)
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
+                is LoginEvent.NavigateToServiceAgreement -> {
+//                    navController.navigate(NavRoutes.ServiceAgreement.route)
+                }
 
-                // 新用户注册
-                Text(
-                    text = "新用户注册",
-                    fontSize = 16.sp,
-                    color = BtnColor,
-                    modifier = Modifier
-                        .padding(bottom = 30.dp)
-                        .clickable(onClick = {
-                            // 导航到注册页面
-                            navController.navigate(NavRoutes.Register.route)
-                        }),
-                    textAlign = TextAlign.Center
-                )
+                is LoginEvent.NavigateToPrivacyAgreement -> {
+//                    navController.navigate(NavRoutes.PrivacyAgreement.route)
+                }
+
+                is LoginEvent.ExitApp -> {
+                    val activity = context as? Activity
+                    activity?.finishAffinity()
+                }
             }
         }
     }
 
+    // 主内容
+    LoginScreenContent(
+        uiState = uiState,
+        onPhoneNumberChange = viewModel::updatePhoneNumber,
+        onPasswordChange = viewModel::updatePassword,
+        onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
+        onToggleAgreeProtocol = viewModel::setAgreeProtocol,
+        onLoginClick = viewModel::performLogin,
+        onRegisterClick = viewModel::navigateToRegister,
+        onServiceAgreementClick = viewModel::navigateToServiceAgreement,
+        onPrivacyAgreementClick = viewModel::navigateToPrivacyAgreement,
+        onCloseClick = { viewModel.setExitDialogVisibility(true) }
+    )
+
     // 退出确认对话框
-    CommonDialog(
-        showDialog = showExitDialog,
-        onDismissRequest = { showExitDialog = false },
-        title = "温馨提示",
-        content = {
-            Text(
-                text = "你真的要退出吗？",
-                fontSize = 16.sp,
-                color = Color.Black
-            )
-        },
-        confirmText = "确认",
-        onConfirmClick = {
-            // 步骤1：关闭当前Activity
-            activity.finish()
-            // 可选：清除任务栈，防止返回键重新打开
-            activity.finishAffinity()
-        },
-        cancelText = "取消",
-        onCancelClick = {
-            showExitDialog = false
-        }
-    )
-
-    // 拦截登录页的回退事件
-    BackHandler(
-        enabled = navController.currentBackStackEntry?.destination?.route == NavRoutes.Login.route, // 仅登录页生效
-        onBack = {
-            showExitDialog = true
-        }
-    )
-}
-
-/**
- * 协议文本（带可点击的服务协议和隐私协议）
- */
-@Composable
-fun ProtocolText(
-    onServiceAgreementClick: () -> Unit,
-    onPrivacyAgreementClick: () -> Unit
-) {
-    // 构建带点击事件的注解文本
-    val annotatedText = buildAnnotatedString {
-        append("我已经认真阅读、理解并同意")
-        // 服务协议（可点击）
-        withStyle(style = SpanStyle(color = BtnColor)) {
-            append("《服务协议》")
-            addStringAnnotation(
-                tag = "service",
-                annotation = "service_agreement",
-                start = length - 6,
-                end = length
-            )
-        }
-        append("和")
-        // 隐私协议（可点击）
-        withStyle(style = SpanStyle(color = BtnColor)) {
-            append("《隐私协议》")
-            addStringAnnotation(
-                tag = "privacy",
-                annotation = "privacy_agreement",
-                start = length - 6,
-                end = length
-            )
-        }
+    if (uiState.showExitDialog) {
+        ExitConfirmationDialog(
+            onConfirm = {
+                viewModel.exitApp()
+                viewModel.setExitDialogVisibility(false)
+            },
+            onDismiss = { viewModel.setExitDialogVisibility(false) }
+        )
     }
 
-    ClickableText(
-        text = annotatedText,
-//        fontSize = 14.sp,
-//        color = Color.Gray,
-        onClick = { offset ->
-            // 处理服务协议点击
-            annotatedText.getStringAnnotations(tag = "service", start = offset, end = offset)
-                .firstOrNull()?.let {
-                    onServiceAgreementClick()
-                }
-            // 处理隐私协议点击
-            annotatedText.getStringAnnotations(tag = "privacy", start = offset, end = offset)
-                .firstOrNull()?.let {
-                    onPrivacyAgreementClick()
-                }
-        }
+    // 错误信息对话框
+    uiState.errorMessage?.let { errorMessage ->
+        ErrorMessageDialog(
+            errorMessage = errorMessage,
+            onDismiss = viewModel::resetErrorMessage
+        )
+    }
+
+    // 加载指示器
+    if (uiState.isLoading) {
+        LoadingDialog()
+    }
+
+    // 拦截物理返回键
+    BackHandler(
+        enabled = navController.currentBackStackEntry?.destination?.route == NavRoutes.Login.route,
+        onBack = { viewModel.setExitDialogVisibility(true) }
     )
 }
 
