@@ -54,7 +54,9 @@ fun LoginScreenContent(
                 isPasswordVisible = uiState.isPasswordVisible,
                 onPasswordVisibilityToggle = onTogglePasswordVisibility,
                 isPhoneValid = uiState.isPhoneNumberValid,
-                isPasswordValid = uiState.isPasswordValid
+                isPasswordValid = uiState.isPasswordValid,
+                hasStartedInput = uiState.hasStartedInput,
+                hasStartedPasswordInput = uiState.hasStartedPasswordInput
             )
 
             Spacer(modifier = Modifier.height(20.dp))

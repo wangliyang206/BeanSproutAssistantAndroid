@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wly.beansprout.presentation.dialog.CommonDialog
+import com.wly.beansprout.presentation.theme.BtnColor
 
 /**
  * 退出确认对话框
@@ -74,8 +75,10 @@ fun LoadingDialog() {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // 加载中动画
                 CircularProgressIndicator(
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(48.dp),
+                    color = BtnColor
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("请稍候...")

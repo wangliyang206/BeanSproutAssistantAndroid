@@ -86,6 +86,8 @@ fun LoginInputSection(
     onPasswordVisibilityToggle: () -> Unit,
     isPhoneValid: Boolean = true,
     isPasswordValid: Boolean = true,
+    hasStartedInput: Boolean = false,
+    hasStartedPasswordInput: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -99,8 +101,8 @@ fun LoginInputSection(
             onValueChange = onPhoneNumberChange,
             label = "手机号",
             keyboardType = KeyboardType.Phone,
-            isError = !isPhoneValid,
-            supportingText = if (!isPhoneValid) {
+            isError = hasStartedInput && !isPhoneValid,
+            supportingText = if (hasStartedInput && !isPhoneValid) {
                 { Text(text = "请输入正确的手机号") }
             } else null,
             modifier = Modifier
@@ -114,8 +116,8 @@ fun LoginInputSection(
             onValueChange = onPasswordChange,
             isPasswordVisible = isPasswordVisible,
             onVisibilityToggle = onPasswordVisibilityToggle,
-            isError = !isPasswordValid,
-            supportingText = if (!isPasswordValid) {
+            isError = hasStartedPasswordInput && !isPasswordValid,  // 只有开始输入后才显示错误
+            supportingText = if (hasStartedPasswordInput && !isPasswordValid) {
                 { Text(text = "密码至少6位") }
             } else null,
             modifier = Modifier

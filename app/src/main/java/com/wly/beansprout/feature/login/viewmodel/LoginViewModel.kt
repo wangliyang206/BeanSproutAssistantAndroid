@@ -33,7 +33,10 @@ class LoginViewModel @Inject constructor(
      */
     fun updatePhoneNumber(phone: String) {
         _uiState.update { currentState ->
-            currentState.copy(phoneNumber = phone.trim())
+            currentState.copy(
+                phoneNumber = phone.trim(),
+                hasStartedInput = true
+            )
         }
     }
 
@@ -42,7 +45,10 @@ class LoginViewModel @Inject constructor(
      */
     fun updatePassword(password: String) {
         _uiState.update { currentState ->
-            currentState.copy(password = password)
+            currentState.copy(
+                password = password,
+                hasStartedPasswordInput = true
+            )
         }
     }
 
