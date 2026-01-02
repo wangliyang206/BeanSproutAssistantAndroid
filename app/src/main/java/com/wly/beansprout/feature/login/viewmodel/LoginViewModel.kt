@@ -1,8 +1,8 @@
 package com.wly.beansprout.feature.login.viewmodel
 
-import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wly.beansprout.data.repository.LoginRepository
 import com.wly.beansprout.feature.login.ui.LoginEvent
 import com.wly.beansprout.feature.login.ui.LoginFormValidation
 import com.wly.beansprout.feature.login.ui.LoginUiState
@@ -18,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-
-): ViewModel() {
+    private val loginRepository: LoginRepository
+) : ViewModel() {
     // 私有状态，只能通过 ViewModel 更新
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -99,36 +99,25 @@ class LoginViewModel @Inject constructor(
 
         // 3. 发起登录请求
         viewModelScope.launch {
-//            try {
-//                val result = authRepository.login(
-//                    phoneNumber = currentState.phoneNumber,
-//                    password = currentState.password
-//                )
-//
-//                if (result.isSuccess) {
-//                    // 登录成功，发送事件
-//                    _events.emit(LoginEvent.LoginSuccess(result.userInfo))
-//                    // 重置加载状态
-//                    _uiState.update { it.copy(isLoading = false) }
-//                } else {
-//                    // 登录失败
-//                    _uiState.update {
-//                        it.copy(
-//                            isLoading = false,
-//                            errorMessage = result.errorMessage ?: "登录失败"
-//                        )
-//                    }
-//                    _events.emit(LoginEvent.LoginFailed(result.errorMessage ?: "登录失败"))
-//                }
-//            } catch (e: Exception) {
-//                _uiState.update {
-//                    it.copy(
-//                        isLoading = false,
-//                        errorMessage = e.message ?: "网络请求异常"
-//                    )
-//                }
-//                _events.emit(LoginEvent.LoginFailed(e.message ?: "网络请求异常"))
-//            }
+            try {
+                val result = loginRepository.login(
+                    mobile = currentState.phoneNumber,
+                    password = currentState.password
+                )
+
+                // 登录成功，发送事件
+                _events.emit(LoginEvent.LoginSuccess(result.userName))
+                // 重置加载状态
+                _uiState.update { it.copy(isLoading = false) }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.message ?: "网络请求异常"
+                    )
+                }
+                _events.emit(LoginEvent.LoginFailed(e.message ?: "网络请求异常"))
+            }
         }
     }
 

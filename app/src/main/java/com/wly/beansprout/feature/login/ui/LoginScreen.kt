@@ -34,6 +34,7 @@ fun LoginScreen(
                 is LoginEvent.LoginSuccess -> {
                     // 登录成功后的处理，例如导航到主页
                     navController.navigate(NavRoutes.Home.route) {
+                        // 将Login页面从返回栈中弹出（包含Login页面本身）。这样用户无法通过返回键回到登录页面，通常用于登录成功后跳转到主页的场景
                         popUpTo(NavRoutes.Login.route) {
                             inclusive = true
                         }

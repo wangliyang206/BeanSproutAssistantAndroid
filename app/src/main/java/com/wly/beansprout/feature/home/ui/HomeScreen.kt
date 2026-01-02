@@ -64,7 +64,6 @@ fun HomeScreen(
         // 顶部 标题
         CommTopBar(
             title = stringResource(id = R.string.app_name),
-            onBack = {},
             content = { modifier ->
                 // 内容
                 Column(
