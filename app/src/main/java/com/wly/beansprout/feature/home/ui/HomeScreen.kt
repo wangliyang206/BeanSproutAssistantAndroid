@@ -31,12 +31,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.wly.beansprout.BuildConfig
 import com.wly.beansprout.MainActivity
 import com.wly.beansprout.R
 import com.wly.beansprout.core.utils.ToastUtils.showToast
+import com.wly.beansprout.feature.home.viewmodel.HomeViewModel
 import com.wly.beansprout.presentation.CommTopBar
 import com.wly.beansprout.presentation.GridRadioGroup
 import com.wly.beansprout.presentation.navigation.NavRoutes
@@ -49,7 +51,8 @@ import com.wly.beansprout.presentation.theme.JetNewsTheme
  */
 @Composable
 fun HomeScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current // Compose中获取上下文
     // 安全转换为Activity（避免空指针）
