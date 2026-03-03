@@ -37,8 +37,8 @@ fun LoginScreenContent(
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 顶部关闭按钮
-            LoginTopBar(onCloseClick = onCloseClick)
+            // 顶部-关闭按钮
+            LoginCloseBar(onCloseClick = onCloseClick)
 
             Spacer(modifier = Modifier.height(40.dp))
 

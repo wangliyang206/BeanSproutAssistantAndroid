@@ -16,24 +16,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 /**
- * 宫格单选
+ * 宫格单选布局
+ * @param options 选项数据源
+ * @param selected 选中索引
+ * @param onOptionSelected 选项点击回调
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GridRadioGroup(
-    radioOptions: List<String>,
-    selected: Int? = null,
+    options: List<String>,
+    selected: Int = 0,
     modifier: Modifier = Modifier,
-    // 添加回调参数
-    onSelectedChange: ((Int) -> Unit)? = null
+    onOptionSelected: ((Int) -> Unit)? = null
 ) {
-    // 1. 互斥状态管理：保存当前选中的选项索引（-1表示未选中）
-    var selectedIndex by remember { mutableStateOf(0) }
-    if (selected != null) {
-        selectedIndex = selected
-    }
-
-    // 2. FlowRow自动换行布局（核心）
+    // FlowRow自动换行布局（核心）
     FlowRow(
         modifier = modifier
             .padding(horizontal = 1.dp, vertical = 1.dp),
@@ -43,7 +39,7 @@ fun GridRadioGroup(
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         // 遍历生成10个互斥RadioButton
-        radioOptions.forEachIndexed { index, optionText ->
+        options.forEachIndexed { index, optionText ->
             // 单个RadioButton+文本组合
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -52,11 +48,10 @@ fun GridRadioGroup(
                 RadioButtonLayout(
                     optionText,
                     // 绑定选中状态
-                    selectedIndex == index,
+                    selected = selected == index,
                     // 点击更新选中索引（实现互斥）
                     onClick = {
-                        selectedIndex = index
-                        onSelectedChange?.invoke(index)
+                        onOptionSelected?.invoke(index)
                     }
                 )
             }

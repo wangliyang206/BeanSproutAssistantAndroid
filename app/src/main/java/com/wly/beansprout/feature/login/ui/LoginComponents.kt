@@ -30,7 +30,7 @@ import com.wly.beansprout.presentation.theme.BtnColor
  * 所有UI组件的定义
  */
 @Composable
-fun LoginTopBar(
+fun LoginCloseBar(
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

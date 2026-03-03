@@ -14,10 +14,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * 单选按钮
+ * 单选按钮布局组件
+ * @param name 选项名称
+ * @param selected 是否选中
+ * @param onClick 点击回调
  */
 @Composable
-fun RadioButtonLayout(name: String, selected: Boolean, onClick: (() -> Unit)?) {
+fun RadioButtonLayout(
+    name: String,
+    selected: Boolean,
+    onClick: (() -> Unit)? = null
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -31,7 +38,7 @@ fun RadioButtonLayout(name: String, selected: Boolean, onClick: (() -> Unit)?) {
 
         Text(
             text = name,
-            fontSize = 13.sp,
+            fontSize = 12.sp,
             modifier = Modifier
                 .padding(end = 5.dp)
                 .clickable {
