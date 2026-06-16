@@ -3,4 +3,14 @@
 
     <string name="hint">开启该权限才能正常使用自动触控功能</string>
 
+    <!-- 隐私政策相关 -->
+    <string name="privacy_policy_tips">感谢您使用打工鸡软件助手！\n\n在使用前请仔细阅读《服务协议》和《隐私政策》，以了解我们在使用你个人信息时所遵循的条款。我们将严格按照政策内容使用你的个人信息，尽全力保护您的个人信息安全。感谢信任。</string>
+    <string name="privacy_policy_tips_x">点击同意即表示您已阅读并同意《服务协议》和《隐私政策》</string>
+    <string name="not_privacy_policy_tips">不同意将无法使用我们的产品和服务，并会退出App。</string>
+    <string name="login_agreement_tips">我已经认真阅读、理解并同意《服务协议》和《隐私政策》</string>
+
+    <!-- 协议页 URL -->
+    <string name="service_agreement_url">http://47.115.223.27/serviceagreement.html</string>
+    <string name="privacy_policy_url">http://47.115.223.27/privacypolicy.html</string>
+
 </resources>

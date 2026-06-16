@@ -1,11 +1,16 @@
 package com.wly.beansprout.feature.splash.ui
 
+import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.wly.beansprout.feature.splash.viewmodel.PrivacyDialogState
 import com.wly.beansprout.feature.splash.viewmodel.SplashViewModel
+import com.wly.beansprout.presentation.dialog.NotPrivacyPolicyDialog
+import com.wly.beansprout.presentation.dialog.PrivacyPolicyDialog
 import com.wly.beansprout.presentation.navigation.NavRoutes
 
 /**
@@ -16,26 +21,52 @@ fun SplashScreen(
     navController: NavController,
     splashScreen: SplashScreen
 ) {
-    // 使用 hiltViewModel() 获取 ViewModel，支持依赖注入
     val viewModel: SplashViewModel = hiltViewModel()
+    val context = LocalContext.current
 
-    // 使用 LaunchedEffect 确保只执行一次
+    // 启动加载任务
     LaunchedEffect(Unit) {
-        // 启动数据加载任务
         viewModel.startLoadingTasks()
     }
 
-    // 设置闪屏保持条件（核心逻辑）
+    // 设置闪屏保持条件
     splashScreen.setKeepOnScreenCondition {
-        viewModel.isLoading // 直接访问 ViewModel 的状态
+        viewModel.isLoading
     }
 
-    // 独立的导航逻辑
+    // 隐私政策弹窗
+    when (viewModel.privacyDialogState) {
+        PrivacyDialogState.FIRST -> {
+            PrivacyPolicyDialog(
+                onAgree = { viewModel.onPrivacyAgreed() },
+                onDisagree = { viewModel.onPrivacyDisagreeFirst() },
+                onServiceAgreementClick = { /* TODO: Day 2 打开协议页 */ },
+                onPrivacyPolicyClick = { /* TODO: Day 2 打开隐私政策页 */ }
+            )
+        }
+
+        PrivacyDialogState.SECOND -> {
+            NotPrivacyPolicyDialog(
+                onAgree = { viewModel.onPrivacyAgreed() },
+                onDisagree = { viewModel.onPrivacyDisagreeSecond() }
+            )
+        }
+
+        null -> { /* 不显示弹窗 */ }
+    }
+
+    // 两次不同意隐私政策 → 退出 App
+    LaunchedEffect(viewModel.shouldExitApp) {
+        if (viewModel.shouldExitApp) {
+            val activity = context as? Activity
+            activity?.finishAffinity()
+        }
+    }
+
+    // 导航逻辑
     LaunchedEffect(viewModel.navigateToHome) {
         if (viewModel.navigateToHome != null && !viewModel.isLoading) {
-            // 闪屏退出动画
             splashScreen.setOnExitAnimationListener { splashScreenView ->
-                // 示例：图标缩放动画
                 val icon = splashScreenView.iconView
                 icon.animate()
                     ?.setDuration(500)
@@ -43,31 +74,23 @@ fun SplashScreen(
                     ?.scaleY(0.5f)
                     ?.alpha(0f)
                     ?.withEndAction {
-                        // 在动画结束后执行导航
                         navigateBasedOnCondition(navController, viewModel.navigateToHome)
-                        // 必须调用
                         splashScreenView.remove()
                     }
                     ?.start()
             }
-
         }
     }
 }
 
 fun navigateBasedOnCondition(navController: NavController, navigateToHome: Boolean?) {
     when (navigateToHome) {
-        // 跳转到首页
         true -> navController.navigate(NavRoutes.Home.route) {
-            // 清除返回栈中的闪屏页面，避免用户按返回键回到闪屏
             popUpTo(NavRoutes.Splash.route) { inclusive = true }
         }
-        // 跳转到登录页
         false -> navController.navigate(NavRoutes.Login.route) {
-            // 清除返回栈中的闪屏页面
             popUpTo(NavRoutes.Splash.route) { inclusive = true }
         }
-
         null -> Unit
     }
 }

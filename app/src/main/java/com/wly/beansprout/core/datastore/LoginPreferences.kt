@@ -72,4 +72,24 @@ class LoginPreferences @Inject constructor(
     suspend fun isLoggedIn(): Boolean {
         return loginDataStore.data.first()[LoginKeys.IS_LOGGED_IN] ?: false
     }
+
+    // 读取隐私政策同意状态
+    val privacyAgreedFlow: Flow<Boolean> = loginDataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[LoginKeys.PRIVACY_AGREED] ?: false
+        }
+
+    // 保存隐私政策同意状态
+    suspend fun setPrivacyAgreed(agreed: Boolean) {
+        loginDataStore.edit { preferences ->
+            preferences[LoginKeys.PRIVACY_AGREED] = agreed
+        }
+    }
 }

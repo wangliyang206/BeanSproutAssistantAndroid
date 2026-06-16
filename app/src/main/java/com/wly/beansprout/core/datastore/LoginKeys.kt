@@ -25,4 +25,6 @@ object LoginKeys {
     val DAYS_REMAINING = intPreferencesKey("days_remaining")
     // 是否登录
     val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+    // 是否同意隐私政策
+    val PRIVACY_AGREED = booleanPreferencesKey("privacy_agreed")
 }
