@@ -3,6 +3,8 @@ package com.wly.beansprout.feature.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wly.beansprout.BuildConfig
+import com.wly.beansprout.core.utils.StringUtils
+import com.wly.beansprout.data.repository.LoginRepository
 import com.wly.beansprout.feature.home.ui.HomeEvent
 import com.wly.beansprout.feature.home.ui.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,8 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-
-): ViewModel() {
+    private val loginRepository: LoginRepository
+) : ViewModel() {
     // 私有状态
     private val _uiState = MutableStateFlow(
         HomeUiState(versionName = BuildConfig.VERSION_NAME)
@@ -28,6 +30,30 @@ class HomeViewModel @Inject constructor(
     // 事件通道
     private val _events = MutableSharedFlow<HomeEvent>()
     val events = _events.asSharedFlow()
+
+    init {
+        // 初始化时从 DataStore 加载用户信息
+        loadUserInfo()
+    }
+
+    /**
+     * 从 DataStore 加载用户信息
+     */
+    private fun loadUserInfo() {
+        viewModelScope.launch {
+            try {
+                val userInfo = loginRepository.getUserInfo()
+                _uiState.update {
+                    it.copy(
+                        phoneNumber = userInfo.userPhone,
+                        userType = StringUtils.userTypeText(userInfo.status, userInfo.daysRemaining)
+                    )
+                }
+            } catch (e: Exception) {
+                // 加载失败保持默认值
+            }
+        }
+    }
 
     // 回退键处理
     private var lastBackPressTime = 0L
@@ -64,11 +90,51 @@ class HomeViewModel @Inject constructor(
     }
 
     /**
-     * 处理退出登录
+     * 显示退出登录确认对话框
      */
     fun onLogoutClick() {
+        _uiState.update { it.copy(showLogoutDialog = true) }
+    }
+
+    /**
+     * 关闭退出登录对话框
+     */
+    fun dismissLogoutDialog() {
+        _uiState.update { it.copy(showLogoutDialog = false) }
+    }
+
+    /**
+     * 确认退出登录：清除本地数据 → 导航到登录页
+     */
+    fun confirmLogout() {
+        _uiState.update { it.copy(showLogoutDialog = false) }
         viewModelScope.launch {
-            _events.emit(HomeEvent.NavigateToLogin)
+            try {
+                // 清除本地存储的登录信息
+                loginRepository.logout()
+                // 发送导航到登录页事件
+                _events.emit(HomeEvent.NavigateToLogin)
+            } catch (e: Exception) {
+                _events.emit(HomeEvent.ShowToast("退出登录失败：${e.message}"))
+            }
+        }
+    }
+
+    /**
+     * 导航到服务协议
+     */
+    fun navigateToServiceAgreement() {
+        viewModelScope.launch {
+            _events.emit(HomeEvent.NavigateToServiceAgreement)
+        }
+    }
+
+    /**
+     * 导航到隐私政策
+     */
+    fun navigateToPrivacyPolicy() {
+        viewModelScope.launch {
+            _events.emit(HomeEvent.NavigateToPrivacyPolicy)
         }
     }
 

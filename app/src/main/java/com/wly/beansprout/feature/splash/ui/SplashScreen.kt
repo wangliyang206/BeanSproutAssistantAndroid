@@ -40,8 +40,21 @@ fun SplashScreen(
             PrivacyPolicyDialog(
                 onAgree = { viewModel.onPrivacyAgreed() },
                 onDisagree = { viewModel.onPrivacyDisagreeFirst() },
-                onServiceAgreementClick = { /* TODO: Day 2 打开协议页 */ },
-                onPrivacyPolicyClick = { /* TODO: Day 2 打开隐私政策页 */ }
+                onServiceAgreementClick = {
+                    // 闪屏阶段无法使用 NavGraph，用系统浏览器打开协议
+                    val intent = android.content.Intent(
+                        android.content.Intent.ACTION_VIEW,
+                        android.net.Uri.parse(NavRoutes.WebView.SERVICE_AGREEMENT_URL)
+                    )
+                    context.startActivity(intent)
+                },
+                onPrivacyPolicyClick = {
+                    val intent = android.content.Intent(
+                        android.content.Intent.ACTION_VIEW,
+                        android.net.Uri.parse(NavRoutes.WebView.PRIVACY_POLICY_URL)
+                    )
+                    context.startActivity(intent)
+                }
             )
         }
 

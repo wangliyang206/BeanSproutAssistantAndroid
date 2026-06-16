@@ -2,13 +2,17 @@ package com.wly.beansprout.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.core.splashscreen.SplashScreen
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.wly.beansprout.feature.home.ui.HomeScreen
 import com.wly.beansprout.feature.login.ui.LoginScreen
 import com.wly.beansprout.feature.register.ui.RegisterScreen
 import com.wly.beansprout.feature.splash.ui.SplashScreen
+import com.wly.beansprout.feature.webview.ui.WebViewScreen
+import java.net.URLDecoder
 
 /**
  * 全局导航图
@@ -42,6 +46,27 @@ fun AppNavGraph(
         // 首页
         composable(NavRoutes.Home.route) {
             HomeScreen(navController)
+        }
+
+        // WebView 协议页
+        composable(
+            route = NavRoutes.WebView.route,
+            arguments = listOf(
+                navArgument("title") { type = NavType.StringType },
+                navArgument("url") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val title = URLDecoder.decode(
+                backStackEntry.arguments?.getString("title") ?: "", "UTF-8"
+            )
+            val url = URLDecoder.decode(
+                backStackEntry.arguments?.getString("url") ?: "", "UTF-8"
+            )
+            WebViewScreen(
+                navController = navController,
+                title = title,
+                url = url
+            )
         }
     }
 }

@@ -29,6 +29,8 @@ data class HomeUiState(
  */
 sealed class HomeEvent {
     object NavigateToLogin : HomeEvent()
+    object NavigateToServiceAgreement : HomeEvent()
+    object NavigateToPrivacyPolicy : HomeEvent()
     object ShowExitAppDialog : HomeEvent()
     object ShowStartDialog : HomeEvent()
     data class ShowToast(val message: String) : HomeEvent()

@@ -26,21 +26,38 @@ fun HomeDialogHandlers(
         viewModel.events.collectLatest { event ->
             when (event) {
                 is HomeEvent.NavigateToLogin -> {
-                    // 导航到登录页面
+                    // 导航到登录页面（清除返回栈）
                     navController.navigate(NavRoutes.Login.route) {
-                        popUpTo(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Login.route) {
                             inclusive = true
                         }
                     }
                 }
+
+                is HomeEvent.NavigateToServiceAgreement -> {
+                    // 导航到服务协议页
+                    navController.navigate(
+                        NavRoutes.WebView.withArgs("服务协议", NavRoutes.WebView.SERVICE_AGREEMENT_URL)
+                    )
+                }
+
+                is HomeEvent.NavigateToPrivacyPolicy -> {
+                    // 导航到隐私政策页
+                    navController.navigate(
+                        NavRoutes.WebView.withArgs("隐私政策", NavRoutes.WebView.PRIVACY_POLICY_URL)
+                    )
+                }
+
                 is HomeEvent.ShowExitAppDialog -> {
                     val activity = context as? Activity
                     activity?.finishAffinity()
                 }
+
                 is HomeEvent.ShowStartDialog -> {
                     // 显示开始对话框或启动服务
                     showToast(context, "开始执行任务")
                 }
+
                 is HomeEvent.ShowToast -> {
                     showToast(context, event.message)
                 }
@@ -52,13 +69,13 @@ fun HomeDialogHandlers(
     if (uiState.showLogoutDialog) {
         CommonDialog(
             showDialog = true,
-            onDismissRequest = { /* TODO */ },
+            onDismissRequest = { viewModel.dismissLogoutDialog() },
             title = "退出登录",
             content = { Text("确定要退出登录吗？") },
             confirmText = "确定",
+            onConfirmClick = { viewModel.confirmLogout() },
             cancelText = "取消",
-            onConfirmClick = { /* TODO */ },
-            onCancelClick = { /* TODO */ }
+            onCancelClick = { viewModel.dismissLogoutDialog() }
         )
     }
 
@@ -66,13 +83,13 @@ fun HomeDialogHandlers(
     if (uiState.showStartDialog) {
         CommonDialog(
             showDialog = true,
-            onDismissRequest = { /* TODO */ },
+            onDismissRequest = { /* TODO: Day 4 接入自动化服务 */ },
             title = "开始执行",
             content = { Text("确定开始执行任务吗？") },
             confirmText = "确定",
+            onConfirmClick = { /* TODO: Day 4 启动 FloatingService */ },
             cancelText = "取消",
-            onConfirmClick = { /* TODO */ },
-            onCancelClick = { /* TODO */ }
+            onCancelClick = { /* TODO: Day 4 关闭对话框 */ }
         )
     }
 }

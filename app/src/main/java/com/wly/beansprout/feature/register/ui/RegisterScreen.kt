@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import com.wly.beansprout.core.utils.ToastUtils
 import com.wly.beansprout.feature.register.viewmodel.RegisterViewModel
 import com.wly.beansprout.presentation.dialog.CommonDialog
+import com.wly.beansprout.presentation.navigation.NavRoutes
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -52,11 +53,15 @@ fun RegisterScreen(
                 }
 
                 is RegisterEvent.NavigateToServiceAgreement -> {
-                    // TODO: Day 2 实现 WebView 协议页
+                    navController.navigate(
+                        NavRoutes.WebView.withArgs("服务协议", NavRoutes.WebView.SERVICE_AGREEMENT_URL)
+                    )
                 }
 
                 is RegisterEvent.NavigateToPrivacyAgreement -> {
-                    // TODO: Day 2 实现 WebView 协议页
+                    navController.navigate(
+                        NavRoutes.WebView.withArgs("隐私政策", NavRoutes.WebView.PRIVACY_POLICY_URL)
+                    )
                 }
             }
         }

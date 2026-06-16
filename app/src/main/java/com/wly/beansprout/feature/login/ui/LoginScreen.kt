@@ -51,11 +51,15 @@ fun LoginScreen(
                 }
 
                 is LoginEvent.NavigateToServiceAgreement -> {
-//                    navController.navigate(NavRoutes.ServiceAgreement.route)
+                    navController.navigate(
+                        NavRoutes.WebView.withArgs("服务协议", NavRoutes.WebView.SERVICE_AGREEMENT_URL)
+                    )
                 }
 
                 is LoginEvent.NavigateToPrivacyAgreement -> {
-//                    navController.navigate(NavRoutes.PrivacyAgreement.route)
+                    navController.navigate(
+                        NavRoutes.WebView.withArgs("隐私政策", NavRoutes.WebView.PRIVACY_POLICY_URL)
+                    )
                 }
 
                 is LoginEvent.ExitApp -> {
