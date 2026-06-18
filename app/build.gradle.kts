@@ -110,11 +110,7 @@ android {
             buildConfigField("String", "SHARED_NAME_INVEST", "\"sharedAssistantTest\"")
 
             //AndroidManifest中用到的配置
-//            manifestPlaceholders  = mapOf(
-//                "APP_NAME" to project.property("APP_NAME_DEBUG") as String,
-//                "UM_APP_KEY" to project.property("UM_APP_KEY_DEBUG") as String,
-//                "UM_APP_KEY_MANIFEST" to project.property("UM_APP_KEY_MANIFEST_DEBUG") as String
-//            )
+            manifestPlaceholders["UM_APP_KEY"] = "@string/um_app_key_manifest_debug"
         }
 
         //正式发布版
@@ -135,11 +131,7 @@ android {
             buildConfigField("String", "SHARED_NAME_INVEST", "\"sharedAssistantTest\"")
 
             //AndroidManifest中用到的配置
-//            manifestPlaceholders = mapOf(
-//                "APP_NAME" to project.property("APP_NAME") as String,
-//                "UM_APP_KEY" to project.property("UM_APP_KEY") as String,
-//                "UM_APP_KEY_MANIFEST" to project.property("UM_APP_KEY_MANIFEST") as String
-//            )
+            manifestPlaceholders["UM_APP_KEY"] = "@string/um_app_key_manifest"
         }
     }
 
@@ -188,6 +180,12 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
+
+    // 友盟统计
+    implementation(libs.umeng.common)
+    implementation(libs.umeng.asms)
+    implementation(libs.umeng.apm)
+    implementation(libs.androidx.recyclerview)
 
     // 测试
     testImplementation(libs.junit)

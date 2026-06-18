@@ -19,6 +19,10 @@ javaxInject = "1"
 hiltAndroid = "2.48.1"
 hiltNavigation = "1.1.0"
 materialIcons = "1.5.4"
+umengCommon = "9.8.0"
+umengAsms = "1.8.6"
+umengApm = "1.9.3"
+recyclerview = "1.3.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,6 +55,10 @@ javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "j
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltAndroid" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation" }
+umeng-common = { group = "com.umeng.umsdk", name = "common", version.ref = "umengCommon" }
+umeng-asms = { group = "com.umeng.umsdk", name = "asms", version.ref = "umengAsms" }
+umeng-apm = { group = "com.umeng.umsdk", name = "apm", version.ref = "umengApm" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

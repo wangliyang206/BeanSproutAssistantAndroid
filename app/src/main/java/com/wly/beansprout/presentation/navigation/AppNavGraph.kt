@@ -11,6 +11,9 @@ import com.wly.beansprout.feature.home.ui.HomeScreen
 import com.wly.beansprout.feature.login.ui.LoginScreen
 import com.wly.beansprout.feature.register.ui.RegisterScreen
 import com.wly.beansprout.feature.splash.ui.SplashScreen
+import com.wly.beansprout.feature.touchpoint.ui.AddTouchPointScreen
+import com.wly.beansprout.feature.touchpoint.ui.TouchPointManageScreen
+import com.wly.beansprout.feature.tutorial.ui.TutorialVideoScreen
 import com.wly.beansprout.feature.webview.ui.WebViewScreen
 import java.net.URLDecoder
 
@@ -67,6 +70,21 @@ fun AppNavGraph(
                 title = title,
                 url = url
             )
+        }
+
+        // 触点管理
+        composable(NavRoutes.TouchPointManage.route) {
+            TouchPointManageScreen(navController)
+        }
+
+        // 添加触点
+        composable(NavRoutes.AddTouchPoint.route) {
+            AddTouchPointScreen(navController)
+        }
+
+        // 教程视频
+        composable(NavRoutes.TutorialVideo.route) {
+            TutorialVideoScreen(navController)
         }
     }
 }

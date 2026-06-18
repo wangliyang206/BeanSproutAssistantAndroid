@@ -13,4 +13,10 @@
     <string name="service_agreement_url">http://47.115.223.27/serviceagreement.html</string>
     <string name="privacy_policy_url">http://47.115.223.27/privacypolicy.html</string>
 
+    <!-- 友盟 App Key -->
+    <string name="um_app_key_debug">66b9b018192e0574e75d9be9</string>
+    <string name="um_app_key">66b9aa29cac2a664de8a7f6b</string>
+    <string name="um_app_key_manifest_debug">um.66b9b018192e0574e75d9be9</string>
+    <string name="um_app_key_manifest">um.66b9aa29cac2a664de8a7f6b</string>
+
 </resources>

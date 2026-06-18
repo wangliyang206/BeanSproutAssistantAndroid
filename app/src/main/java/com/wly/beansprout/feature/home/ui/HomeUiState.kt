@@ -3,6 +3,17 @@ package com.wly.beansprout.feature.home.ui
 import androidx.compose.runtime.Stable
 
 /**
+ * 开始按钮状态
+ * 对应旧项目 MainActivity 中的多态按钮：无障碍服务 → 悬浮窗权限 → 开始 → 已开启
+ */
+enum class StartButtonState {
+    NEED_ACCESSIBILITY,   // 需要开启无障碍服务
+    NEED_OVERLAY,         // 需要开启悬浮窗权限
+    READY,                // 就绪，可以开始
+    RUNNING               // 服务已运行
+}
+
+/**
  * 首页 UI 状态
  */
 @Stable
@@ -19,9 +30,14 @@ data class HomeUiState(
     // 版本信息
     val versionName: String = "",
 
+    // 开始按钮状态
+    val startButtonState: StartButtonState = StartButtonState.NEED_ACCESSIBILITY,
+
     // UI 状态
     val showLogoutDialog: Boolean = false,
-    val showStartDialog: Boolean = false
+    val showStartDialog: Boolean = false,
+    val showAccessibilityDialog: Boolean = false,
+    val showOverlayDialog: Boolean = false
 )
 
 /**
@@ -31,6 +47,9 @@ sealed class HomeEvent {
     object NavigateToLogin : HomeEvent()
     object NavigateToServiceAgreement : HomeEvent()
     object NavigateToPrivacyPolicy : HomeEvent()
+    object NavigateToTutorial : HomeEvent()
+    object NavigateToAccessibilitySettings : HomeEvent()
+    object NavigateToOverlaySettings : HomeEvent()
     object ShowExitAppDialog : HomeEvent()
     object ShowStartDialog : HomeEvent()
     data class ShowToast(val message: String) : HomeEvent()

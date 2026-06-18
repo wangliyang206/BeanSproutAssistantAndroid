@@ -1,6 +1,7 @@
 package com.wly.beansprout.feature.home.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -85,6 +86,7 @@ fun HomeCenter(
     selectedExclusive: Int,
     selectedFunctions: Int,
     selectedModel: Int,
+    startButtonState: StartButtonState,
     onExclusiveChanged: (Int) -> Unit,
     onFunctionSelected: (Int) -> Unit,
     onModelChanged: (Int) -> Unit,
@@ -109,7 +111,7 @@ fun HomeCenter(
         Spacer(modifier = Modifier.height(20.dp))
 
         // 开始按钮
-        StartButton(onClick = onStartClick)
+        StartButton(startButtonState = startButtonState, onClick = onStartClick)
     }
 }
 
@@ -244,9 +246,17 @@ fun ModelSetting(
 
 @Composable
 fun StartButton(
+    startButtonState: StartButtonState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val (buttonText, buttonColor) = when (startButtonState) {
+        StartButtonState.NEED_ACCESSIBILITY -> "无障碍服务" to Color(0xFFFF9800)
+        StartButtonState.NEED_OVERLAY -> "悬浮窗权限" to Color(0xFFFF9800)
+        StartButtonState.READY -> "开始" to BtnColor
+        StartButtonState.RUNNING -> "已开启" to Color(0xFFE53935)
+    }
+
     Button(
         onClick = onClick,
         modifier = modifier
@@ -254,14 +264,14 @@ fun StartButton(
             .aspectRatio(1f),
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(
-            containerColor = BtnColor,
+            containerColor = buttonColor,
             contentColor = Color.White
         ),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
     ) {
         Text(
-            text = "开始",
-            fontSize = 30.sp,
+            text = buttonText,
+            fontSize = if (buttonText.length > 2) 20.sp else 30.sp,
             fontWeight = FontWeight.Bold
         )
     }
@@ -273,15 +283,56 @@ fun StartButton(
 @Composable
 fun HomeBottom(
     versionName: String,
+    onTutorialClick: () -> Unit = {},
+    onServiceAgreementClick: () -> Unit = {},
+    onPrivacyPolicyClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    Text(
-        text = "V$versionName",
-        fontSize = 14.sp,
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp)
-            .wrapContentWidth(Alignment.CenterHorizontally),
-        textAlign = TextAlign.Center
-    )
+            .padding(bottom = 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // 版本号
+        Text(
+            text = "V$versionName",
+            fontSize = 14.sp
+        )
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        // 底部链接栏：服务协议 | 使用教程 | 隐私政策
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "服务协议",
+                fontSize = 12.sp,
+                color = Color(0xFF666666),
+                modifier = Modifier
+                    .clickable { onServiceAgreementClick() }
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+            Text(text = "|", fontSize = 12.sp, color = Color(0xFFCCCCCC))
+            Text(
+                text = "使用教程",
+                fontSize = 12.sp,
+                color = Color(0xFF1E88E5),
+                modifier = Modifier
+                    .clickable { onTutorialClick() }
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+            Text(text = "|", fontSize = 12.sp, color = Color(0xFFCCCCCC))
+            Text(
+                text = "隐私政策",
+                fontSize = 12.sp,
+                color = Color(0xFF666666),
+                modifier = Modifier
+                    .clickable { onPrivacyPolicyClick() }
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+        }
+    }
 }

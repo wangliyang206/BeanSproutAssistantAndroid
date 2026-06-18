@@ -2,6 +2,7 @@ package com.wly.beansprout.feature.login.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wly.beansprout.core.utils.UMengManager
 import com.wly.beansprout.data.repository.LoginRepository
 import com.wly.beansprout.feature.login.ui.LoginEvent
 import com.wly.beansprout.feature.login.ui.LoginFormValidation
@@ -107,6 +108,8 @@ class LoginViewModel @Inject constructor(
 
                 // 登录成功，发送事件
                 _events.emit(LoginEvent.LoginSuccess(result.userName))
+                // 友盟：用户登录
+                UMengManager.onProfileSignIn(result.userId)
                 // 重置加载状态
                 _uiState.update { it.copy(isLoading = false) }
             } catch (e: Exception) {

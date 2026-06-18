@@ -3,9 +3,10 @@ package com.wly.beansprout.feature.splash.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.wly.beansprout.core.datastore.LoginPreferences
+import com.wly.beansprout.core.utils.UMengManager
 import com.wly.beansprout.data.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -14,9 +15,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
+    application: android.app.Application,
     private val loginRepository: LoginRepository,
     private val loginPreferences: LoginPreferences
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     // 是否正在加载
     var isLoading by mutableStateOf(true)
@@ -63,6 +65,8 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             // 保存同意状态到 DataStore
             loginPreferences.setPrivacyAgreed(true)
+            // 友盟完整初始化（必须在用户同意之后）
+            UMengManager.init(getApplication())
             // 关闭弹窗
             privacyDialogState = null
             // 继续 Token 校验流程
@@ -111,6 +115,8 @@ class SplashViewModel @Inject constructor(
             loginRepository.validToken()
             // 验证成功，跳首页
             navigateToHome = true
+            // 友盟：用户登录（使用手机号作为 userId）
+            UMengManager.onProfileSignIn(userInfo.userId)
         } catch (e: Exception) {
             // 任何异常都跳登录
             e.printStackTrace()

@@ -15,6 +15,14 @@ sealed class NavRoutes(val route: String) {
     // 首页
     object Home : NavRoutes("home")
 
+    // 触点管理
+    object TouchPointManage : NavRoutes("touchpoint_manage")
+    // 添加触点
+    object AddTouchPoint : NavRoutes("add_touch_point")
+
+    // 教程视频
+    object TutorialVideo : NavRoutes("tutorial_video")
+
     // WebView 协议页（支持 URL + 标题参数）
     object WebView : NavRoutes("webview/{title}/{url}") {
         // 服务协议 URL

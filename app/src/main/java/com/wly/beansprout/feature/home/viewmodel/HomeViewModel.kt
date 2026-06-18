@@ -1,12 +1,17 @@
 package com.wly.beansprout.feature.home.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.content.Intent
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.wly.beansprout.BuildConfig
 import com.wly.beansprout.core.utils.StringUtils
+import com.wly.beansprout.core.utils.UMengManager
+import com.wly.beansprout.core.utils.WindowUtils
 import com.wly.beansprout.data.repository.LoginRepository
+import com.wly.beansprout.feature.floating.FloatingService
 import com.wly.beansprout.feature.home.ui.HomeEvent
 import com.wly.beansprout.feature.home.ui.HomeUiState
+import com.wly.beansprout.feature.home.ui.StartButtonState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +24,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    application: android.app.Application,
     private val loginRepository: LoginRepository
-) : ViewModel() {
+) : AndroidViewModel(application) {
+
+    companion object {
+        // 功能选择对应的友盟事件ID
+        private val FUNCTION_EVENT_IDS = mapOf(
+            0 to "lightlyTrigger",   // 轻点触发
+            1 to "liveStreamingLikes", // 直播点赞
+            2 to "slideDown",        // 向下滑
+            3 to "wipeUp",           // 向上滑
+            4 to "swipeLeft",        // 向左滑
+            5 to "swipeRight",       // 向右滑
+            6 to "autoReply",        // 自动回复
+            7 to "luckyBag"          // 抢福袋
+        )
+    }
+
     // 私有状态
     private val _uiState = MutableStateFlow(
         HomeUiState(versionName = BuildConfig.VERSION_NAME)
@@ -34,6 +55,8 @@ class HomeViewModel @Inject constructor(
     init {
         // 初始化时从 DataStore 加载用户信息
         loadUserInfo()
+        // 友盟：进入首页事件
+        UMengManager.onEvent(application, "open_main")
     }
 
     /**
@@ -70,6 +93,11 @@ class HomeViewModel @Inject constructor(
      */
     fun updateSelectedFunction(functionIndex: Int) {
         _uiState.update { it.copy(selectedFunction = functionIndex) }
+        // 友盟：功能选择事件
+        val eventId = FUNCTION_EVENT_IDS.getOrElse(functionIndex) { "" }
+        if (eventId.isNotBlank()) {
+            UMengManager.onEvent(getApplication(), eventId)
+        }
     }
 
     /**
@@ -80,13 +108,103 @@ class HomeViewModel @Inject constructor(
     }
 
     /**
-     * 处理开始按钮点击
+     * 刷新开始按钮状态（在 onResume 或权限变化时调用）
+     */
+    fun refreshStartButtonState() {
+        val context: android.content.Context = getApplication()
+        val accessibilityEnabled = isAccessibilityServiceEnabled(context)
+        val overlayGranted = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M
+                || android.provider.Settings.canDrawOverlays(context)
+        val serviceRunning = WindowUtils.isServiceRunning(context, FloatingService::class.java.name)
+
+        val buttonState = when {
+            !accessibilityEnabled -> StartButtonState.NEED_ACCESSIBILITY
+            !overlayGranted -> StartButtonState.NEED_OVERLAY
+            serviceRunning -> StartButtonState.RUNNING
+            else -> StartButtonState.READY
+        }
+        _uiState.update { it.copy(startButtonState = buttonState) }
+    }
+
+    /**
+     * 检查无障碍服务是否已启用
+     */
+    private fun isAccessibilityServiceEnabled(context: android.content.Context): Boolean {
+        val serviceClass = com.wly.beansprout.feature.accessibility.AutoTouchService::class.java
+        val prefString = android.provider.Settings.Secure.getString(
+            context.contentResolver,
+            android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        ) ?: return false
+        val expectedComponent = "${context.packageName}/${serviceClass.name}"
+        return prefString.split(':').any { it.equals(expectedComponent, ignoreCase = true) }
+    }
+
+    /**
+     * 处理开始按钮点击 → 根据状态执行不同操作
      */
     fun onStartClick() {
-        viewModelScope.launch {
-            _events.emit(HomeEvent.ShowStartDialog)
-            // 这里可以启动后台服务或执行其他逻辑
+        when (_uiState.value.startButtonState) {
+            StartButtonState.NEED_ACCESSIBILITY -> {
+                _uiState.update { it.copy(showAccessibilityDialog = true) }
+            }
+            StartButtonState.NEED_OVERLAY -> {
+                _uiState.update { it.copy(showOverlayDialog = true) }
+            }
+            StartButtonState.READY -> {
+                _uiState.update { it.copy(showStartDialog = true) }
+            }
+            StartButtonState.RUNNING -> {
+                // 停止服务
+                val context: android.content.Context = getApplication()
+                context.stopService(Intent(context, FloatingService::class.java))
+                _uiState.update { it.copy(startButtonState = StartButtonState.READY) }
+            }
         }
+    }
+
+    fun dismissAccessibilityDialog() {
+        _uiState.update { it.copy(showAccessibilityDialog = false) }
+    }
+
+    fun dismissOverlayDialog() {
+        _uiState.update { it.copy(showOverlayDialog = false) }
+    }
+
+    fun navigateToAccessibilitySettings() {
+        _uiState.update { it.copy(showAccessibilityDialog = false) }
+        viewModelScope.launch {
+            _events.emit(HomeEvent.NavigateToAccessibilitySettings)
+        }
+    }
+
+    fun navigateToOverlaySettings() {
+        _uiState.update { it.copy(showOverlayDialog = false) }
+        viewModelScope.launch {
+            _events.emit(HomeEvent.NavigateToOverlaySettings)
+        }
+    }
+
+    /**
+     * 关闭开始确认弹窗
+     */
+    fun dismissStartDialog() {
+        _uiState.update { it.copy(showStartDialog = false) }
+    }
+
+    /**
+     * 确认开始执行：返回当前选择的参数
+     * @return Triple(functionType, chickModel, luckybagTime)
+     */
+    fun confirmStart(): Triple<Int, Int, Int> {
+        val state = _uiState.value
+        // selectedFunction: 0=轻点触发 1=直播点赞 2=向下滑 3=向上滑 4=向左滑 5=向右滑 6=自动回复 7=抢福袋(抖音专属)
+        val functionType = state.selectedFunction + 1 // 映射到 TouchPoint.TYPE_*
+        // selectedModel: 0=功德小鸡(闪现) 1=跳绳小鸡(溜达)
+        val chickModel = if (state.selectedModel == 0) 1 else 2
+        // luckybagTime 默认为 0 (不限制)
+        val luckybagTime = if (functionType == 8) 0 else 0
+        _uiState.update { it.copy(showStartDialog = false) }
+        return Triple(functionType, chickModel, luckybagTime)
     }
 
     /**
@@ -108,6 +226,8 @@ class HomeViewModel @Inject constructor(
      */
     fun confirmLogout() {
         _uiState.update { it.copy(showLogoutDialog = false) }
+        // 友盟：用户登出
+        UMengManager.onProfileSignOff()
         viewModelScope.launch {
             try {
                 // 清除本地存储的登录信息
@@ -135,6 +255,15 @@ class HomeViewModel @Inject constructor(
     fun navigateToPrivacyPolicy() {
         viewModelScope.launch {
             _events.emit(HomeEvent.NavigateToPrivacyPolicy)
+        }
+    }
+
+    /**
+     * 导航到教程视频
+     */
+    fun navigateToTutorial() {
+        viewModelScope.launch {
+            _events.emit(HomeEvent.NavigateToTutorial)
         }
     }
 
