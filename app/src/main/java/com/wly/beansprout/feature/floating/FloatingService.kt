@@ -257,6 +257,20 @@ class FloatingService : Service() {
                     override fun onExitService() {
                         stopSelf()
                     }
+
+                    override fun onAddTouchPoint() {
+                        // 启动主 Activity 并导航到添加触点页面
+                        val intent = Intent(this@FloatingService, com.wly.beansprout.MainActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                            putExtra(com.wly.beansprout.MainActivity.EXTRA_NAVIGATE_TO,
+                                com.wly.beansprout.MainActivity.NAV_ADD_TOUCH_POINT)
+                        }
+                        startActivity(intent)
+                    }
+
+                    override fun onEditReplyScript() {
+                        // 话术编辑弹窗已在 FloatingMenuDialog 内部直接展示，此处无需额外操作
+                    }
                 })
             }
         }

@@ -1,5 +1,6 @@
 package com.wly.beansprout.feature.floating
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -7,12 +8,16 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.wly.beansprout.R
 import com.wly.beansprout.core.TouchAction
 import com.wly.beansprout.core.TouchEventManager
 import com.wly.beansprout.core.utils.DensityUtil
+import com.wly.beansprout.core.utils.ToastUtils
 import com.wly.beansprout.data.model.TouchPoint
 import com.wly.beansprout.data.repository.TouchPointRepository
 import com.wly.beansprout.feature.accessibility.AutoTouchService
@@ -53,6 +58,10 @@ class FloatingMenuDialog(context: Context) : Dialog(context) {
         fun onStopTouch()
         /** 退出助手 */
         fun onExitService()
+        /** 添加触控点 — 跳转主 App 添加触点页面 */
+        fun onAddTouchPoint()
+        /** 编辑自动回复话术 */
+        fun onEditReplyScript()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,10 +129,8 @@ class FloatingMenuDialog(context: Context) : Dialog(context) {
         // 按钮点击
         btAdd.setOnClickListener {
             if (isDoubleClick()) return@setOnClickListener
-            // 添加触点 → 跳转到添加触点页面（通过悬浮窗回调）
-            // 由于 Service 无法直接启动 Activity 导航，这里暂时通过 Toast 提示
-            // 实际使用应在主 app 中添加触点
             dismiss()
+            listener?.onAddTouchPoint()
         }
 
         btStop.setOnClickListener {
@@ -145,8 +152,8 @@ class FloatingMenuDialog(context: Context) : Dialog(context) {
 
         btReply.setOnClickListener {
             if (isDoubleClick()) return@setOnClickListener
-            // 话术功能 — 在主 app 的触点管理页面中处理
             dismiss()
+            showReplyScriptDialog()
         }
 
         btExit.setOnClickListener {
@@ -204,6 +211,64 @@ class FloatingMenuDialog(context: Context) : Dialog(context) {
             lastClickTime = now
             false
         }
+    }
+
+    /**
+     * 显示自动回复话术编辑弹窗（传统 AlertDialog，与旧项目 AutomaticReplyScriptDialog 对齐）
+     */
+    private fun showReplyScriptDialog() {
+        val currentScript = repository.getAutoReplyScript()
+
+        val editText = EditText(context).apply {
+            setText(currentScript)
+            minLines = 8
+            maxLines = 10
+            gravity = Gravity.TOP or Gravity.START
+            setPadding(
+                DensityUtil.dip2px(context, 12f),
+                DensityUtil.dip2px(context, 8f),
+                DensityUtil.dip2px(context, 12f),
+                DensityUtil.dip2px(context, 8f)
+            )
+        }
+
+        val container = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(
+                DensityUtil.dip2px(context, 16f),
+                DensityUtil.dip2px(context, 8f),
+                DensityUtil.dip2px(context, 16f),
+                0
+            )
+        }
+
+        val tipView = android.widget.TextView(context).apply {
+            text = "支持多条话术随机回复。多条话术之间用英文';'做分割。最后一组结尾不用填英文';'符号。"
+            textSize = 12f
+            setTextColor(0xFFE53935.toInt())
+        }
+        container.addView(tipView)
+        container.addView(editText, LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply { topMargin = DensityUtil.dip2px(context, 8f) })
+
+        val scrollView = ScrollView(context).apply {
+            addView(container)
+        }
+
+        AlertDialog.Builder(context)
+            .setTitle("填入自动回复的话术")
+            .setView(scrollView)
+            .setPositiveButton("保存") { _, _ ->
+                val newScript = editText.text.toString().trim()
+                if (newScript.isNotEmpty()) {
+                    repository.setAutoReplyScript(newScript)
+                    ToastUtils.showToast(context, "话术已保存")
+                }
+            }
+            .setNegativeButton("取消", null)
+            .show()
     }
 
     companion object {

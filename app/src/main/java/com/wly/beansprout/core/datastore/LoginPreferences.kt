@@ -68,6 +68,19 @@ class LoginPreferences @Inject constructor(
         }
     }
 
+    // 退出登录时仅清除令牌和用户信息，保留手机号（与旧项目 AccountManager.setToken("") 行为一致）
+    suspend fun clearForLogout() {
+        loginDataStore.edit { preferences ->
+            preferences.remove(LoginKeys.USER_TOKEN)
+            preferences.remove(LoginKeys.USER_ID)
+            preferences.remove(LoginKeys.USER_NAME)
+            // 保留 USER_PHONE，方便用户重新登录
+            preferences.remove(LoginKeys.STATUS)
+            preferences.remove(LoginKeys.DAYS_REMAINING)
+            preferences.remove(LoginKeys.REMEMBER_PASSWORD)
+        }
+    }
+
     // 检查是否已登录
     suspend fun isLoggedIn(): Boolean {
         return loginDataStore.data.first()[LoginKeys.IS_LOGGED_IN] ?: false

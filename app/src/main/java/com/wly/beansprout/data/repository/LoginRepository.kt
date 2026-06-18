@@ -60,10 +60,10 @@ class LoginRepository @Inject constructor(
         return userData
     }
 
-    // 退出登录（清除本地存储）
+    // 退出登录（清除令牌和用户信息，保留手机号）
     suspend fun logout() {
         operateLocal {
-            userPrefs.clearLoginInfo()
+            userPrefs.clearForLogout()
         }
 
     }

@@ -24,8 +24,9 @@ data class HomeUiState(
 
     // 设置选项
     val selectedExclusive: Int = 0,  // 0:抖音, 1:快手, 2:其它
-    val selectedFunction: Int = 0,  // 单选功能
-    val selectedModel: Int = 0,  // 0:功德小鸡, 1:跳绳小鸡
+    val selectedFunction: Int = 1,  // 默认选中"直播点赞"（与旧项目一致）
+    val selectedModel: Int = 1,  // 默认选中"跳绳小鸡"（与旧项目一致）
+    val selectedLuckyBagTime: Int = 999,  // 默认"不设置"（与旧项目 tag=999 一致）
 
     // 版本信息
     val versionName: String = "",
@@ -37,7 +38,8 @@ data class HomeUiState(
     val showLogoutDialog: Boolean = false,
     val showStartDialog: Boolean = false,
     val showAccessibilityDialog: Boolean = false,
-    val showOverlayDialog: Boolean = false
+    val showOverlayDialog: Boolean = false,
+    val showLuckyBagTipDialog: Boolean = false  // 福袋每日提示弹窗
 )
 
 /**
@@ -52,6 +54,7 @@ sealed class HomeEvent {
     object NavigateToOverlaySettings : HomeEvent()
     object ShowExitAppDialog : HomeEvent()
     object ShowStartDialog : HomeEvent()
+    object NavigateToAddTouchPoint : HomeEvent()
     data class ShowToast(val message: String) : HomeEvent()
 }
 
@@ -78,6 +81,9 @@ object HomeFunctionOptions {
 
     // 模型选项
     val modelOptions = listOf("功德小鸡", "跳绳小鸡")
+
+    // 福袋时间选项（索引对应 tag 值：0→999不设置, 1→998随机5~10, 2→997随机0~5, 3→5分钟, 4→1分钟, 5→小于1分）
+    val luckyBagTimeOptions = listOf("不设置", "5~10随机", "0~5随机", "5分钟", "1分钟", "小于1分")
 
     /**
      * 根据选择的专属平台获取功能选项

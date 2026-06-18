@@ -22,7 +22,7 @@ class TouchPointRepository @Inject constructor(
     private companion object {
         const val KEY_TOUCH_LIST = "touch_list"
         const val KEY_AUTO_REPLY_SCRIPT = "auto_reply_script"
-        const val DEFAULT_AUTO_REPLY_SCRIPT = "你好;欢迎;谢谢;辛苦了"
+        const val DEFAULT_AUTO_REPLY_SCRIPT = "喜欢主播的点点关注、点点赞，感谢！;感谢大家的支持！;如果觉得今天的直播不错，就请给我点个赞吧！你们的支持是我最大的动力！;欢迎各位亲们来到直播间！"
     }
 
     /** 获取所有已保存的触点 */

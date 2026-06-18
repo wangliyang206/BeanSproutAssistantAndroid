@@ -86,10 +86,12 @@ fun HomeCenter(
     selectedExclusive: Int,
     selectedFunctions: Int,
     selectedModel: Int,
+    selectedLuckyBagTime: Int,
     startButtonState: StartButtonState,
     onExclusiveChanged: (Int) -> Unit,
     onFunctionSelected: (Int) -> Unit,
     onModelChanged: (Int) -> Unit,
+    onLuckyBagTimeChanged: (Int) -> Unit,
     onStartClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -103,9 +105,11 @@ fun HomeCenter(
             selectedExclusive = selectedExclusive,
             selectedFunctions = selectedFunctions,
             selectedModel = selectedModel,
+            selectedLuckyBagTime = selectedLuckyBagTime,
             onExclusiveChanged = onExclusiveChanged,
             onFunctionSelected = onFunctionSelected,
-            onModelChanged = onModelChanged
+            onModelChanged = onModelChanged,
+            onLuckyBagTimeChanged = onLuckyBagTimeChanged
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -120,9 +124,11 @@ fun SettingsPanel(
     selectedExclusive: Int,
     selectedFunctions: Int,
     selectedModel: Int,
+    selectedLuckyBagTime: Int,
     onExclusiveChanged: (Int) -> Unit,
     onFunctionSelected: (Int) -> Unit,
     onModelChanged: (Int) -> Unit,
+    onLuckyBagTimeChanged: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -153,6 +159,14 @@ fun SettingsPanel(
             selectedModel = selectedModel,
             onModelChanged = onModelChanged
         )
+
+        // 福袋时间设置（仅在功能选择为"抢福袋"时显示，抢福袋在抖音专属下索引为7）
+        if (selectedExclusive == 0 && selectedFunctions == 7) {
+            LuckyBagTimeSetting(
+                selectedLuckyBagTime = selectedLuckyBagTime,
+                onLuckyBagTimeChanged = onLuckyBagTimeChanged
+            )
+        }
 
         Spacer(modifier = Modifier.height(10.dp))
     }
