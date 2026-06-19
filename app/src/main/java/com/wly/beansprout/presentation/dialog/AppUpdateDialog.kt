@@ -82,7 +82,7 @@ fun AppUpdateDialog(
             // 版本号 + 大小
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "v${appUpdate.verName}",
+                    text = appUpdate.verName,
                     fontSize = 14.sp,
                     color = Color(0xFF666666)
                 )
