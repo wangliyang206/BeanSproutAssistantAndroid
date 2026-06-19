@@ -91,8 +91,8 @@ fun AppNavGraph(
         }
     }
 
-    // 消费来自悬浮窗的待处理导航（仅在 Home 页就绪后）
-    LaunchedEffect(Unit) {
+    // 消费来自悬浮窗的待处理导航（navRouteVersion 变化时重新触发）
+    LaunchedEffect(MainActivity.navRouteVersion) {
         // 等待 NavGraph 完成初始化
         delay(300)
         // 等待直到当前目的地是 Home（即用户已登录）

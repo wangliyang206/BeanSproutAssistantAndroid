@@ -45,6 +45,7 @@ class MainActivity : ComponentActivity() {
         val navigateTo = intent?.getStringExtra(EXTRA_NAVIGATE_TO)
         if (navigateTo != null) {
             pendingNavRoute = navigateTo
+            navRouteVersion++
             intent.removeExtra(EXTRA_NAVIGATE_TO)
         }
     }
@@ -64,5 +65,11 @@ class MainActivity : ComponentActivity() {
          * AppNavGraph 在 Home 页就绪时消费此值。
          */
         var pendingNavRoute: String? = null
+
+        /**
+         * 导航路由版本号。每次 handleNavigationIntent 设置新路由时递增，
+         * 用于触发 AppNavGraph 的 LaunchedEffect 重新消费 pendingNavRoute。
+         */
+        var navRouteVersion: Int = 0
     }
 }

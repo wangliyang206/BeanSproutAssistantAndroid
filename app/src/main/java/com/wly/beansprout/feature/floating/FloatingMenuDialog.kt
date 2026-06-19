@@ -33,7 +33,7 @@ import com.wly.beansprout.feature.accessibility.AutoTouchService
  *
  * 使用传统 Dialog 而非 Compose，因为从 Service 上下文弹出。
  */
-class FloatingMenuDialog(context: Context) : Dialog(context) {
+class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDialog) {
 
     private lateinit var btAdd: Button
     private lateinit var btStop: Button
@@ -130,7 +130,7 @@ class FloatingMenuDialog(context: Context) : Dialog(context) {
         btAdd.setOnClickListener {
             if (isDoubleClick()) return@setOnClickListener
             dismiss()
-            listener?.onAddTouchPoint()
+            showAddPointDialog()
         }
 
         btStop.setOnClickListener {
@@ -138,6 +138,8 @@ class FloatingMenuDialog(context: Context) : Dialog(context) {
             // 停止触控
             btReply.visibility = if (functionType == TYPE_AUTO_REPLY) View.VISIBLE else View.GONE
             btStop.visibility = View.GONE
+
+            ToastUtils.showToast(context, "已停止触控")
 
             // 通知无障碍服务停止触控
             AutoTouchService.instance?.handleTouchAction(TouchAction.STOP)
@@ -169,6 +171,19 @@ class FloatingMenuDialog(context: Context) : Dialog(context) {
                 AutoTouchService.instance?.handleTouchAction(TouchAction.CONTINUE)
             }
         }
+    }
+
+    override fun show() {
+        // 从 Service 上下文弹出 Dialog 必须设置系统级窗口类型，否则会 BadTokenException
+        window?.let { w ->
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                w.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+            } else {
+                @Suppress("DEPRECATION")
+                w.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT)
+            }
+        }
+        super.show()
     }
 
     override fun onStart() {
@@ -257,7 +272,7 @@ class FloatingMenuDialog(context: Context) : Dialog(context) {
             addView(container)
         }
 
-        AlertDialog.Builder(context)
+        val dialog = AlertDialog.Builder(context)
             .setTitle("填入自动回复的话术")
             .setView(scrollView)
             .setPositiveButton("保存") { _, _ ->
@@ -268,7 +283,34 @@ class FloatingMenuDialog(context: Context) : Dialog(context) {
                 }
             }
             .setNegativeButton("取消", null)
-            .show()
+            .create()
+
+        // 从 Service 上下文弹出，需设置系统级窗口类型
+        dialog.window?.let { w ->
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                w.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+            } else {
+                @Suppress("DEPRECATION")
+                w.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT)
+            }
+        }
+        dialog.show()
+    }
+
+    /**
+     * 弹出添加触控点覆盖层（与旧项目 AddPointDialog 行为一致）
+     * 用户点击屏幕捕获坐标，填写名称和间隔后保存
+     */
+    private fun showAddPointDialog() {
+        val addDialog = AddPointDialog(context) { touchPoint ->
+            val points = repository.getTouchPoints().toMutableList()
+            points.add(touchPoint)
+            repository.saveTouchPoints(points)
+        }
+        addDialog.setOnDismissListener {
+            show()
+        }
+        addDialog.show()
     }
 
     companion object {
