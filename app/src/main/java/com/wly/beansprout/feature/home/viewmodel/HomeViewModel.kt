@@ -83,9 +83,15 @@ class HomeViewModel @Inject constructor(
 
     /**
      * 更新专属平台选择
+     * 切换平台时联动：若当前选中的功能在非抖音平台不存在（如抢福袋），自动回退到"直播点赞"
      */
     fun updateSelectedExclusive(exclusive: Int) {
-        _uiState.update { it.copy(selectedExclusive = exclusive) }
+        _uiState.update { state ->
+            val currentFunction = state.selectedFunction
+            // 抖音有 8 个功能（0-7，含抢福袋），其它平台只有 7 个（0-6）
+            val newFunction = if (exclusive != 0 && currentFunction >= 7) 1 else currentFunction
+            state.copy(selectedExclusive = exclusive, selectedFunction = newFunction)
+        }
     }
 
     /**
@@ -105,6 +111,13 @@ class HomeViewModel @Inject constructor(
      */
     fun updateSelectedModel(model: Int) {
         _uiState.update { it.copy(selectedModel = model) }
+    }
+
+    /**
+     * 更新福袋时间选择
+     */
+    fun updateSelectedLuckyBagTime(time: Int) {
+        _uiState.update { it.copy(selectedLuckyBagTime = time) }
     }
 
     /**
@@ -151,13 +164,23 @@ class HomeViewModel @Inject constructor(
                 _uiState.update { it.copy(showOverlayDialog = true) }
             }
             StartButtonState.READY -> {
-                _uiState.update { it.copy(showStartDialog = true) }
+                // 直接启动，不弹确认弹窗（与旧项目一致）
+                val (functionType, chickModel, luckybagTime) = confirmStart()
+                // 抢福袋功能检查每日提示
+                if (functionType == 8 && !checkLuckyBagTipToday()) {
+                    _uiState.update { it.copy(showLuckyBagTipDialog = true) }
+                    return
+                }
+                launchService(functionType, chickModel, luckybagTime)
             }
             StartButtonState.RUNNING -> {
                 // 停止服务
                 val context: android.content.Context = getApplication()
                 context.stopService(Intent(context, FloatingService::class.java))
                 _uiState.update { it.copy(startButtonState = StartButtonState.READY) }
+                viewModelScope.launch {
+                    _events.emit(HomeEvent.ShowToast("打工鸡已停止"))
+                }
             }
         }
     }
@@ -201,10 +224,60 @@ class HomeViewModel @Inject constructor(
         val functionType = state.selectedFunction + 1 // 映射到 TouchPoint.TYPE_*
         // selectedModel: 0=功德小鸡(闪现) 1=跳绳小鸡(溜达)
         val chickModel = if (state.selectedModel == 0) 1 else 2
-        // luckybagTime 默认为 0 (不限制)
-        val luckybagTime = if (functionType == 8) 0 else 0
-        _uiState.update { it.copy(showStartDialog = false) }
+        // 福袋时间：仅抢福袋(functionType==8)时使用选中值，其它功能传 0
+        val luckybagTime = if (functionType == 8) state.selectedLuckyBagTime else 0
         return Triple(functionType, chickModel, luckybagTime)
+    }
+
+    /**
+     * 启动悬浮窗服务并最小化应用（与旧项目一致）
+     */
+    private fun launchService(functionType: Int, chickModel: Int, luckybagTime: Int) {
+        viewModelScope.launch {
+            _events.emit(HomeEvent.StartFloatingService(functionType, chickModel, luckybagTime))
+            _events.emit(HomeEvent.MinimizeApp)
+        }
+    }
+
+    /**
+     * 关闭福袋每日提示弹窗并启动服务
+     */
+    fun dismissLuckyBagTipDialog() {
+        _uiState.update { it.copy(showLuckyBagTipDialog = false) }
+    }
+
+    /**
+     * 确认福袋提示：记录今日已展示，然后启动服务
+     */
+    fun confirmLuckyBagTipDialog() {
+        _uiState.update { it.copy(showLuckyBagTipDialog = false) }
+        markLuckyBagTipToday()
+        val (functionType, chickModel, luckybagTime) = confirmStart()
+        launchService(functionType, chickModel, luckybagTime)
+    }
+
+    /**
+     * 检查今天是否已展示过福袋提示
+     */
+    private fun checkLuckyBagTipToday(): Boolean {
+        val prefs = getApplication<android.app.Application>()
+            .getSharedPreferences("lucky_bag_tip", android.content.Context.MODE_PRIVATE)
+        val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+            .format(java.util.Date())
+        return prefs.getString("last_shown_date", "") == today
+    }
+
+    /**
+     * 记录今天已展示福袋提示
+     */
+    private fun markLuckyBagTipToday() {
+        val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+            .format(java.util.Date())
+        getApplication<android.app.Application>()
+            .getSharedPreferences("lucky_bag_tip", android.content.Context.MODE_PRIVATE)
+            .edit()
+            .putString("last_shown_date", today)
+            .apply()
     }
 
     /**

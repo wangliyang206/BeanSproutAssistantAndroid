@@ -259,6 +259,28 @@ fun ModelSetting(
 }
 
 @Composable
+fun LuckyBagTimeSetting(
+    selectedLuckyBagTime: Int,
+    onLuckyBagTimeChanged: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = "福袋时间：", fontSize = 14.sp)
+
+        GridRadioGroup(
+            options = HomeFunctionOptions.luckyBagTimeOptions,
+            selected = selectedLuckyBagTime,
+            onOptionSelected = onLuckyBagTimeChanged
+        )
+    }
+}
+
+@Composable
 fun StartButton(
     startButtonState: StartButtonState,
     onClick: () -> Unit,

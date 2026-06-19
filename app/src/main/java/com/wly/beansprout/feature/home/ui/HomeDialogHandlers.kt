@@ -79,6 +79,19 @@ fun HomeDialogHandlers(
                     // 已通过 state 管理，此事件保留兼容
                 }
 
+                is HomeEvent.StartFloatingService -> {
+                    startFloatingService(context, event.functionType, event.chickModel, event.luckybagTime)
+                }
+
+                is HomeEvent.MinimizeApp -> {
+                    val activity = context as? Activity
+                    activity?.moveTaskToBack(true)
+                }
+
+                is HomeEvent.NavigateToAddTouchPoint -> {
+                    navController.navigate(NavRoutes.TouchPointManage.route)
+                }
+
                 is HomeEvent.ShowToast -> {
                     showToast(context, event.message)
                 }
@@ -100,20 +113,17 @@ fun HomeDialogHandlers(
         )
     }
 
-    // 开始确认对话框
-    if (uiState.showStartDialog) {
+    // 福袋每日提示弹窗（每天只弹一次，仅在抢福袋功能时展示）
+    if (uiState.showLuckyBagTipDialog) {
         CommonDialog(
             showDialog = true,
-            onDismissRequest = { viewModel.dismissStartDialog() },
-            title = "开始执行",
-            content = { Text("确定开始执行任务吗？") },
-            confirmText = "确定",
-            onConfirmClick = {
-                val (functionType, chickModel, luckybagTime) = viewModel.confirmStart()
-                startFloatingService(context, functionType, chickModel, luckybagTime)
-            },
+            onDismissRequest = { viewModel.dismissLuckyBagTipDialog() },
+            title = "福袋使用说明",
+            content = { Text("当直播间出现福袋图标时，请迅速点击福袋图标进行抢福袋操作。此提示每天仅展示一次。") },
+            confirmText = "我知道了",
+            onConfirmClick = { viewModel.confirmLuckyBagTipDialog() },
             cancelText = "取消",
-            onCancelClick = { viewModel.dismissStartDialog() }
+            onCancelClick = { viewModel.dismissLuckyBagTipDialog() }
         )
     }
 
@@ -183,7 +193,6 @@ private fun startFloatingService(
     }
     // 启动悬浮窗服务（使用 startService 而非 startForegroundService，因为悬浮窗服务不需要前台通知）
     context.startService(intent)
-    showToast(context, "悬浮窗已启动")
 }
 
 @Composable

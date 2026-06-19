@@ -55,6 +55,8 @@ sealed class HomeEvent {
     object ShowExitAppDialog : HomeEvent()
     object ShowStartDialog : HomeEvent()
     object NavigateToAddTouchPoint : HomeEvent()
+    object MinimizeApp : HomeEvent()
+    data class StartFloatingService(val functionType: Int, val chickModel: Int, val luckybagTime: Int) : HomeEvent()
     data class ShowToast(val message: String) : HomeEvent()
 }
 
