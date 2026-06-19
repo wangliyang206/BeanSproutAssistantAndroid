@@ -1,9 +1,8 @@
 package com.wly.beansprout.data.repository
 
 import com.wly.beansprout.core.datastore.LoginPreferences
-import com.wly.beansprout.core.network.ApiService
+import com.wly.beansprout.core.network.RequestHelper
 import com.wly.beansprout.core.network.RetrofitClient
-import com.wly.beansprout.data.model.BaseRequest
 import com.wly.beansprout.data.model.UserInfo
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -13,21 +12,19 @@ import javax.inject.Inject
  */
 class LoginRepository @Inject constructor(
     private val retrofitClient: RetrofitClient,
-    private val userPrefs: LoginPreferences
+    private val userPrefs: LoginPreferences,
+    private val requestHelper: RequestHelper
 ) : BaseRepository() {
 
     // 验证令牌
-    suspend fun validToken(): UserInfo{
+    suspend fun validToken(): UserInfo {
         // 组装数据
         val requestData = mutableMapOf<String, String>()
 
-        // 发送登录请求
+        // 发送请求（携带完整信封字段 + token）
         val userData: UserInfo = requestNetwork {
             retrofitClient.apiService.validToken(
-                BaseRequest(
-                    token = userPrefs.userInfoFlow.first().token,
-                    data = requestData
-                )
+                requestHelper.buildRequest(requestData)
             )
         }
 
@@ -44,12 +41,14 @@ class LoginRepository @Inject constructor(
 
         // 组装数据
         val requestData = mutableMapOf<String, String>()
-        requestData.put("mobile", mobile)
-        requestData.put("password", password)
+        requestData["mobile"] = mobile
+        requestData["password"] = password
 
-        // 发送登录请求
+        // 发送请求（登录前无 token，使用匿名请求）
         val userData: UserInfo = requestNetwork {
-            retrofitClient.apiService.login(BaseRequest(data = requestData))
+            retrofitClient.apiService.login(
+                requestHelper.buildAnonymousRequest(requestData)
+            )
         }
 
         operateLocal {
@@ -65,7 +64,6 @@ class LoginRepository @Inject constructor(
         operateLocal {
             userPrefs.clearForLogout()
         }
-
     }
 
     // 获取本地用户信息

@@ -1,7 +1,7 @@
 package com.wly.beansprout.data.repository
 
+import com.wly.beansprout.core.network.RequestHelper
 import com.wly.beansprout.core.network.RetrofitClient
-import com.wly.beansprout.data.model.BaseRequest
 import com.wly.beansprout.data.model.UserInfo
 import javax.inject.Inject
 
@@ -9,7 +9,8 @@ import javax.inject.Inject
  * 注册相关数据逻辑
  */
 class RegisterRepository @Inject constructor(
-    private val retrofitClient: RetrofitClient
+    private val retrofitClient: RetrofitClient,
+    private val requestHelper: RequestHelper
 ) : BaseRepository() {
 
     /**
@@ -24,7 +25,9 @@ class RegisterRepository @Inject constructor(
         requestData["password"] = password
 
         return requestNetwork {
-            retrofitClient.apiService.register(BaseRequest(data = requestData))
+            retrofitClient.apiService.register(
+                requestHelper.buildAnonymousRequest(requestData)
+            )
         }
     }
 }

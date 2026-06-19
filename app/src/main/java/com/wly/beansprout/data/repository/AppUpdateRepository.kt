@@ -1,8 +1,8 @@
 package com.wly.beansprout.data.repository
 
+import com.wly.beansprout.core.network.RequestHelper
 import com.wly.beansprout.core.network.RetrofitClient
 import com.wly.beansprout.data.model.AppUpdate
-import com.wly.beansprout.data.model.BaseRequest
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -11,7 +11,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class AppUpdateRepository @Inject constructor(
-    private val retrofitClient: RetrofitClient
+    private val retrofitClient: RetrofitClient,
+    private val requestHelper: RequestHelper
 ) {
     /**
      * 检查应用更新
@@ -20,9 +21,9 @@ class AppUpdateRepository @Inject constructor(
      */
     suspend fun checkUpdate(): AppUpdate? {
         return try {
-            val request = BaseRequest<Map<String, String>>(data = emptyMap())
+            val request = requestHelper.buildAnonymousRequest(emptyMap<String, String>())
             val response = retrofitClient.apiService.getVersion(request)
-            if (response.code == 200) {
+            if (response.errorinfo == null) {
                 response.data
             } else {
                 null
