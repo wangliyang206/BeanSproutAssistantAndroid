@@ -49,7 +49,7 @@ android {
 //            SHA-1 签名: C5 7E AD AB C3 C0 44 4A 18 50 B2 DE 37 D7 7C C8 79 FE 07 15
 //            SHA-256 签名: D5 BC 46 0C 72 2C 98 01 9E 15 16 77 A6 EA BC FB E8 8D F3 92 BA C4 22 2F C9 56 01 D5 80 1C 85 91
         }
-        //测试
+        //测试1
         debug {
             //签名文件路径
             storeFile file('keystore/debug.keystore')
