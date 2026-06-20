@@ -45,11 +45,9 @@ class AutoTouchService : AccessibilityService() {
     // ---- 当前触点 ----
     private var autoTouchPoint: TouchPoint? = null
 
-    // ---- 抢福袋状态机 ----
-    private var luckyBagStep = 0       // 0=空闲 1=查找控件 2=福袋界面 3=已参与 4=已观看直播
-    private var luckyBagX = 0
-    private var luckyBagY = 0
-    private var luckyBagTime = -1
+    // ---- 抢福袋顺序执行器 ----
+    private var luckyBagPoints: List<TouchPoint> = emptyList()
+    private var currentLuckyBagIndex: Int = 0
 
     // ======================== 生命周期 ========================
 
@@ -88,20 +86,34 @@ class AutoTouchService : AccessibilityService() {
 
             when (action) {
                 TouchAction.START -> {
-                    autoTouchPoint = touchPoint
-                    resolveLuckyBagTime()
-                    scheduleAutoTouch()
+                    if (touchPoint != null) {
+                        // 常规模式：使用指定触点
+                        autoTouchPoint = touchPoint
+                        scheduleAutoTouch()
+                    } else {
+                        // 福袋模式：从仓库加载所有福袋触点，顺序循环执行
+                        luckyBagPoints = touchPointRepo?.getTouchPointsByType(TouchPoint.TYPE_LUCKY_BAG) ?: emptyList()
+                        currentLuckyBagIndex = 0
+                        if (luckyBagPoints.isNotEmpty()) {
+                            Log.d(TAG, "###福袋模式启动：共 ${luckyBagPoints.size} 个坐标")
+                            scheduleLuckyBagTick()
+                        } else {
+                            Log.d(TAG, "###福袋模式：无可用触点")
+                        }
+                    }
                 }
                 TouchAction.CONTINUE -> {
                     if (autoTouchPoint != null) scheduleAutoTouch()
+                    if (luckyBagPoints.isNotEmpty()) scheduleLuckyBagTick()
                 }
                 TouchAction.PAUSE -> {
                     handler.removeCallbacks(autoTouchRunnable)
                 }
                 TouchAction.STOP -> {
-                    luckyBagStep = 0
                     handler.removeCallbacks(autoTouchRunnable)
                     autoTouchPoint = null
+                    luckyBagPoints = emptyList()
+                    currentLuckyBagIndex = 0
                 }
                 else -> Unit
             }
@@ -115,12 +127,6 @@ class AutoTouchService : AccessibilityService() {
         Log.d(TAG, "###autoTouch: x=${point.x} y=${point.y} type=${point.functionType}")
 
         when (point.functionType) {
-            TouchPoint.TYPE_LUCKY_BAG -> {
-                if (luckyBagStep == 0) {
-                    Log.d(TAG, "###执行 抢福袋 功能")
-                    grabLuckyBag()
-                }
-            }
             TouchPoint.TYPE_AUTO_REPLY -> {
                 Log.d(TAG, "###执行 自动回复 功能")
                 val root = rootInActiveWindow ?: return@Runnable
@@ -222,15 +228,15 @@ class AutoTouchService : AccessibilityService() {
     }
 
     /**
-     * 窗口内容变化回调 —— 自动暂停/恢复 + 福袋结果监听
+     * 窗口内容变化回调 —— 自动暂停/恢复
+     * 注：福袋模式（纯坐标执行）不受自动暂停影响，
+     * 因为 autoTouchPoint 为 null 时 functionType = 0，不会触发暂停逻辑。
      */
     private fun onWindowContentChanged(packageName: String, functionType: Int) {
         val targetPkg = TouchEventManager.getTargetPackage()
 
-        // 自动暂停/恢复（排除自动回复和抢福袋）
-        if (targetPkg.isNotEmpty() && functionType != TouchPoint.TYPE_AUTO_REPLY
-            && functionType != TouchPoint.TYPE_LUCKY_BAG
-        ) {
+        // 自动暂停/恢复（排除自动回复）
+        if (targetPkg.isNotEmpty() && functionType != TouchPoint.TYPE_AUTO_REPLY) {
             if (packageName.contains(targetPkg)) {
                 if (TouchEventManager.isPaused()) {
                     Log.d(TAG, "###自动恢复动作")
@@ -240,32 +246,6 @@ class AutoTouchService : AccessibilityService() {
                 if (TouchEventManager.isTouching()) {
                     Log.d(TAG, "###自动暂停动作")
                     handleTouchAction(TouchAction.PAUSE)
-                }
-            }
-        }
-
-        // 福袋相关：检测到"没有抽中福袋"界面时自动关闭
-        if (packageName.contains(targetPkg)
-            && functionType == TouchPoint.TYPE_LUCKY_BAG
-            && luckyBagStep >= 2
-        ) {
-            serviceScope.launch(Dispatchers.Default) {
-                val foundNode = findNodeUtil?.findTargetNode(
-                    rootInActiveWindow, TG_CLASS_PATH, "我知道了", -1
-                )
-                if (foundNode != null) {
-                    Log.d(TAG, "###界面监听到【没有抽中福袋】")
-                    foundNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-
-                    val bounds = Rect()
-                    foundNode.getBoundsInScreen(bounds)
-                    dispatchClickAt(bounds.centerX(), bounds.centerY(), onCompleted = {
-                        Log.d(TAG, "###已点击 我知道了")
-                        resolveLuckyBagTime()
-                        luckyBagStep = 0
-                        TouchEventManager.isLuckyBagAllowed = true
-                    })
-                    foundNode.recycle()
                 }
             }
         }
@@ -302,169 +282,35 @@ class AutoTouchService : AccessibilityService() {
         }, 1000)
     }
 
-    // ======================== 抢福袋状态机 ========================
+    // ======================== 抢福袋顺序执行器 ========================
 
-    private fun grabLuckyBag() {
-        luckyBagStep = 1
-        findNodeUtil?.findNode(CJ_CLASS_PATH, "超级福袋", luckyBagTime, rootInActiveWindow) { luckyBagNode ->
-            if (luckyBagNode != null) {
-                Log.d(TAG, "###检测到 超级福袋")
-                if (!TouchEventManager.isLuckyBagAllowed) {
-                    Log.d(TAG, "###福袋卡点时间未到：${luckyBagTime}分钟")
-                    luckyBagStep = 0
-                    return@findNode
-                }
+    /**
+     * 福袋模式 Runnable：按顺序逐个点击所有福袋坐标，完成后循环。
+     * 不再依赖无障碍控件检测，纯坐标点击。
+     */
+    private val luckyBagRunnable = Runnable {
+        if (luckyBagPoints.isEmpty()) return@Runnable
 
-                // 记录坐标并点击
-                val rect = Rect()
-                luckyBagNode.getBoundsInScreen(rect)
-                luckyBagX = rect.left
-                luckyBagY = rect.top
-                luckyBagNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        val point = luckyBagPoints[currentLuckyBagIndex]
+        Log.d(TAG, "###福袋点击 [${currentLuckyBagIndex + 1}/${luckyBagPoints.size}]: " +
+                "${point.name} (${point.x}, ${point.y})")
 
-                dispatchClickAt(luckyBagX, luckyBagY, onCompleted = {
-                    luckyBagStep = 2
-                    Log.d(TAG, "###已点击 超级福袋")
-
-                    // 3 秒后查找参与按钮
-                    delayHandler.postDelayed({
-                        handleSuperLuckyBagParticipation()
-                    }, 3000)
-                })
-            } else {
-                // 没找到超级福袋，尝试找团购福袋
-                findNodeUtil?.findNode("android.widget.Button", "生活服务-直播-福袋", -1, rootInActiveWindow) { tgNode ->
-                    if (tgNode != null) {
-                        handleTeamBuyLuckyBag(tgNode)
-                    } else {
-                        Log.d(TAG, "###没有检测到左上角福袋")
-                        luckyBagStep = 0
-                    }
-                }
-            }
-        }
-    }
-
-    /** 超级福袋 —— 参与流程 */
-    private fun handleSuperLuckyBagParticipation() {
-        findNodeUtil?.findNode(TG_CLASS_PATH, "一键发表评论", -1, rootInActiveWindow) { commentNode ->
-            val point = autoTouchPoint ?: return@findNode
-            if (commentNode != null) {
-                dispatchClickAt(point.x, point.y, onCompleted = {
-                    Log.d(TAG, "###已点击 一键发表评论")
-                    luckyBagStep = 3
-                    delayHandler.postDelayed({ findAndStartWatchTask() }, 2000)
-                })
-            } else {
-                // 查找 "参与抽奖"
-                findNodeUtil?.findNode(TG_CLASS_PATH, "参与抽奖", -1, rootInActiveWindow) { drawNode ->
-                    if (drawNode != null) {
-                        dispatchClickAt(point.x, point.y, onCompleted = {
-                            Log.d(TAG, "###已点击 参与抽奖")
-                            luckyBagStep = 3
-                            delayHandler.postDelayed({ findAndStartWatchTask() }, 2000)
-                        })
-                    } else {
-                        // 直接查找 "开始观看直播任务"
-                        findNodeUtil?.findNode(TG_CLASS_PATH, "开始观看直播任务", -1, rootInActiveWindow) { watchNode ->
-                            if (watchNode != null) {
-                                startWatchTask()
-                            } else {
-                                closeLuckyBagDialog()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /** 团购福袋 —— 参与流程 */
-    private fun handleTeamBuyLuckyBag(tgNode: AccessibilityNodeInfo) {
-        Log.d(TAG, "###检测到 团购福袋")
-        if (!TouchEventManager.isLuckyBagAllowed) {
-            Log.d(TAG, "###福袋卡点时间未到：${luckyBagTime}分钟")
-            luckyBagStep = 0
-            return
-        }
-
-        val rect = Rect()
-        tgNode.getBoundsInScreen(rect)
-        luckyBagX = rect.left
-        luckyBagY = rect.top
-        tgNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-
-        val point = autoTouchPoint ?: return
-
-        dispatchClickAt(luckyBagX, luckyBagY, onCompleted = {
-            luckyBagStep = 2
-            Log.d(TAG, "###已点击 团购福袋")
-
-            delayHandler.postDelayed({
-                // 查找 "发送评论 参与抽奖"
-                findNodeUtil?.findNode(TG_CLASS_PATH, "发送评论 参与抽奖", -1, rootInActiveWindow) { buyInfoNode ->
-                    if (buyInfoNode != null) {
-                        dispatchClickAt(point.x, point.y, onCompleted = {
-                            Log.d(TAG, "###已点击 发送评论 参与抽奖")
-                            luckyBagStep = 3
-                        })
-                    } else {
-                        // 查找 "发送评论"
-                        findNodeUtil?.findNode(TG_CLASS_PATH, "发送评论", -1, rootInActiveWindow) { commentNode ->
-                            if (commentNode != null) {
-                                dispatchClickAt(point.x, point.y, onCompleted = {
-                                    luckyBagStep = 3
-                                    delayHandler.postDelayed({
-                                        findNodeUtil?.findNode(TG_CLASS_PATH, "开始观看直播任务 参与抽奖", -1, rootInActiveWindow) { watchNode ->
-                                            if (watchNode != null) {
-                                                dispatchClickAt(point.x, point.y, onCompleted = {
-                                                    luckyBagStep = 4
-                                                    closeLuckyBagDialog()
-                                                })
-                                            } else {
-                                                closeLuckyBagDialog()
-                                            }
-                                        }
-                                    }, 2000)
-                                })
-                            } else {
-                                closeLuckyBagDialog()
-                            }
-                        }
-                    }
-                }
-            }, 3000)
-        })
-    }
-
-    /** 查找并点击 "开始观看直播任务" */
-    private fun findAndStartWatchTask() {
-        findNodeUtil?.findNode(TG_CLASS_PATH, "开始观看直播任务", -1, rootInActiveWindow) { node ->
-            if (node != null) {
-                startWatchTask()
-            } else {
-                closeLuckyBagDialog()
-            }
-        }
-    }
-
-    /** 点击 "开始观看直播任务" 后关闭弹窗 */
-    private fun startWatchTask() {
-        val point = autoTouchPoint ?: return
         dispatchClickAt(point.x, point.y, onCompleted = {
-            Log.d(TAG, "###已点击 开始观看直播任务")
-            luckyBagStep = 4
-            closeLuckyBagDialog()
+            // 推进到下一个坐标
+            currentLuckyBagIndex = (currentLuckyBagIndex + 1) % luckyBagPoints.size
+            if (currentLuckyBagIndex == 0) {
+                Log.d(TAG, "###福袋一轮完成，开始下一轮循环")
+            }
+            // 调度下一轮（使用当前点的 delay）
+            scheduleLuckyBagTick()
         })
     }
 
-    /** 关闭福袋弹窗（点击空白区域） */
-    private fun closeLuckyBagDialog() {
-        delayHandler.postDelayed({
-            dispatchClickAt(luckyBagX, luckyBagY, onCompleted = {
-                Log.d(TAG, "###已点击空白 关闭弹窗")
-            })
-        }, 2000)
+    /** 按当前触点的 delay 调度下一次福袋点击 */
+    private fun scheduleLuckyBagTick() {
+        if (luckyBagPoints.isEmpty()) return
+        val point = luckyBagPoints[currentLuckyBagIndex]
+        handler.postDelayed(luckyBagRunnable, point.delay.toLong())
     }
 
     // ======================== 工具方法 ========================
@@ -510,24 +356,7 @@ class AutoTouchService : AccessibilityService() {
         return nodes.firstOrNull { it.isClickable } ?: nodes.firstOrNull()
     }
 
-    /** 解析抢福袋时间（处理随机值） */
-    private fun resolveLuckyBagTime() {
-        val point = autoTouchPoint ?: run { luckyBagTime = -1; return }
-        luckyBagTime = when (point.luckyBagTime) {
-            998 -> (5..10).random()       // 5~10 分钟随机
-            997 -> (0..5).random()        // 0~5 分钟随机
-            else -> point.luckyBagTime
-        }
-        if (point.luckyBagTime == 998 || point.luckyBagTime == 997) {
-            Log.d(TAG, "###随机生成福袋时间=${luckyBagTime}分钟")
-        }
-    }
-
     companion object {
-        // 抖音福袋控件路径
-        private const val TG_CLASS_PATH = "com.lynx.tasm.behavior.ui.view.UIView"
-        private const val CJ_CLASS_PATH = "com.lynx.tasm.behavior.ui.LynxFlattenUI"
-
         /** 全局实例引用，供外部（如悬浮窗菜单）直接调用 handleTouchAction */
         var instance: AutoTouchService? = null
             private set

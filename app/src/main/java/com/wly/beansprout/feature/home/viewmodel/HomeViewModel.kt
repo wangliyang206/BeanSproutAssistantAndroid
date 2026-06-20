@@ -40,6 +40,20 @@ class HomeViewModel @Inject constructor(
             6 to "autoReply",        // 自动回复
             7 to "luckyBag"          // 抢福袋
         )
+
+        /**
+         * 福袋时间索引转换为后端 tag 值
+         * 索引 0→999(不设置), 1→998(5~10随机), 2→997(0~5随机), 3→5(5分钟), 4→1(1分钟), 5→0(小于1分)
+         */
+        private fun luckyBagTimeIndexToTag(index: Int): Int = when (index) {
+            0 -> 999  // 不设置
+            1 -> 998  // 5~10随机
+            2 -> 997  // 0~5随机
+            3 -> 5    // 5分钟
+            4 -> 1    // 1分钟
+            5 -> 0    // 小于1分
+            else -> 999
+        }
     }
 
     // 私有状态
@@ -225,7 +239,7 @@ class HomeViewModel @Inject constructor(
         // selectedModel: 0=功德小鸡(闪现) 1=跳绳小鸡(溜达)
         val chickModel = if (state.selectedModel == 0) 1 else 2
         // 福袋时间：仅抢福袋(functionType==8)时使用选中值，其它功能传 0
-        val luckybagTime = if (functionType == 8) state.selectedLuckyBagTime else 0
+        val luckybagTime = if (functionType == 8) luckyBagTimeIndexToTag(state.selectedLuckyBagTime) else 0
         return Triple(functionType, chickModel, luckybagTime)
     }
 

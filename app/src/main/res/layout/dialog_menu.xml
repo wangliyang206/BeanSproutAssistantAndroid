@@ -74,4 +74,16 @@
         android:layout_height="300dp"
         android:background="#ccc" />
 
+    <Button
+        android:id="@+id/bt_lucky_bag_start"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:background="#4CAF50"
+        android:text="开始抢福袋"
+        android:textColor="#fff"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
 </LinearLayout>

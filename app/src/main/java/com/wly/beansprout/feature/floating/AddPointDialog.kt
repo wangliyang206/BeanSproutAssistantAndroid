@@ -32,6 +32,7 @@ import com.wly.beansprout.data.model.TouchPoint
  */
 class AddPointDialog(
     context: Context,
+    private val functionType: Int = 0,
     private val onSave: (TouchPoint) -> Unit
 ) : Dialog(context, R.style.NoTitleDialog) {
 
@@ -152,7 +153,7 @@ class AddPointDialog(
                 ToastUtils.showToast(context, "名字或毫秒数错误")
                 return@setOnClickListener
             }
-            onSave(TouchPoint(name = name, x = capturedX, y = capturedY, delay = ms))
+            onSave(TouchPoint(name = name, x = capturedX, y = capturedY, delay = ms, functionType = functionType))
             dismiss()
         }
 

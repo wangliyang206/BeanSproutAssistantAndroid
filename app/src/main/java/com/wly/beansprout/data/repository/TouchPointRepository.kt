@@ -36,6 +36,16 @@ class TouchPointRepository @Inject constructor(
         }
     }
 
+    /** 获取指定功能类型的触点列表 */
+    fun getTouchPointsByType(functionType: Int): List<TouchPoint> {
+        return getTouchPoints().filter { it.functionType == functionType }
+    }
+
+    /** 获取非福袋类型的触点列表（functionType != TYPE_LUCKY_BAG） */
+    fun getNonLuckyBagTouchPoints(): List<TouchPoint> {
+        return getTouchPoints().filter { it.functionType != TouchPoint.TYPE_LUCKY_BAG }
+    }
+
     /** 保存触点列表（覆盖） */
     fun saveTouchPoints(touchPoints: List<TouchPoint>) {
         val json = JsonUtils.toJson(touchPoints)
