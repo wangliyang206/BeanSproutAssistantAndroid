@@ -302,7 +302,7 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
         btLuckyBagStart.visibility = View.GONE
         dismiss()
 
-        // 通知无障碍服务开启福袋模式（顺序执行所有坐标）
+        // 通知无障碍服务启动福袋坐标循环模式
         AutoTouchService.instance?.handleTouchAction(TouchAction.START)
 
         // 通知悬浮窗开始跳绳动画（福袋模式不跑到目标点）

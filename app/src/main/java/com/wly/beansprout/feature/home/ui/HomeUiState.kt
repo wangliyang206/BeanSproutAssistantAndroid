@@ -26,7 +26,6 @@ data class HomeUiState(
     val selectedExclusive: Int = 0,  // 0:抖音, 1:快手, 2:其它
     val selectedFunction: Int = 1,  // 默认选中"直播点赞"（与旧项目一致）
     val selectedModel: Int = 1,  // 默认选中"跳绳小鸡"（与旧项目一致）
-    val selectedLuckyBagTime: Int = 0,  // 默认选中"不设置"（索引0，对应 tag=999）
 
     // 版本信息
     val versionName: String = "",
@@ -83,10 +82,6 @@ object HomeFunctionOptions {
 
     // 模型选项
     val modelOptions = listOf("功德小鸡", "跳绳小鸡")
-
-    // 福袋时间选项（索引：0→不设置, 1→5~10随机, 2→0~5随机, 3→5分钟, 4→1分钟, 5→小于1分）
-    // 启动服务时通过 luckyBagTimeIndexToTag() 转换为后端 tag 值
-    val luckyBagTimeOptions = listOf("不设置", "5~10随机", "0~5随机", "5分钟", "1分钟", "小于1分")
 
     /**
      * 根据选择的专属平台获取功能选项
