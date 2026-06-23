@@ -96,15 +96,18 @@ fun AppNavGraph(
             route = NavRoutes.VideoPlayer.route,
             arguments = listOf(
                 navArgument("title") { type = NavType.StringType },
-                navArgument("videoUrl") { type = NavType.StringType }
+                navArgument("videoUrl") { type = NavType.StringType },
+                navArgument("isLocal") { type = NavType.BoolType; defaultValue = true }
             )
         ) { backStackEntry ->
             val title = backStackEntry.arguments?.getString("title") ?: ""
             val videoUrl = backStackEntry.arguments?.getString("videoUrl") ?: ""
+            val isLocal = backStackEntry.arguments?.getBoolean("isLocal") ?: true
             VideoPlayerScreen(
                 navController = navController,
                 title = title,
-                videoUrl = videoUrl
+                videoUrl = videoUrl,
+                isLocal = isLocal
             )
         }
     }

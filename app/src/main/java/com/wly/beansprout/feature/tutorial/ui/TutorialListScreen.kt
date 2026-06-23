@@ -55,7 +55,7 @@ fun TutorialListScreen(navController: NavController) {
                 TutorialCard(item = item) {
                     val encodedUrl = URLEncoder.encode(item.videoUrl, "UTF-8")
                     val encodedTitle = URLEncoder.encode(item.title, "UTF-8")
-                    navController.navigate("video_player/$encodedTitle/$encodedUrl")
+                    navController.navigate("video_player/$encodedTitle/$encodedUrl/${item.isLocal}")
                 }
                 Spacer(modifier = Modifier.height(12.dp))
             }
