@@ -29,6 +29,9 @@ object TouchEventManager {
     /** 是否允许抢福袋（由 FindTargetNodeUtil 根据时间条件设置） */
     var isLuckyBagAllowed: Boolean = true
 
+    /** 当前选中的福袋方案 ID（由 FloatingMenuDialog 写入，AutoTouchService 读取） */
+    var currentLuckyBagSchemeId: Int = 0
+
     fun setTouchAction(action: TouchAction) {
         _touchAction.value = action
     }

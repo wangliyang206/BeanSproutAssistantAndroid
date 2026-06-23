@@ -52,7 +52,7 @@ fun HomeDialogHandlers(
                 }
 
                 is HomeEvent.NavigateToTutorial -> {
-                    navController.navigate(NavRoutes.TutorialVideo.route)
+                    navController.navigate(NavRoutes.TutorialList.route)
                 }
 
                 is HomeEvent.NavigateToAccessibilitySettings -> {

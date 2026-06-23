@@ -18,7 +18,8 @@ data class TouchPoint(
     val delay: Int = 0,
     val isStartClick: Boolean = false,
     val functionType: Int = 0,
-    val luckyBagTime: Int = -1
+    val luckyBagTime: Int = -1,
+    val schemeId: Int = 0  // 福袋方案 ID，0 = 默认方案
 ) {
     companion object {
         const val TYPE_OTHER = 0

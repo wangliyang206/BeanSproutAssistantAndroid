@@ -326,11 +326,12 @@ class AutoTouchService : AccessibilityService() {
      * 发现"未中奖"则自动关闭，发现"中奖"则暂停等待用户手动领奖。
      */
     private fun startLuckyBagAutoGrab() {
-        luckyBagRecordedPoints = touchPointRepo?.getTouchPointsByType(TouchPoint.TYPE_LUCKY_BAG)
+        val schemeId = TouchEventManager.currentLuckyBagSchemeId
+        luckyBagRecordedPoints = touchPointRepo?.getTouchPointsByScheme(schemeId)
             ?: emptyList()
 
         if (luckyBagRecordedPoints.isEmpty()) {
-            Log.w(TAG, "###福袋坐标循环启动失败：无录制坐标")
+            Log.w(TAG, "###福袋坐标循环启动失败：方案[$schemeId]无录制坐标")
             return
         }
 

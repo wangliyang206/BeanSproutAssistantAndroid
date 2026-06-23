@@ -15,7 +15,8 @@ import com.wly.beansprout.feature.register.ui.RegisterScreen
 import com.wly.beansprout.feature.splash.ui.SplashScreen
 import com.wly.beansprout.feature.touchpoint.ui.AddTouchPointScreen
 import com.wly.beansprout.feature.touchpoint.ui.TouchPointManageScreen
-import com.wly.beansprout.feature.tutorial.ui.TutorialVideoScreen
+import com.wly.beansprout.feature.tutorial.ui.TutorialListScreen
+import com.wly.beansprout.feature.tutorial.ui.VideoPlayerScreen
 import com.wly.beansprout.feature.webview.ui.WebViewScreen
 import kotlinx.coroutines.delay
 import java.net.URLDecoder
@@ -85,9 +86,26 @@ fun AppNavGraph(
             AddTouchPointScreen(navController)
         }
 
-        // 教程视频
-        composable(NavRoutes.TutorialVideo.route) {
-            TutorialVideoScreen(navController)
+        // 教程列表
+        composable(NavRoutes.TutorialList.route) {
+            TutorialListScreen(navController)
+        }
+
+        // 视频播放
+        composable(
+            route = NavRoutes.VideoPlayer.route,
+            arguments = listOf(
+                navArgument("title") { type = NavType.StringType },
+                navArgument("videoUrl") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val title = backStackEntry.arguments?.getString("title") ?: ""
+            val videoUrl = backStackEntry.arguments?.getString("videoUrl") ?: ""
+            VideoPlayerScreen(
+                navController = navController,
+                title = title,
+                videoUrl = videoUrl
+            )
         }
     }
 

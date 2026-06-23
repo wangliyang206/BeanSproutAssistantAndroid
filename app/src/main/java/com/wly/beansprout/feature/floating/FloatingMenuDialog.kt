@@ -3,6 +3,7 @@ package com.wly.beansprout.feature.floating
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -52,6 +53,13 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
     private lateinit var btLuckyBagStart: Button
     private lateinit var recyclerView: RecyclerView
 
+    // 福袋方案按钮（固定三个）
+    private lateinit var llSchemeRow: LinearLayout
+    private lateinit var btScheme1: Button
+    private lateinit var btScheme2: Button
+    private lateinit var btScheme3: Button
+    private var currentSchemeId: Int = 0
+
     private val touchPointAdapter = TouchPointAdapter()
     private val repository = TouchPointRepository(context)
 
@@ -95,6 +103,25 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
         // 设置 RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = touchPointAdapter
+
+        // ── 初始化福袋方案按钮 ──
+        llSchemeRow = findViewById(R.id.ll_scheme_row)
+        btScheme1 = findViewById(R.id.bt_scheme_1)
+        btScheme2 = findViewById(R.id.bt_scheme_2)
+        btScheme3 = findViewById(R.id.bt_scheme_3)
+
+        // 确保至少有三个方案
+        ensureThreeSchemes()
+
+        // 恢复上次选中的方案
+        currentSchemeId = repository.getCurrentSchemeId()
+        TouchEventManager.currentLuckyBagSchemeId = currentSchemeId
+        updateSchemeButtons()
+
+        // 方案按钮点击
+        btScheme1.setOnClickListener { selectSchemeByIndex(0) }
+        btScheme2.setOnClickListener { selectSchemeByIndex(1) }
+        btScheme3.setOnClickListener { selectSchemeByIndex(2) }
 
         // 设置 item 点击监听
         touchPointAdapter.setOnItemClickListener { view, position, touchPoint ->
@@ -178,6 +205,8 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
         if (TouchEventManager.appPackageName.value.isBlank()) {
             AutoTouchService.instance?.handleTouchAction(TouchAction.PAUSE)
         }
+        // 福袋模式始终显示方案选择器
+        llSchemeRow.visibility = if (isLuckyBagMode()) View.VISIBLE else View.GONE
         // 按功能类型过滤触点列表
         loadFilteredList()
     }
@@ -218,7 +247,7 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
     /** 根据当前功能类型加载过滤后的触点列表 */
     private fun loadFilteredList() {
         val points = if (isLuckyBagMode()) {
-            repository.getTouchPointsByType(TouchPoint.TYPE_LUCKY_BAG)
+            repository.getTouchPointsByScheme(currentSchemeId)
         } else {
             repository.getNonLuckyBagTouchPoints()
         }
@@ -241,14 +270,17 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
 
     /**
      * 将适配器中的过滤后列表合并回完整存储：
-     * - 福袋模式：保留非福袋点 + 替换福袋点
+     * - 福袋模式：保留非当前方案的福袋点 + 非福袋点 + 替换当前方案的福袋点
      * - 非福袋模式：保留福袋点 + 替换非福袋点
      */
     private fun mergeAndSavePoints() {
         val allPoints = repository.getTouchPoints()
         val mergedList = if (isLuckyBagMode()) {
-            val nonLuckyBag = allPoints.filter { it.functionType != TouchPoint.TYPE_LUCKY_BAG }
-            nonLuckyBag + touchPointAdapter.getTouchPointList()
+            // 保留：非福袋点 + 其他方案的福袋点
+            val otherPoints = allPoints.filter {
+                it.functionType != TouchPoint.TYPE_LUCKY_BAG || it.schemeId != currentSchemeId
+            }
+            otherPoints + touchPointAdapter.getTouchPointList()
         } else {
             val luckyBag = allPoints.filter { it.functionType == TouchPoint.TYPE_LUCKY_BAG }
             touchPointAdapter.getTouchPointList() + luckyBag
@@ -292,7 +324,7 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
     // ─────────────────────────────────────────────────
 
     private fun startLuckyBagTouch() {
-        val luckyBagPoints = repository.getTouchPointsByType(TouchPoint.TYPE_LUCKY_BAG)
+        val luckyBagPoints = repository.getTouchPointsByScheme(currentSchemeId)
         if (luckyBagPoints.isEmpty()) {
             ToastUtils.showToast(context, "请先添加福袋触控点")
             return
@@ -301,6 +333,9 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
         btStop.visibility = View.VISIBLE
         btLuckyBagStart.visibility = View.GONE
         dismiss()
+
+        // 将当前方案 ID 写入 TouchEventManager，供 AutoTouchService 读取
+        TouchEventManager.currentLuckyBagSchemeId = currentSchemeId
 
         // 通知无障碍服务启动福袋坐标循环模式
         AutoTouchService.instance?.handleTouchAction(TouchAction.START)
@@ -420,7 +455,7 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
      * 新触控点会被标记为当前功能类型（福袋模式 → TYPE_LUCKY_BAG）
      */
     private fun showAddPointDialog() {
-        val addDialog = AddPointDialog(context, functionType) { touchPoint ->
+        val addDialog = AddPointDialog(context, functionType, currentSchemeId) { touchPoint ->
             val allPoints = repository.getTouchPoints().toMutableList()
             allPoints.add(touchPoint)
             repository.saveTouchPoints(allPoints)
@@ -429,6 +464,58 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
             show()
         }
         addDialog.show()
+    }
+
+    // ─────────────────────────────────────────────────
+    //  福袋方案管理（三个固定按钮）
+    // ─────────────────────────────────────────────────
+
+    /** 选中指定索引的方案 */
+    private fun selectSchemeByIndex(index: Int) {
+        if (isDoubleClick()) return
+        val schemes = repository.getLuckyBagSchemes()
+        if (index >= schemes.size) return
+        val selectedScheme = schemes[index]
+        currentSchemeId = selectedScheme.id
+        repository.setCurrentSchemeId(currentSchemeId)
+        TouchEventManager.currentLuckyBagSchemeId = currentSchemeId
+        updateSchemeButtons()
+        loadFilteredList()
+    }
+
+    /** 刷新三个方案按钮的选中状态 */
+    private fun updateSchemeButtons() {
+        val schemes = repository.getLuckyBagSchemes()
+        val buttons = listOf(btScheme1, btScheme2, btScheme3)
+
+        for (i in buttons.indices) {
+            val btn = buttons[i]
+            if (i < schemes.size) {
+                btn.text = schemes[i].name
+                btn.visibility = View.VISIBLE
+                if (schemes[i].id == currentSchemeId) {
+                    // 选中状态：主题色 + 粗体
+                    btn.setBackgroundColor(0xFF008577.toInt())
+                    btn.setTypeface(null, Typeface.BOLD)
+                } else {
+                    // 未选中：灰色
+                    btn.setBackgroundColor(0xFF666666.toInt())
+                    btn.setTypeface(null, Typeface.NORMAL)
+                }
+            } else {
+                btn.visibility = View.GONE
+            }
+        }
+    }
+
+    /** 确保至少有三个方案存在（不足则自动创建） */
+    private fun ensureThreeSchemes() {
+        val defaultNames = arrayOf("方案一", "方案二", "方案三")
+        val schemes = repository.getLuckyBagSchemes().toMutableList()
+        while (schemes.size < 3) {
+            val newScheme = repository.addScheme(defaultNames[schemes.size])
+            schemes.add(newScheme)
+        }
     }
 
     companion object {
