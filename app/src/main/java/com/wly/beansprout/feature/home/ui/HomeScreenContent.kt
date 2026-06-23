@@ -79,12 +79,10 @@ fun HomeScreenContent(
                         selectedExclusive = uiState.selectedExclusive,
                         selectedFunctions = uiState.selectedFunction,
                         selectedModel = uiState.selectedModel,
-                        selectedLuckyBagTime = uiState.selectedLuckyBagTime,
                         startButtonState = uiState.startButtonState,
                         onExclusiveChanged = viewModel::updateSelectedExclusive,
                         onFunctionSelected = viewModel::updateSelectedFunction,
                         onModelChanged = viewModel::updateSelectedModel,
-                        onLuckyBagTimeChanged = viewModel::updateSelectedLuckyBagTime,
                         onStartClick = viewModel::onStartClick,
                         modifier = Modifier
                             .fillMaxWidth()

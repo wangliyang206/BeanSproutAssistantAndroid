@@ -86,12 +86,10 @@ fun HomeCenter(
     selectedExclusive: Int,
     selectedFunctions: Int,
     selectedModel: Int,
-    selectedLuckyBagTime: Int,
     startButtonState: StartButtonState,
     onExclusiveChanged: (Int) -> Unit,
     onFunctionSelected: (Int) -> Unit,
     onModelChanged: (Int) -> Unit,
-    onLuckyBagTimeChanged: (Int) -> Unit,
     onStartClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -105,11 +103,9 @@ fun HomeCenter(
             selectedExclusive = selectedExclusive,
             selectedFunctions = selectedFunctions,
             selectedModel = selectedModel,
-            selectedLuckyBagTime = selectedLuckyBagTime,
             onExclusiveChanged = onExclusiveChanged,
             onFunctionSelected = onFunctionSelected,
-            onModelChanged = onModelChanged,
-            onLuckyBagTimeChanged = onLuckyBagTimeChanged
+            onModelChanged = onModelChanged
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -124,11 +120,9 @@ fun SettingsPanel(
     selectedExclusive: Int,
     selectedFunctions: Int,
     selectedModel: Int,
-    selectedLuckyBagTime: Int,
     onExclusiveChanged: (Int) -> Unit,
     onFunctionSelected: (Int) -> Unit,
     onModelChanged: (Int) -> Unit,
-    onLuckyBagTimeChanged: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -159,14 +153,6 @@ fun SettingsPanel(
             selectedModel = selectedModel,
             onModelChanged = onModelChanged
         )
-
-        // 福袋时间设置（仅在功能选择为"抢福袋"时显示，抢福袋在抖音专属下索引为7）
-        if (selectedExclusive == 0 && selectedFunctions == 7) {
-            LuckyBagTimeSetting(
-                selectedLuckyBagTime = selectedLuckyBagTime,
-                onLuckyBagTimeChanged = onLuckyBagTimeChanged
-            )
-        }
 
         Spacer(modifier = Modifier.height(10.dp))
     }
@@ -254,28 +240,6 @@ fun ModelSetting(
             options = HomeFunctionOptions.modelOptions,
             selected = selectedModel,
             onOptionSelected = onModelChanged
-        )
-    }
-}
-
-@Composable
-fun LuckyBagTimeSetting(
-    selectedLuckyBagTime: Int,
-    onLuckyBagTimeChanged: (Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = "福袋时间：", fontSize = 14.sp)
-
-        GridRadioGroup(
-            options = HomeFunctionOptions.luckyBagTimeOptions,
-            selected = selectedLuckyBagTime,
-            onOptionSelected = onLuckyBagTimeChanged
         )
     }
 }

@@ -279,15 +279,10 @@ class FloatingService : Service() {
     }
 
     /**
-     * 更新福袋卡点时间显示
+     * 更新福袋循环间隔显示
      */
     private fun updateLuckyBagTimeText() {
-        txviTime.text = when (luckybagTime) {
-            999 -> ""
-            998 -> "5~10随机"
-            997 -> "0~5随机"
-            else -> "${luckybagTime}分钟"
-        }
+        txviTime.text = if (luckybagTime > 0) "间隔${luckybagTime}秒" else ""
     }
 
     // ─────────────────────────────────────────────────

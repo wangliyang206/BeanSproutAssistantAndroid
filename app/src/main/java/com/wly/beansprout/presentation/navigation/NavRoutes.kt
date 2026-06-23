@@ -20,8 +20,11 @@ sealed class NavRoutes(val route: String) {
     // 添加触点
     object AddTouchPoint : NavRoutes("add_touch_point")
 
-    // 教程视频
-    object TutorialVideo : NavRoutes("tutorial_video")
+    // 教程列表
+    object TutorialList : NavRoutes("tutorial_list")
+
+    // 视频播放（接收标题、视频地址、是否本地标志）
+    object VideoPlayer : NavRoutes("video_player/{title}/{videoUrl}/{isLocal}")
 
     // WebView 协议页（支持 URL + 标题参数）
     object WebView : NavRoutes("webview/{title}/{url}") {

@@ -114,13 +114,6 @@ class HomeViewModel @Inject constructor(
     }
 
     /**
-     * 更新福袋时间选择
-     */
-    fun updateSelectedLuckyBagTime(time: Int) {
-        _uiState.update { it.copy(selectedLuckyBagTime = time) }
-    }
-
-    /**
      * 刷新开始按钮状态（在 onResume 或权限变化时调用）
      */
     fun refreshStartButtonState() {
@@ -224,9 +217,8 @@ class HomeViewModel @Inject constructor(
         val functionType = state.selectedFunction + 1 // 映射到 TouchPoint.TYPE_*
         // selectedModel: 0=功德小鸡(闪现) 1=跳绳小鸡(溜达)
         val chickModel = if (state.selectedModel == 0) 1 else 2
-        // 福袋时间：仅抢福袋(functionType==8)时使用选中值，其它功能传 0
-        val luckybagTime = if (functionType == 8) state.selectedLuckyBagTime else 0
-        return Triple(functionType, chickModel, luckybagTime)
+        // 福袋循环间隔已固定在 AutoTouchService 内部，此处传 0
+        return Triple(functionType, chickModel, 0)
     }
 
     /**
