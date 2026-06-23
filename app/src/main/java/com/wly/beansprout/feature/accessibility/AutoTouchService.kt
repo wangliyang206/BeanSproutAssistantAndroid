@@ -219,7 +219,7 @@ class AutoTouchService : AccessibilityService() {
     ): GestureDescription.StrokeDescription {
         val path = Path().apply {
             moveTo(point.x.toFloat(), point.y.toFloat())
-            val dist = 1000f
+            val dist = 1500f
             when (direction) {
                 1 -> lineTo(point.x.toFloat(), point.y - dist)
                 2 -> lineTo(point.x.toFloat(), point.y + dist)
@@ -227,7 +227,7 @@ class AutoTouchService : AccessibilityService() {
                 4 -> lineTo(point.x + dist, point.y.toFloat())
             }
         }
-        return GestureDescription.StrokeDescription(path, 0, 100)
+        return GestureDescription.StrokeDescription(path, 0, 300)
     }
 
     // ======================== 无障碍事件监听 ========================
@@ -285,32 +285,86 @@ class AutoTouchService : AccessibilityService() {
     // ======================== 自动回复 ========================
 
     private fun performAutoReply(commentResId: String, sendResId: String) {
-        val commentLayout = findNodeById(commentResId) ?: findNodeByText("说点什么...") ?: return
+        // 优先用资源 ID 找评论框，失败则用文本兜底
+        val commentLayout = findNodeById(commentResId) ?: findNodeByText("说点什么...") ?: run {
+            Log.w(TAG, "###自动回复: 未找到评论输入框")
+            return
+        }
         commentLayout.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        commentLayout.recycle()
 
         delayHandler.postDelayed({
-            val root = rootInActiveWindow ?: return@postDelayed
-            // 查找 EditText（根据弹窗状态取不同 index）
-            var input = root.getChild(1)
-            if (input?.className?.toString() != "android.widget.EditText") {
-                input = root.getChild(2)
-            }
-            if (input == null) return@postDelayed
+            try {
+                val root = rootInActiveWindow ?: return@postDelayed
 
-            // 从脚本库随机选取一条回复
-            val script = touchPointRepo?.getAutoReplyScript() ?: return@postDelayed
-            val replyText = StringUtils.randomPick(script)
-            if (replyText.isBlank()) return@postDelayed
+                // 安全查找 EditText：BFS 遍历，不再按 index 盲取（避免 IndexOutOfBoundsException）
+                val input = findFirstEditText(root)
+                if (input == null) {
+                    Log.w(TAG, "###自动回复: 未找到 EditText 输入框")
+                    root.recycle()
+                    return@postDelayed
+                }
 
-            val args = Bundle().apply {
-                putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, replyText)
-            }
-            val success = input.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args)
-            if (success) {
-                val sendBtn = findNodeById(sendResId) ?: findNodeByText("发送")
-                sendBtn?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                // 从脚本库随机选取一条回复
+                val script = touchPointRepo?.getAutoReplyScript() ?: run {
+                    input.recycle()
+                    root.recycle()
+                    return@postDelayed
+                }
+                val replyText = StringUtils.randomPick(script)
+                if (replyText.isBlank()) {
+                    input.recycle()
+                    root.recycle()
+                    return@postDelayed
+                }
+
+                val args = Bundle().apply {
+                    putCharSequence(
+                        AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                        replyText
+                    )
+                }
+                val success = input.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args)
+                input.recycle()
+
+                if (success) {
+                    // 优先用资源 ID 找发送按钮，失败则用文本兜底
+                    val sendBtn = findNodeById(sendResId) ?: findNodeByText("发送")
+                    if (sendBtn != null) {
+                        sendBtn.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        sendBtn.recycle()
+                    } else {
+                        Log.w(TAG, "###自动回复: 未找到发送按钮")
+                    }
+                }
+
+                root.recycle()
+            } catch (e: Exception) {
+                Log.e(TAG, "###自动回复异常: ${e.message}", e)
             }
         }, 1000)
+    }
+
+    /**
+     * BFS 查找第一个 EditText 节点（安全替代 getChild(index)）
+     */
+    private fun findFirstEditText(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        val queue = ArrayDeque<AccessibilityNodeInfo>()
+        queue.add(root)
+        while (queue.isNotEmpty()) {
+            val node = queue.removeFirst()
+            if (node.className?.toString() == "android.widget.EditText") {
+                // 回收队列中剩余节点（不包括 root）
+                queue.forEach { if (it !== root) it.recycle() }
+                return node
+            }
+            for (i in 0 until node.childCount) {
+                val child = try { node.getChild(i) } catch (_: Exception) { null }
+                if (child != null) queue.add(child)
+            }
+            if (node !== root) node.recycle()
+        }
+        return null
     }
 
     // ======================== 抢福袋：坐标循环自动抢夺 ========================
