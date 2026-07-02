@@ -18,6 +18,8 @@
 #指定代码的压缩级别(代码混淆的压缩比例，值在0-7之间)
 -optimizationpasses 5
 
+-dontoptimize
+
 -allowaccessmodification
 
 #不做预校验的操作
@@ -461,10 +463,14 @@
 ## ----------------------------------
 ##   ########## Gson混淆    ##########
 ## ----------------------------------
--keepattributes Signature-keepattributes
+-keepattributes Signature
+-keepattributes *Annotation*
 
 -keep class sun.misc.Unsafe { *; }
 -keep class com.google.gson.stream.** { *; }
+
+-dontwarn com.google.code.gson.**
+-keep class com.google.code.gson.**{*;}
 
 -dontwarn com.google.code.gson.**
 -keep class com.google.code.gson.**{*;}
@@ -484,6 +490,13 @@
 -keepclassmembers class * {
    public <init> (org.json.JSONObject);
 }
+
+# 保留泛型签名信息，防止 ParameterizedType 转换错误
+-keepattributes Signature
+
+# 保留数据模型类不被混淆（用于 Gson 序列化/反序列化）
+-keep class com.wly.beansprout.data.model.** { *; }
+-keepclassmembers class com.wly.beansprout.data.model.** { *; }
 
 # # -------------------------------------------
 # #  ######## greenDao混淆  ##########
@@ -1060,5 +1073,39 @@ public static final int *;
 
 -keep class me.jessyan.mvparms.demo.mvp.model.** { *; }
 
+# 保留 Kotlin 元数据（Kotlin 数据类需要）
+-keep class kotlin.Metadata { *; }
+-keepattributes RuntimeVisibleAnnotations
+-keepattributes RuntimeInvisibleAnnotations
 
+# ============================================
+# 华为手机专用修复 - ParameterizedType 错误
+# ============================================
 
+# 强制保留所有泛型相关的反射能力
+-keepclassmembers class com.wly.beansprout.data.model.** {
+    <fields>;
+    <methods>;
+}
+
+# 保留所有构造函数（Gson 反序列化需要）
+-keepclassmembers class com.wly.beansprout.data.model.** {
+    public <init>(...);
+}
+
+# 华为手机特别要求：保留内部类和匿名类
+-keep class com.wly.beansprout.data.model.**$* { *; }
+
+# 强制保留 Kotlin 协程和泛型的桥接方法
+-keepclassmembers class com.wly.beansprout.data.model.** {
+    synthetic <methods>;
+    bridge <methods>;
+}
+
+# R8 专用规则：防止内联优化破坏泛型
+-if class com.wly.beansprout.data.model.**
+-keep class <1> { *; }
+
+# 如果仍然失败，尝试这个终极方案
+-dontshrink
+-dontoptimize

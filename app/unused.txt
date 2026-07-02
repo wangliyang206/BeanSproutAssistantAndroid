@@ -35219,153 +35219,6 @@ com.wly.beansprout.core.utils.UMengManager:
     private static final java.lang.String CHANNEL
 com.wly.beansprout.core.utils.WindowUtils:
     public static final int $stable
-com.wly.beansprout.data.model.AppUpdate:
-    public static final int $stable
-    private final int _id
-    private final int appForce
-    private final java.lang.String fileName
-    private final java.lang.String filePath
-    private final java.lang.String name
-    private final float newAppSize
-    private final java.lang.String newAppUpdateDesc
-    private final int verCode
-    private final java.lang.String verName
-    static void <clinit>()
-    public void <init>()
-    public void <init>(int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,float,java.lang.String)
-    public synthetic void <init>(int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,float,java.lang.String,int,kotlin.jvm.internal.DefaultConstructorMarker)
-    public final int component1()
-    public final int component2()
-    public final java.lang.String component3()
-    public final java.lang.String component4()
-    public final java.lang.String component5()
-    public final java.lang.String component6()
-    public final int component7()
-    public final float component8()
-    public final java.lang.String component9()
-    public final com.wly.beansprout.data.model.AppUpdate copy(int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,float,java.lang.String)
-    public static synthetic com.wly.beansprout.data.model.AppUpdate copy$default(com.wly.beansprout.data.model.AppUpdate,int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,float,java.lang.String,int,java.lang.Object)
-    public boolean equals(java.lang.Object)
-    public final java.lang.String getName()
-    public final int get_id()
-    public int hashCode()
-    public java.lang.String toString()
-com.wly.beansprout.data.model.BaseRequest:
-    public static final int $stable
-    public final java.lang.String component1()
-    public final int component2()
-    public final com.wly.beansprout.data.model.ClientInfo component3()
-    public final java.lang.String component4()
-    public final java.lang.String component5()
-    public final java.lang.Object component6()
-    public final com.wly.beansprout.data.model.BaseRequest copy(java.lang.String,int,com.wly.beansprout.data.model.ClientInfo,java.lang.String,java.lang.String,java.lang.Object)
-    public static synthetic com.wly.beansprout.data.model.BaseRequest copy$default(com.wly.beansprout.data.model.BaseRequest,java.lang.String,int,com.wly.beansprout.data.model.ClientInfo,java.lang.String,java.lang.String,java.lang.Object,int,java.lang.Object)
-    public final com.wly.beansprout.data.model.ClientInfo getClient()
-    public final java.lang.Object getData()
-    public final java.lang.String getLanguage()
-    public final java.lang.String getToken()
-    public final java.lang.String getUserId()
-    public final int getVersion()
-com.wly.beansprout.data.model.BaseResponse:
-    public static final int $stable
-    private final java.lang.Object data
-    private final com.wly.beansprout.data.model.ErrorInfo errorinfo
-    private final java.lang.String version
-    static void <clinit>()
-    public void <init>(java.lang.String,com.wly.beansprout.data.model.ErrorInfo,java.lang.Object)
-    public synthetic void <init>(java.lang.String,com.wly.beansprout.data.model.ErrorInfo,java.lang.Object,int,kotlin.jvm.internal.DefaultConstructorMarker)
-    public final java.lang.String component1()
-    public final com.wly.beansprout.data.model.ErrorInfo component2()
-    public final java.lang.Object component3()
-    public final com.wly.beansprout.data.model.BaseResponse copy(java.lang.String,com.wly.beansprout.data.model.ErrorInfo,java.lang.Object)
-    public static synthetic com.wly.beansprout.data.model.BaseResponse copy$default(com.wly.beansprout.data.model.BaseResponse,java.lang.String,com.wly.beansprout.data.model.ErrorInfo,java.lang.Object,int,java.lang.Object)
-    public boolean equals(java.lang.Object)
-    public final java.lang.String getVersion()
-    public int hashCode()
-    public java.lang.String toString()
-com.wly.beansprout.data.model.ClientInfo:
-    public static final int $stable
-    public void <init>()
-    public final java.lang.String component1()
-    public final java.lang.String component2()
-    public final java.lang.String component3()
-    public final java.lang.String component4()
-    public final java.lang.String component5()
-    public final int component6()
-    public final java.lang.String component7()
-    public final int component8()
-    public final int component9()
-    public final com.wly.beansprout.data.model.ClientInfo copy(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,java.lang.String,int,int)
-    public static synthetic com.wly.beansprout.data.model.ClientInfo copy$default(com.wly.beansprout.data.model.ClientInfo,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,java.lang.String,int,int,int,java.lang.Object)
-    public final java.lang.String getCell()
-    public final java.lang.String getDeviceid()
-    public final java.lang.String getOs()
-    public final java.lang.String getOsver()
-    public final int getPpiheight()
-    public final int getPpiwidth()
-    public final java.lang.String getSimid()
-    public final int getVercode()
-    public final java.lang.String getVername()
-com.wly.beansprout.data.model.ErrorInfo:
-    public static final int $stable
-    private final java.lang.String errorcode
-    private final java.lang.String errormessage
-    static void <clinit>()
-    public void <init>(java.lang.String,java.lang.String)
-    public final java.lang.String component1()
-    public final java.lang.String component2()
-    public final com.wly.beansprout.data.model.ErrorInfo copy(java.lang.String,java.lang.String)
-    public static synthetic com.wly.beansprout.data.model.ErrorInfo copy$default(com.wly.beansprout.data.model.ErrorInfo,java.lang.String,java.lang.String,int,java.lang.Object)
-    public boolean equals(java.lang.Object)
-    public final java.lang.String getErrorcode()
-    public int hashCode()
-    public java.lang.String toString()
-com.wly.beansprout.data.model.LuckyBagScheme:
-    public static final int $stable
-    public final int component1()
-    public final java.lang.String component2()
-    public final long component3()
-    public final com.wly.beansprout.data.model.LuckyBagScheme copy(int,java.lang.String,long)
-    public static synthetic com.wly.beansprout.data.model.LuckyBagScheme copy$default(com.wly.beansprout.data.model.LuckyBagScheme,int,java.lang.String,long,int,java.lang.Object)
-    public final long getCreatedAt()
-com.wly.beansprout.data.model.Point:
-    public static final int $stable
-    public final int component1()
-    public final int component2()
-    public final com.wly.beansprout.data.model.Point copy(int,int)
-    public static synthetic com.wly.beansprout.data.model.Point copy$default(com.wly.beansprout.data.model.Point,int,int,int,java.lang.Object)
-com.wly.beansprout.data.model.TouchPoint:
-    public static final int $stable
-    public static final int TYPE_AUTO_REPLY
-    public static final int TYPE_LIKE
-    public static final int TYPE_LUCKY_BAG
-    public static final int TYPE_OTHER
-    public static final int TYPE_SINGLE_CLICK
-    public static final int TYPE_SLIDE_DOWN
-    public static final int TYPE_SLIDE_LEFT
-    public static final int TYPE_SLIDE_RIGHT
-    public static final int TYPE_SLIDE_UP
-    public void <init>()
-    public final java.lang.String component1()
-    public final int component2()
-    public final int component3()
-    public final int component4()
-    public final boolean component5()
-    public final int component6()
-    public final int component7()
-    public final int component8()
-com.wly.beansprout.data.model.UserInfo:
-    public static final int $stable
-    public synthetic void <init>(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,boolean,int,kotlin.jvm.internal.DefaultConstructorMarker)
-    public final java.lang.String component1()
-    public final java.lang.String component2()
-    public final java.lang.String component3()
-    public final java.lang.String component4()
-    public final int component5()
-    public final int component6()
-    public final boolean component7()
-    public final com.wly.beansprout.data.model.UserInfo copy(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,boolean)
-    public static synthetic com.wly.beansprout.data.model.UserInfo copy$default(com.wly.beansprout.data.model.UserInfo,java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,boolean,int,java.lang.Object)
 com.wly.beansprout.data.repository.AppUpdateRepository_Factory
 com.wly.beansprout.data.repository.BaseRepository:
     public static final int $stable
@@ -44795,8 +44648,6 @@ androidx.compose.animation.core.Animatable:
     public static final int $stable
     public final boolean isRunning()
     public final java.lang.Object stop(kotlin.coroutines.Continuation)
-androidx.compose.animation.core.AnimateAsStateKt:
-    public static final androidx.compose.runtime.State animateFloatAsState(float,androidx.compose.animation.core.AnimationSpec,float,java.lang.String,kotlin.jvm.functions.Function1,androidx.compose.runtime.Composer,int,int)
 androidx.compose.animation.core.AnimationScope:
     public static final int $stable
 androidx.compose.animation.core.AnimationVector1D:
@@ -45168,20 +45019,6 @@ androidx.compose.material3.AppBarKt$settleAppBar$3
 androidx.compose.material3.AppBarKt:
     public static final synthetic java.lang.Object access$settleAppBar(androidx.compose.material3.TopAppBarState,float,androidx.compose.animation.core.DecayAnimationSpec,androidx.compose.animation.core.AnimationSpec,kotlin.coroutines.Continuation)
     public static final java.lang.Object settleAppBar(androidx.compose.material3.TopAppBarState,float,androidx.compose.animation.core.DecayAnimationSpec,androidx.compose.animation.core.AnimationSpec,kotlin.coroutines.Continuation)
-androidx.compose.material3.ProgressIndicatorDefaults:
-    public final long getLinearColor(androidx.compose.runtime.Composer,int)
-    public final int getLinearStrokeCap-KaPHkGw()
-    public final long getLinearTrackColor(androidx.compose.runtime.Composer,int)
-androidx.compose.material3.ProgressIndicatorKt$LinearProgressIndicator$1$1
-androidx.compose.material3.ProgressIndicatorKt$LinearProgressIndicator$2$1
-androidx.compose.material3.ProgressIndicatorKt$LinearProgressIndicator$3
-androidx.compose.material3.ProgressIndicatorKt$LinearProgressIndicator$coercedProgress$1$1
-androidx.compose.material3.ProgressIndicatorKt:
-    public static final void LinearProgressIndicator-_5eSR-E(kotlin.jvm.functions.Function0,androidx.compose.ui.Modifier,long,long,int,androidx.compose.runtime.Composer,int,int)
-    public static final synthetic void access$drawLinearIndicator-qYKTg0g(androidx.compose.ui.graphics.drawscope.DrawScope,float,float,long,float,int)
-    public static final synthetic void access$drawLinearIndicatorTrack-AZGd3zU(androidx.compose.ui.graphics.drawscope.DrawScope,long,float,int)
-    public static final void drawLinearIndicator-qYKTg0g(androidx.compose.ui.graphics.drawscope.DrawScope,float,float,long,float,int)
-    public static final void drawLinearIndicatorTrack-AZGd3zU(androidx.compose.ui.graphics.drawscope.DrawScope,long,float,int)
 androidx.compose.material3.TopAppBarScrollBehavior:
     public abstract androidx.compose.animation.core.DecayAnimationSpec getFlingAnimationSpec()
     public abstract androidx.compose.animation.core.AnimationSpec getSnapAnimationSpec()
@@ -45192,9 +45029,6 @@ androidx.compose.material3.TopAppBarState:
     public abstract float getOverlappedFraction()
     public abstract void setHeightOffset(float)
     public abstract void setHeightOffsetLimit(float)
-androidx.compose.material3.tokens.LinearProgressIndicatorTokens:
-    public final androidx.compose.material3.tokens.ColorSchemeKeyTokens getActiveIndicatorColor()
-    public final androidx.compose.material3.tokens.ColorSchemeKeyTokens getTrackColor()
 androidx.compose.runtime.AbstractApplier:
     public static final int $stable
 androidx.compose.runtime.Anchor:
@@ -46077,12 +45911,6 @@ androidx.core.app.SharedElementCallback:
 androidx.core.content.ContextCompat:
     public static int checkSelfPermission(android.content.Context,java.lang.String)
     public static void startActivity(android.content.Context,android.content.Intent,android.os.Bundle)
-androidx.core.content.FileProvider$PathStrategy:
-    public abstract android.net.Uri getUriForFile(java.io.File)
-androidx.core.content.FileProvider$SimplePathStrategy:
-    public android.net.Uri getUriForFile(java.io.File)
-androidx.core.content.FileProvider:
-    public static android.net.Uri getUriForFile(android.content.Context,java.lang.String,java.io.File)
 androidx.core.graphics.PaintCompat:
     public static androidx.core.util.Pair obtainEmptyRects()
 androidx.core.graphics.TypefaceCompatApi29Impl:
@@ -46725,27 +46553,8 @@ com.wly.beansprout.core.datastore.LoginPreferences:
     public static final int $stable
 com.wly.beansprout.core.network.RetrofitClient:
     public static final int $stable
-com.wly.beansprout.core.utils.ApkDownloader$DownloadState$Completed
-com.wly.beansprout.core.utils.ApkDownloader$DownloadState$Downloading
-com.wly.beansprout.core.utils.ApkDownloader$DownloadState$Failed
-com.wly.beansprout.core.utils.ApkDownloader$downloadApk$2
-com.wly.beansprout.core.utils.ApkDownloader:
-    public static final synthetic okhttp3.OkHttpClient access$getClient$p()
-    public static final synthetic kotlinx.coroutines.flow.MutableStateFlow access$get_downloadState$p()
-    public final java.lang.Object downloadApk(android.content.Context,java.lang.String,java.lang.String,kotlin.coroutines.Continuation)
-    public final void installApk(android.content.Context,java.io.File)
-    public final void resetState()
-com.wly.beansprout.data.model.AppUpdate:
-    public abstract int getAppForce()
-    public abstract java.lang.String getFileName()
-    public abstract java.lang.String getFilePath()
-    public abstract float getNewAppSize()
-    public abstract java.lang.String getNewAppUpdateDesc()
-    public abstract int getVerCode()
-    public abstract java.lang.String getVerName()
-com.wly.beansprout.data.model.BaseResponse
-com.wly.beansprout.data.model.ErrorInfo
-com.wly.beansprout.data.repository.AppUpdateRepository$$InternalSyntheticThrowCCEIfNotNull$14$323ee95c0fafe3bbb90b86528e7ccd4beb78640f2cef9a85b8fa77f9b0928c05$1
+com.wly.beansprout.core.utils.ApkDownloader$DownloadState$Completed:
+    public static final int $stable
 com.wly.beansprout.data.repository.AppUpdateRepository:
     public static final int $stable
 com.wly.beansprout.data.repository.LoginRepository:
@@ -46760,21 +46569,8 @@ com.wly.beansprout.feature.floating.TouchPointAdapter:
     public static final int $stable
 com.wly.beansprout.feature.home.ui.HomeEvent$NavigateToAddTouchPoint
 com.wly.beansprout.feature.home.ui.HomeEvent$ShowStartDialog
-com.wly.beansprout.feature.home.ui.HomeScreenContentKt$HomeScreenContent$5
-com.wly.beansprout.feature.home.ui.HomeScreenContentKt$HomeScreenContent$6
-com.wly.beansprout.feature.home.ui.HomeScreenContentKt:
-    public static final com.wly.beansprout.core.utils.ApkDownloader$DownloadState HomeScreenContent$lambda$3(androidx.compose.runtime.State)
-com.wly.beansprout.feature.home.viewmodel.AppUpdateViewModel$$InternalSyntheticThrowCCEIfNotNull$14$c915bcd50172eed2d9547c44f28cdbeea34e239064ebf9acf4980357ba2ae160$0
-com.wly.beansprout.feature.home.viewmodel.AppUpdateViewModel$startDownload$1
 com.wly.beansprout.feature.home.viewmodel.AppUpdateViewModel:
     public static final int $stable
-    public static final synthetic android.app.Application access$getApplication$p(com.wly.beansprout.feature.home.viewmodel.AppUpdateViewModel)
-    public static final synthetic kotlinx.coroutines.flow.MutableStateFlow access$get_appUpdate$p(com.wly.beansprout.feature.home.viewmodel.AppUpdateViewModel)
-    public static final synthetic kotlinx.coroutines.flow.MutableStateFlow access$get_showUpdateDialog$p(com.wly.beansprout.feature.home.viewmodel.AppUpdateViewModel)
-    public static final synthetic boolean access$hasNewVersion(com.wly.beansprout.feature.home.viewmodel.AppUpdateViewModel,int)
-    public final void dismissUpdateDialog()
-    public final boolean hasNewVersion(int)
-    public final void startDownload()
 com.wly.beansprout.feature.home.viewmodel.AppUpdateViewModel_HiltModules$BindsModule
 com.wly.beansprout.feature.home.viewmodel.HomeViewModel_HiltModules$BindsModule
 com.wly.beansprout.feature.login.viewmodel.LoginViewModel:
@@ -46791,18 +46587,6 @@ com.wly.beansprout.feature.touchpoint.viewmodel.TouchPointUiState:
 com.wly.beansprout.feature.touchpoint.viewmodel.TouchPointViewModel:
     public static final int $stable
 com.wly.beansprout.feature.touchpoint.viewmodel.TouchPointViewModel_HiltModules$BindsModule
-com.wly.beansprout.presentation.dialog.AppUpdateDialogKt$AppUpdateDialog$1
-com.wly.beansprout.presentation.dialog.AppUpdateDialogKt$AppUpdateDialog$2$1
-com.wly.beansprout.presentation.dialog.AppUpdateDialogKt$AppUpdateDialog$3$1$3$1
-com.wly.beansprout.presentation.dialog.AppUpdateDialogKt$AppUpdateDialog$3$1$4$1
-com.wly.beansprout.presentation.dialog.AppUpdateDialogKt$AppUpdateDialog$3$1$4$2
-com.wly.beansprout.presentation.dialog.AppUpdateDialogKt$AppUpdateDialog$3$1$4$3
-com.wly.beansprout.presentation.dialog.AppUpdateDialogKt$AppUpdateDialog$3
-com.wly.beansprout.presentation.dialog.AppUpdateDialogKt$AppUpdateDialog$4
-com.wly.beansprout.presentation.dialog.AppUpdateDialogKt
-com.wly.beansprout.presentation.dialog.ComposableSingletons$AppUpdateDialogKt$lambda-1$1
-com.wly.beansprout.presentation.dialog.ComposableSingletons$AppUpdateDialogKt$lambda-2$1
-com.wly.beansprout.presentation.dialog.ComposableSingletons$AppUpdateDialogKt
 com.wly.beansprout.presentation.theme.JetLaggedExtraColors:
     public static final int $stable
 dagger.hilt.EntryPoints:
@@ -46881,16 +46665,6 @@ kotlin.coroutines.SafeContinuation:
     public java.lang.StackTraceElement getStackTraceElement()
 kotlin.coroutines.jvm.internal.CoroutineStackFrame:
     public abstract java.lang.StackTraceElement getStackTraceElement()
-kotlin.ranges.ClosedFloatRange:
-    public boolean lessThanOrEquals(float,float)
-    public synthetic bridge boolean lessThanOrEquals(java.lang.Comparable,java.lang.Comparable)
-kotlin.ranges.ClosedFloatingPointRange:
-    public abstract boolean isEmpty()
-    public abstract boolean lessThanOrEquals(java.lang.Comparable,java.lang.Comparable)
-kotlin.ranges.RangesKt:
-    public static synthetic bridge java.lang.Comparable coerceIn(java.lang.Comparable,kotlin.ranges.ClosedFloatingPointRange)
-kotlin.ranges.RangesKt___RangesKt:
-    public static java.lang.Comparable coerceIn(java.lang.Comparable,kotlin.ranges.ClosedFloatingPointRange)
 kotlin.text.StringsKt:
     public static synthetic bridge boolean contentEquals(java.lang.CharSequence,java.lang.CharSequence)
     public static synthetic bridge java.lang.String padStart(java.lang.String,int,char)

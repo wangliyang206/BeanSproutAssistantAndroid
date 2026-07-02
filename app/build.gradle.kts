@@ -13,8 +13,8 @@ android {
         applicationId = "com.wly.beansprout"
         minSdk = 24
         targetSdk = 34
-        versionCode = 157
-        versionName = "1.5.7"
+        versionCode = 158
+        versionName = "1.5.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
