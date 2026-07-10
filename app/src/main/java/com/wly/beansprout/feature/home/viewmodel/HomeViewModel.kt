@@ -38,7 +38,8 @@ class HomeViewModel @Inject constructor(
             4 to "swipeLeft",        // 向左滑
             5 to "swipeRight",       // 向右滑
             6 to "autoReply",        // 自动回复
-            7 to "luckyBag"          // 抢福袋
+            7 to "luckyBag",         // 抢福袋
+            8 to "customSequence"    // 自定义序列
         )
     }
 
@@ -83,13 +84,14 @@ class HomeViewModel @Inject constructor(
 
     /**
      * 更新专属平台选择
-     * 切换平台时联动：若当前选中的功能在非抖音平台不存在（如抢福袋），自动回退到"直播点赞"
+     * 切换平台时联动：若当前选中的功能在非抖音平台不存在（如抢福袋 index=8），自动回退到"直播点赞"
      */
     fun updateSelectedExclusive(exclusive: Int) {
         _uiState.update { state ->
             val currentFunction = state.selectedFunction
-            // 抖音有 8 个功能（0-7，含抢福袋），其它平台只有 7 个（0-6）
-            val newFunction = if (exclusive != 0 && currentFunction >= 7) 1 else currentFunction
+            // 抖音有 9 个功能（0-8，含抢福袋），其它平台只有 8 个（0-7）
+            // 抢福袋在 index=8，仅抖音可用
+            val newFunction = if (exclusive != 0 && currentFunction >= 8) 1 else currentFunction
             state.copy(selectedExclusive = exclusive, selectedFunction = newFunction)
         }
     }
@@ -213,8 +215,14 @@ class HomeViewModel @Inject constructor(
      */
     fun confirmStart(): Triple<Int, Int, Int> {
         val state = _uiState.value
-        // selectedFunction: 0=轻点触发 1=直播点赞 2=向下滑 3=向上滑 4=向左滑 5=向右滑 6=自动回复 7=抢福袋(抖音专属)
-        val functionType = state.selectedFunction + 1 // 映射到 TouchPoint.TYPE_*
+        // selectedFunction 索引映射：
+        // 0=轻点触发(→1) 1=直播点赞(→2) 2=向下滑(→3) 3=向上滑(→4) 4=向左滑(→5) 5=向右滑(→6) 6=自动回复(→7)
+        // 7=自定义(→9)  8=抢福袋(→8，仅抖音)
+        val functionType = when (state.selectedFunction) {
+            7 -> 9   // TYPE_CUSTOM（自定义序列）
+            8 -> 8   // TYPE_LUCKY_BAG（抢福袋，仅抖音）
+            else -> state.selectedFunction + 1
+        }
         // selectedModel: 0=功德小鸡(闪现) 1=跳绳小鸡(溜达)
         val chickModel = if (state.selectedModel == 0) 1 else 2
         // 福袋循环间隔已固定在 AutoTouchService 内部，此处传 0

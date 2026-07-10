@@ -2,6 +2,7 @@ package com.wly.beansprout.data.repository
 
 import android.content.Context
 import com.wly.beansprout.core.json.JsonUtils
+import com.wly.beansprout.data.model.CustomSequence
 import com.wly.beansprout.data.model.LuckyBagScheme
 import com.wly.beansprout.data.model.TouchPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -25,6 +26,8 @@ class TouchPointRepository @Inject constructor(
         const val KEY_AUTO_REPLY_SCRIPT = "auto_reply_script"
         const val KEY_LUCKY_BAG_SCHEMES = "lucky_bag_schemes"
         const val KEY_CURRENT_SCHEME_ID = "current_scheme_id"
+        const val KEY_CUSTOM_SEQUENCES = "custom_sequences"
+        const val KEY_CURRENT_SEQUENCE_ID = "current_sequence_id"
         const val DEFAULT_AUTO_REPLY_SCRIPT = "喜欢主播的点点关注、点点赞，感谢！;感谢大家的支持！;如果觉得今天的直播不错，就请给我点个赞吧！你们的支持是我最大的动力！;欢迎各位亲们来到直播间！"
     }
 
@@ -44,9 +47,11 @@ class TouchPointRepository @Inject constructor(
         return getTouchPoints().filter { it.functionType == functionType }
     }
 
-    /** 获取非福袋类型的触点列表（functionType != TYPE_LUCKY_BAG） */
+    /** 获取非福袋且非自定义序列类型的触点列表 */
     fun getNonLuckyBagTouchPoints(): List<TouchPoint> {
-        return getTouchPoints().filter { it.functionType != TouchPoint.TYPE_LUCKY_BAG }
+        return getTouchPoints().filter {
+            it.functionType != TouchPoint.TYPE_LUCKY_BAG && it.functionType != TouchPoint.TYPE_CUSTOM
+        }
     }
 
     /** 保存触点列表（覆盖） */
@@ -198,5 +203,60 @@ class TouchPointRepository @Inject constructor(
     /** 设置当前选中的方案 ID */
     fun setCurrentSchemeId(id: Int) {
         prefs.edit().putInt(KEY_CURRENT_SCHEME_ID, id).apply()
+    }
+
+    // ======================== 自定义序列管理 ========================
+
+    /** 获取所有自定义序列（首次调用自动创建默认序列） */
+    fun getCustomSequences(): List<CustomSequence> {
+        val json = prefs.getString(KEY_CUSTOM_SEQUENCES, "") ?: ""
+        val sequences = if (json.isBlank()) {
+            emptyList()
+        } else {
+            try {
+                JsonUtils.fromJsonList(json, CustomSequence::class.java)
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
+        if (sequences.isEmpty()) {
+            val defaultSeq = CustomSequence(id = 0, name = "序列一")
+            saveCustomSequences(listOf(defaultSeq))
+            return listOf(defaultSeq)
+        }
+        return sequences
+    }
+
+    /** 保存自定义序列列表 */
+    fun saveCustomSequences(sequences: List<CustomSequence>) {
+        val json = JsonUtils.toJson(sequences)
+        prefs.edit().putString(KEY_CUSTOM_SEQUENCES, json).apply()
+    }
+
+    /** 创建新序列 */
+    fun addCustomSequence(name: String): CustomSequence {
+        val sequences = getCustomSequences().toMutableList()
+        val maxId = sequences.maxOfOrNull { it.id } ?: -1
+        val newSeq = CustomSequence(id = maxId + 1, name = name)
+        sequences.add(newSeq)
+        saveCustomSequences(sequences)
+        return newSeq
+    }
+
+    /** 获取指定序列的动作列表 */
+    fun getTouchPointsBySequence(sequenceId: Int): List<TouchPoint> {
+        return getTouchPoints().filter {
+            it.functionType == TouchPoint.TYPE_CUSTOM && it.sequenceId == sequenceId
+        }
+    }
+
+    /** 获取当前选中的序列 ID */
+    fun getCurrentCustomSequenceId(): Int {
+        return prefs.getInt(KEY_CURRENT_SEQUENCE_ID, 0)
+    }
+
+    /** 设置当前选中的序列 ID */
+    fun setCurrentCustomSequenceId(id: Int) {
+        prefs.edit().putInt(KEY_CURRENT_SEQUENCE_ID, id).apply()
     }
 }
