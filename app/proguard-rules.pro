@@ -738,7 +738,7 @@ public static final int *;
 ##记录生成的日志数据,gradle build时在本项目根目录输出##
 
 #apk 包内所有 class 的内部结构
--dump class_files.txt
+# -dump class_files.txt  (R8 不支持此选项，已注释)
 #未混淆的类和成员
 -printseeds seeds.txt
 #列出从 apk 中删除的代码
