@@ -3,6 +3,7 @@ package com.wly.beansprout.data.repository
 import com.wly.beansprout.core.datastore.LoginPreferences
 import com.wly.beansprout.core.network.RequestHelper
 import com.wly.beansprout.core.network.RetrofitClient
+import com.wly.beansprout.core.utils.MD5
 import com.wly.beansprout.data.model.UserInfo
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -42,7 +43,7 @@ class LoginRepository @Inject constructor(
         // 组装数据
         val requestData = mutableMapOf<String, String>()
         requestData["mobile"] = mobile
-        requestData["password"] = password
+        requestData["password"] = MD5.getMD5Code(password)
 
         // 发送请求（登录前无 token，使用匿名请求）
         val userData: UserInfo = requestNetwork {
