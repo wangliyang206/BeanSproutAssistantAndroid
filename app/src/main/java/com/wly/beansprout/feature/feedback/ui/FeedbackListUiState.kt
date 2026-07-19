@@ -8,9 +8,14 @@ import com.wly.beansprout.data.model.Feedback
 data class FeedbackListUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
+    val isLoadMore: Boolean = false,
     val feedbackList: List<Feedback> = emptyList(),
     val errorMessage: String? = null,
-    val total: Int = 0
+    val total: Int = 0,
+    val pageNum: Int = 1,
+    val pageSize: Int = 10,
+    val pages: Int = 0,
+    val hasMore: Boolean = false
 )
 
 /**

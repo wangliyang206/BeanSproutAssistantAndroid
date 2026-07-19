@@ -25,8 +25,23 @@ data class FeedbackReply(
     val replyUserId: Long? = null,
     val replyUserName: String? = null,
     val replyContent: String? = null,
+    val replyType: String? = null, // "1"用户 "2"管理员
     val createTime: String? = null
 )
+
+/**
+ * 回复类型
+ */
+enum class ReplyType(val value: String) {
+    USER("1"),
+    ADMIN("2");
+
+    companion object {
+        fun fromValue(value: String?): ReplyType {
+            return values().find { it.value == value } ?: ADMIN
+        }
+    }
+}
 
 /**
  * 反馈
@@ -49,11 +64,23 @@ data class Feedback(
 )
 
 /**
+ * 反馈列表请求
+ */
+data class FeedbackListRequest(
+    val pageNum: Int = 1,
+    val pageSize: Int = 10
+)
+
+/**
  * 反馈列表响应
  */
 data class FeedbackListResponse(
     val list: List<Feedback> = emptyList(),
-    val total: Int = 0
+    val total: Int = 0,
+    val pageNum: Int = 1,
+    val pageSize: Int = 10,
+    val pages: Int = 0,
+    val hasMore: Boolean = false
 )
 
 /**
@@ -75,5 +102,20 @@ data class SubmitFeedbackRequest(
  * 提交反馈响应
  */
 data class SubmitFeedbackResponse(
+    val success: Boolean = false
+)
+
+/**
+ * 继续追问请求
+ */
+data class ReplyFeedbackRequest(
+    val feedbackId: Long = 0,
+    val replyContent: String = ""
+)
+
+/**
+ * 继续追问响应
+ */
+data class ReplyFeedbackResponse(
     val success: Boolean = false
 )

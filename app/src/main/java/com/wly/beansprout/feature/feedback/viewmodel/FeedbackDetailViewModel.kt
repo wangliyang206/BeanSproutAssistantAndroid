@@ -2,6 +2,7 @@ package com.wly.beansprout.feature.feedback.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.wly.beansprout.core.base.BaseViewModel
+import com.wly.beansprout.data.model.FeedbackStatus
 import com.wly.beansprout.data.repository.FeedbackRepository
 import com.wly.beansprout.feature.feedback.ui.FeedbackDetailEvent
 import com.wly.beansprout.feature.feedback.ui.FeedbackDetailUiState
@@ -54,12 +55,15 @@ class FeedbackDetailViewModel @Inject constructor(
                 val response = feedbackRepository.getFeedbackDetail(currentFeedbackId)
                 val feedback = response.feedback
                 val replies = feedback?.replies ?: emptyList()
+                // 已关闭的反馈不允许追问
+                val canReply = feedback?.status != FeedbackStatus.CLOSED.value
 
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         feedback = feedback,
-                        replies = replies
+                        replies = replies,
+                        canReply = canReply
                     )
                 }
             } catch (e: Exception) {
@@ -70,6 +74,47 @@ class FeedbackDetailViewModel @Inject constructor(
                     )
                 }
                 _events.emit(FeedbackDetailEvent.ShowError(e.message ?: "加载失败"))
+            }
+        }
+    }
+
+    /**
+     * 更新输入框内容
+     */
+    fun updateInputText(text: String) {
+        _uiState.update { it.copy(inputText = text) }
+    }
+
+    /**
+     * 发送追问
+     */
+    fun sendReply() {
+        val currentState = _uiState.value
+        val content = currentState.inputText.trim()
+        if (content.isBlank() || currentState.isSending) {
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSending = true) }
+            try {
+                feedbackRepository.replyFeedback(currentFeedbackId, content)
+
+                _uiState.update {
+                    it.copy(
+                        isSending = false,
+                        inputText = ""
+                    )
+                }
+
+                // 刷新详情获取最新回复
+                loadFeedbackDetail()
+
+                _events.emit(FeedbackDetailEvent.SendSuccess)
+                _events.emit(FeedbackDetailEvent.ScrollToBottom)
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isSending = false) }
+                _events.emit(FeedbackDetailEvent.ShowError(e.message ?: "发送失败"))
             }
         }
     }

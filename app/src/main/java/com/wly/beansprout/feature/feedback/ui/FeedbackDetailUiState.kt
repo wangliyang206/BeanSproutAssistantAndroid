@@ -10,7 +10,10 @@ data class FeedbackDetailUiState(
     val isLoading: Boolean = false,
     val feedback: Feedback? = null,
     val replies: List<FeedbackReply> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val inputText: String = "",
+    val isSending: Boolean = false,
+    val canReply: Boolean = true
 )
 
 /**
@@ -18,4 +21,6 @@ data class FeedbackDetailUiState(
  */
 sealed class FeedbackDetailEvent {
     data class ShowError(val message: String) : FeedbackDetailEvent()
+    data object SendSuccess : FeedbackDetailEvent()
+    data object ScrollToBottom : FeedbackDetailEvent()
 }

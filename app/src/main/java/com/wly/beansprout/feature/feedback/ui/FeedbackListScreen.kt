@@ -51,6 +51,7 @@ fun FeedbackListScreen(
         FeedbackListContent(
             uiState = uiState,
             onRefresh = viewModel::refresh,
+            onLoadMore = viewModel::loadMore,
             onItemClick = viewModel::navigateToDetail,
             onAddClick = viewModel::navigateToSubmit,
             onRetry = viewModel::refresh,

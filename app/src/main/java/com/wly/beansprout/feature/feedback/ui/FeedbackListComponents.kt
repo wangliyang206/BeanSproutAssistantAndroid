@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,15 +26,22 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,21 +56,49 @@ import com.wly.beansprout.R
 /**
  * 反馈列表内容
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedbackListContent(
     uiState: FeedbackListUiState,
     onRefresh: () -> Unit,
+    onLoadMore: () -> Unit,
     onItemClick: (Long) -> Unit,
     onAddClick: () -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
+    val pullToRefreshState = rememberPullToRefreshState()
+
+    // 下拉刷新完成时停止动画
+    if (pullToRefreshState.isRefreshing) {
+        LaunchedEffect(uiState.isRefreshing) {
+            if (!uiState.isRefreshing) {
+                pullToRefreshState.endRefresh()
+            }
+        }
+    }
+
+    // 上拉加载更多：滚动到接近底部时触发
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            val totalItems = listState.layoutInfo.totalItemsCount
+            !uiState.isLoadMore && !uiState.isRefreshing && uiState.hasMore &&
+                totalItems > 0 && lastVisibleItem >= totalItems - 3
+        }
+    }
+    LaunchedEffect(shouldLoadMore) {
+        if (shouldLoadMore) {
+            onLoadMore()
+        }
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(HomeBackground)
+            .nestedScroll(pullToRefreshState.nestedScrollConnection)
     ) {
         when {
             // 加载中且无数据
@@ -153,15 +189,23 @@ fun FeedbackListContent(
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)
+                    contentPadding = PaddingValues(16.dp)
                 ) {
-                    // 顶部刷新提示
-                    if (uiState.isRefreshing) {
+                    items(uiState.feedbackList, key = { it.feedbackId }) { feedback ->
+                        FeedbackItemCard(
+                            feedback = feedback,
+                            onClick = { onItemClick(feedback.feedbackId) }
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+
+                    // 底部加载更多提示
+                    if (uiState.isLoadMore) {
                         item {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(8.dp),
+                                    .padding(16.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -172,25 +216,38 @@ fun FeedbackListContent(
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "刷新中...",
+                                        text = "加载中...",
                                         fontSize = 12.sp,
                                         color = Color.Gray
                                     )
                                 }
                             }
                         }
-                    }
-
-                    items(uiState.feedbackList, key = { it.feedbackId }) { feedback ->
-                        FeedbackItemCard(
-                            feedback = feedback,
-                            onClick = { onItemClick(feedback.feedbackId) }
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
+                    } else if (!uiState.hasMore) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "没有更多了",
+                                    fontSize = 12.sp,
+                                    color = Color.LightGray
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
+
+        // 下拉刷新指示器
+        PullToRefreshContainer(
+            state = pullToRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
 
         // 悬浮添加按钮
         FloatingActionButton(

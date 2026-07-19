@@ -3,7 +3,10 @@ package com.wly.beansprout.data.repository
 import com.wly.beansprout.core.network.RequestHelper
 import com.wly.beansprout.core.network.RetrofitClient
 import com.wly.beansprout.data.model.FeedbackDetailResponse
+import com.wly.beansprout.data.model.FeedbackListRequest
 import com.wly.beansprout.data.model.FeedbackListResponse
+import com.wly.beansprout.data.model.ReplyFeedbackRequest
+import com.wly.beansprout.data.model.ReplyFeedbackResponse
 import com.wly.beansprout.data.model.SubmitFeedbackRequest
 import com.wly.beansprout.data.model.SubmitFeedbackResponse
 import javax.inject.Inject
@@ -17,14 +20,14 @@ class FeedbackRepository @Inject constructor(
 ) : BaseRepository() {
 
     /**
-     * 获取反馈列表
+     * 获取反馈列表（分页）
      */
-    suspend fun getFeedbackList(): FeedbackListResponse {
-        val requestData = mutableMapOf<String, String>()
+    suspend fun getFeedbackList(pageNum: Int, pageSize: Int): FeedbackListResponse {
+        val request = FeedbackListRequest(pageNum = pageNum, pageSize = pageSize)
 
         return requestNetwork {
             retrofitClient.apiService.getFeedbackList(
-                requestHelper.buildRequest(requestData)
+                requestHelper.buildRequest(request)
             )
         }
     }
@@ -58,6 +61,22 @@ class FeedbackRepository @Inject constructor(
         return requestNetwork {
             retrofitClient.apiService.getFeedbackDetail(
                 requestHelper.buildRequest(requestData)
+            )
+        }
+    }
+
+    /**
+     * 继续追问
+     */
+    suspend fun replyFeedback(feedbackId: Long, replyContent: String): ReplyFeedbackResponse {
+        val request = ReplyFeedbackRequest(
+            feedbackId = feedbackId,
+            replyContent = replyContent
+        )
+
+        return requestNetwork {
+            retrofitClient.apiService.replyFeedback(
+                requestHelper.buildRequest(request)
             )
         }
     }

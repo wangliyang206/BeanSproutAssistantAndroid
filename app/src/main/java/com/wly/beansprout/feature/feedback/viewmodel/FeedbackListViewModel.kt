@@ -43,31 +43,70 @@ class FeedbackListViewModel @Inject constructor(
      * 下拉刷新
      */
     fun refresh() {
-        _uiState.update { it.copy(isRefreshing = true) }
-        loadFeedbackList()
-    }
-
-    private fun loadFeedbackList() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            _uiState.update { it.copy(isRefreshing = true, errorMessage = null) }
             try {
-                val response = feedbackRepository.getFeedbackList()
+                val response = feedbackRepository.getFeedbackList(
+                    pageNum = 1,
+                    pageSize = _uiState.value.pageSize
+                )
 
                 _uiState.update {
                     it.copy(
-                        isLoading = false,
                         isRefreshing = false,
+                        isLoading = false,
                         feedbackList = response.list,
-                        total = response.total
+                        total = response.total,
+                        pageNum = response.pageNum,
+                        pageSize = response.pageSize,
+                        pages = response.pages,
+                        hasMore = response.hasMore,
+                        errorMessage = null
                     )
                 }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
-                        isLoading = false,
                         isRefreshing = false,
-                        errorMessage = e.message ?: "加载失败"
+                        errorMessage = e.message ?: "刷新失败"
                     )
+                }
+            }
+        }
+    }
+
+    /**
+     * 上拉加载更多
+     */
+    fun loadMore() {
+        val currentState = _uiState.value
+        if (currentState.isLoadMore || !currentState.hasMore) {
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadMore = true) }
+            try {
+                val nextPage = currentState.pageNum + 1
+                val response = feedbackRepository.getFeedbackList(
+                    pageNum = nextPage,
+                    pageSize = currentState.pageSize
+                )
+
+                _uiState.update {
+                    it.copy(
+                        isLoadMore = false,
+                        feedbackList = it.feedbackList + response.list,
+                        total = response.total,
+                        pageNum = response.pageNum,
+                        pageSize = response.pageSize,
+                        pages = response.pages,
+                        hasMore = response.hasMore
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoadMore = false)
                 }
             }
         }

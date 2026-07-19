@@ -38,6 +38,12 @@ fun FeedbackDetailScreen(
                 is FeedbackDetailEvent.ShowError -> {
                     ToastUtils.showToast(context, event.message)
                 }
+                is FeedbackDetailEvent.SendSuccess -> {
+                    // 发送成功后 ViewModel 内部已刷新，无需额外处理
+                }
+                is FeedbackDetailEvent.ScrollToBottom -> {
+                    // 滚动由 Composable 内部的 LaunchedEffect 处理
+                }
             }
         }
     }
@@ -50,8 +56,9 @@ fun FeedbackDetailScreen(
     ) { modifier ->
         FeedbackDetailContent(
             uiState = uiState,
-            onRefresh = viewModel::refresh,
             onRetry = viewModel::refresh,
+            onInputChange = viewModel::updateInputText,
+            onSend = viewModel::sendReply,
             modifier = modifier
         )
     }
