@@ -15,7 +15,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class RetrofitClient @Inject constructor() {
-    private val BASE_URL = "http://www.dagongji.xin/"
+//    private val BASE_URL = "http://www.dagongji.xin/"
+    private val BASE_URL = "http://192.168.1.128:7777/"
 
     private val gson: Gson by lazy {
         GsonBuilder()

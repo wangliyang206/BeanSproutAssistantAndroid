@@ -341,6 +341,15 @@ class HomeViewModel @Inject constructor(
     }
 
     /**
+     * 导航到咨询反馈
+     */
+    fun navigateToFeedback() {
+        viewModelScope.launch {
+            _events.emit(HomeEvent.NavigateToFeedback)
+        }
+    }
+
+    /**
      * 处理返回键
      */
     fun onBackPressed(): Boolean {

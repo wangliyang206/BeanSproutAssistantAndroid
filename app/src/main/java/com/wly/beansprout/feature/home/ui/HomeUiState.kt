@@ -49,6 +49,7 @@ sealed class HomeEvent {
     object NavigateToServiceAgreement : HomeEvent()
     object NavigateToPrivacyPolicy : HomeEvent()
     object NavigateToTutorial : HomeEvent()
+    object NavigateToFeedback : HomeEvent()
     object NavigateToAccessibilitySettings : HomeEvent()
     object NavigateToOverlaySettings : HomeEvent()
     object ShowExitAppDialog : HomeEvent()

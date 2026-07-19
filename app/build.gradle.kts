@@ -201,6 +201,9 @@ dependencies {
     implementation(libs.umeng.apm)
     implementation(libs.androidx.recyclerview)
 
+    // 图片加载
+    implementation(libs.coil.compose)
+
     // 测试
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

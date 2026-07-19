@@ -9,6 +9,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.wly.beansprout.MainActivity
+import com.wly.beansprout.feature.feedback.ui.FeedbackDetailScreen
+import com.wly.beansprout.feature.feedback.ui.FeedbackListScreen
+import com.wly.beansprout.feature.feedback.ui.SubmitFeedbackScreen
 import com.wly.beansprout.feature.home.ui.HomeScreen
 import com.wly.beansprout.feature.login.ui.LoginScreen
 import com.wly.beansprout.feature.register.ui.RegisterScreen
@@ -108,6 +111,31 @@ fun AppNavGraph(
                 title = title,
                 videoUrl = videoUrl,
                 isLocal = isLocal
+            )
+        }
+
+        // ==================== 咨询反馈 ====================
+        // 反馈列表
+        composable(NavRoutes.FeedbackList.route) {
+            FeedbackListScreen(navController)
+        }
+
+        // 提交反馈
+        composable(NavRoutes.SubmitFeedback.route) {
+            SubmitFeedbackScreen(navController)
+        }
+
+        // 反馈详情
+        composable(
+            route = NavRoutes.FeedbackDetail.route,
+            arguments = listOf(
+                navArgument("feedbackId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val feedbackId = backStackEntry.arguments?.getLong("feedbackId") ?: 0L
+            FeedbackDetailScreen(
+                navController = navController,
+                feedbackId = feedbackId
             )
         }
     }

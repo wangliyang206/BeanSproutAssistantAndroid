@@ -94,7 +94,8 @@ fun HomeScreenContent(
                         versionName = uiState.versionName,
                         onTutorialClick = viewModel::navigateToTutorial,
                         onServiceAgreementClick = viewModel::navigateToServiceAgreement,
-                        onPrivacyPolicyClick = viewModel::navigateToPrivacyPolicy
+                        onPrivacyPolicyClick = viewModel::navigateToPrivacyPolicy,
+                        onFeedbackClick = viewModel::navigateToFeedback
                     )
                 }
             }
