@@ -1,4 +1,4 @@
-package com.wly.beansprout.feature.login.ui
+﻿package com.wly.beansprout.feature.login.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +25,7 @@ fun LoginScreenContent(
     onRegisterClick: () -> Unit,
     onServiceAgreementClick: () -> Unit,
     onPrivacyAgreementClick: () -> Unit,
+    onMemberConsultClick: () -> Unit = {},
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -78,8 +79,11 @@ fun LoginScreenContent(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // 注册链接
-            RegisterLink(onClick = onRegisterClick)
+            // 用户注册 | 开通会员
+            BottomActionLinks(
+                onRegisterClick = onRegisterClick,
+                onMemberConsultClick = onMemberConsultClick
+            )
         }
     }
 }

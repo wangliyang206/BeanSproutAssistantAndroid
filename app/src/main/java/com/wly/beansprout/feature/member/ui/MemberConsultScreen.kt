@@ -50,7 +50,7 @@ fun MemberConsultScreen(
 
                 // 标题
                 Text(
-                    text = "长按或扫描二维码添加微信",
+                    text = "扫描二维码添加微信",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
@@ -71,13 +71,13 @@ fun MemberConsultScreen(
                 // 二维码图片
                 Card(
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.size(240.dp)
+                    modifier = Modifier.size(220.dp)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.img_wechat_qrcode),
                         contentDescription = "微信二维码",
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Fit
+                        contentScale = ContentScale.FillWidth
                     )
                 }
 
