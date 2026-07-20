@@ -70,6 +70,13 @@ fun FeedbackListContent(
     val listState = rememberLazyListState()
     val pullToRefreshState = rememberPullToRefreshState()
 
+    // 下拉刷新触发时调用刷新回调
+    LaunchedEffect(pullToRefreshState.isRefreshing) {
+        if (pullToRefreshState.isRefreshing) {
+            onRefresh()
+        }
+    }
+
     // 下拉刷新完成时停止动画
     if (pullToRefreshState.isRefreshing) {
         LaunchedEffect(uiState.isRefreshing) {

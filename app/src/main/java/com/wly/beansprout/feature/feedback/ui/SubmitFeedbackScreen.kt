@@ -1,4 +1,4 @@
-package com.wly.beansprout.feature.feedback.ui
+﻿package com.wly.beansprout.feature.feedback.ui
 
 import android.widget.Toast
 import androidx.compose.runtime.Composable
@@ -32,6 +32,8 @@ fun SubmitFeedbackScreen(
             when (event) {
                 is SubmitFeedbackEvent.SubmitSuccess -> {
                     ToastUtils.showToast(context, "提交成功")
+                    navController.previousBackStackEntry?.savedStateHandle
+                        ?.set("shouldRefreshFeedback", true)
                     navController.popBackStack()
                 }
                 is SubmitFeedbackEvent.ShowError -> {

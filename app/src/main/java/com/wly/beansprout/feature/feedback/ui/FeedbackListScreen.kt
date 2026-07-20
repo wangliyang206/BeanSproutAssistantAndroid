@@ -1,4 +1,4 @@
-package com.wly.beansprout.feature.feedback.ui
+﻿package com.wly.beansprout.feature.feedback.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,6 +42,19 @@ fun FeedbackListScreen(
     // 初始加载
     LaunchedEffect(Unit) {
         viewModel.loadInitial()
+    }
+
+    // 监听从提交页返回时的刷新标记
+    LaunchedEffect(Unit) {
+        navController.currentBackStackEntry?.savedStateHandle
+            ?.getStateFlow("shouldRefreshFeedback", false)
+            ?.collect { shouldRefresh ->
+                if (shouldRefresh) {
+                    viewModel.refresh()
+                    navController.currentBackStackEntry?.savedStateHandle
+                        ?.set("shouldRefreshFeedback", false)
+                }
+            }
     }
 
     CommTopBar(
