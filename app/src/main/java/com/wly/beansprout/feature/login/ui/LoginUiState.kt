@@ -1,4 +1,4 @@
-package com.wly.beansprout.feature.login.ui
+﻿package com.wly.beansprout.feature.login.ui
 
 /**
  * 登录界面 UI 状态
@@ -63,6 +63,7 @@ sealed class LoginEvent {
     object NavigateToServiceAgreement : LoginEvent()
     object NavigateToPrivacyAgreement : LoginEvent()
     object ExitApp : LoginEvent()
+    object NavigateToMemberConsult : LoginEvent()
 }
 
 /**

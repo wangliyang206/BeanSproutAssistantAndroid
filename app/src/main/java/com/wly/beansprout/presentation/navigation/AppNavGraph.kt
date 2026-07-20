@@ -1,4 +1,4 @@
-package com.wly.beansprout.presentation.navigation
+﻿package com.wly.beansprout.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,6 +14,7 @@ import com.wly.beansprout.feature.feedback.ui.FeedbackListScreen
 import com.wly.beansprout.feature.feedback.ui.SubmitFeedbackScreen
 import com.wly.beansprout.feature.home.ui.HomeScreen
 import com.wly.beansprout.feature.login.ui.LoginScreen
+import com.wly.beansprout.feature.member.ui.MemberConsultScreen
 import com.wly.beansprout.feature.register.ui.RegisterScreen
 import com.wly.beansprout.feature.splash.ui.SplashScreen
 import com.wly.beansprout.feature.touchpoint.ui.AddTouchPointScreen
@@ -36,7 +37,7 @@ fun AppNavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.Splash.route // 闪页为起始页
+        startDestination = NavRoutes.Splash.route
     ) {
         // 闪页
         composable(NavRoutes.Splash.route) {
@@ -138,20 +139,22 @@ fun AppNavGraph(
                 feedbackId = feedbackId
             )
         }
+
+        // 开通会员
+        composable(NavRoutes.MemberConsult.route) {
+            MemberConsultScreen(navController)
+        }
     }
 
-    // 消费来自悬浮窗的待处理导航（navRouteVersion 变化时重新触发）
+    // 消费来自悬浮窗的待处理导航
     LaunchedEffect(MainActivity.navRouteVersion) {
-        // 等待 NavGraph 完成初始化
         delay(300)
-        // 等待直到当前目的地是 Home（即用户已登录）
-        val maxWait = 15000L // 最多等 15 秒（覆盖 splash + 登录流程）
+        val maxWait = 15000L
         val startTime = System.currentTimeMillis()
         while (navController.currentDestination?.route != NavRoutes.Home.route
             && System.currentTimeMillis() - startTime < maxWait) {
             delay(500)
         }
-        // 消费待导航
         val pendingRoute = MainActivity.pendingNavRoute
         if (pendingRoute != null && navController.currentDestination?.route == NavRoutes.Home.route) {
             MainActivity.pendingNavRoute = null

@@ -1,4 +1,4 @@
-package com.wly.beansprout.presentation.navigation
+﻿package com.wly.beansprout.presentation.navigation
 
 import java.net.URLEncoder
 
@@ -56,4 +56,7 @@ sealed class NavRoutes(val route: String) {
             return "feedback_detail/$feedbackId"
         }
     }
+
+    // 开通会员
+    object MemberConsult : NavRoutes("member_consult")
 }

@@ -1,4 +1,4 @@
-package com.wly.beansprout.feature.login.ui
+﻿package com.wly.beansprout.feature.login.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -360,5 +360,22 @@ fun ProtocolText(
                     onPrivacyAgreementClick()
                 }
         }
+    )
+}
+
+
+@Composable
+fun MemberConsultLink(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = "开通会员",
+        fontSize = 16.sp,
+        color = BtnColor,
+        modifier = modifier
+            .padding(bottom = 12.dp)
+            .clickable(onClick = onClick),
+        textAlign = androidx.compose.ui.text.style.TextAlign.Center
     )
 }
