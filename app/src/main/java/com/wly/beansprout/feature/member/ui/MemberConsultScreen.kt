@@ -6,11 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -69,15 +69,16 @@ fun MemberConsultScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // 二维码图片
-                Card(
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.size(220.dp)
+                Box(
+                    modifier = Modifier
+                        .size(220.dp)
+                        .clip(RoundedCornerShape(12.dp))
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.img_wechat_qrcode),
                         contentDescription = "微信二维码",
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.FillWidth
+                        contentScale = ContentScale.Fit
                     )
                 }
 
