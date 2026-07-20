@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -79,11 +81,10 @@ fun FeedbackDetailContent(
         }
     }
 
-    // 键盘弹出时滚动到底部，避免最后一条消息被遮挡
+    // 键盘高度变化时持续滚动到底部，避免最后一条消息被遮挡
     val imeBottom = WindowInsets.ime.getBottom(density)
-    val isKeyboardVisible = imeBottom > 0
-    LaunchedEffect(isKeyboardVisible) {
-        if (isKeyboardVisible && repliesSize > 0) {
+    LaunchedEffect(imeBottom) {
+        if (imeBottom > 0 && repliesSize > 0) {
             listState.animateScrollToItem(repliesSize - 1)
         }
     }
@@ -91,7 +92,6 @@ fun FeedbackDetailContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .imePadding()
             .background(HomeBackground)
     ) {
         when {
@@ -418,7 +418,8 @@ fun ReplyInputBar(
 
     Surface(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .windowInsetsPadding(WindowInsets.ime.exclude(WindowInsets.navigationBars)),
         color = Color.White,
         shadowElevation = 4.dp
     ) {
