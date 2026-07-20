@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -42,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -67,6 +70,7 @@ fun FeedbackDetailContent(
 ) {
     val listState = rememberLazyListState()
     val repliesSize = uiState.replies.size
+    val density = LocalDensity.current
 
     // 有新回复时滚动到底部
     LaunchedEffect(repliesSize) {
@@ -75,9 +79,19 @@ fun FeedbackDetailContent(
         }
     }
 
+    // 键盘弹出时滚动到底部，避免最后一条消息被遮挡
+    val imeBottom = WindowInsets.ime.getBottom(density)
+    val isKeyboardVisible = imeBottom > 0
+    LaunchedEffect(isKeyboardVisible) {
+        if (isKeyboardVisible && repliesSize > 0) {
+            listState.animateScrollToItem(repliesSize - 1)
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
+            .imePadding()
             .background(HomeBackground)
     ) {
         when {
@@ -279,7 +293,8 @@ fun FeedbackInfoCard(feedback: Feedback) {
 @Composable
 fun ReplyBubble(reply: FeedbackReply) {
     val replyType = ReplyType.fromValue(reply.replyType)
-    val isAdmin = replyType == ReplyType.ADMIN
+    val isAdminByName = reply.replyUserName?.contains("管理员") == true
+    val isAdmin = replyType == ReplyType.ADMIN || isAdminByName
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -411,8 +426,6 @@ fun ReplyInputBar(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .imePadding()
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -470,7 +483,6 @@ fun ReplyInputBar(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .navigationBarsPadding()
                     .padding(vertical = 12.dp),
                 contentAlignment = Alignment.Center
             ) {
