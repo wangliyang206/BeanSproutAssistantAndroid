@@ -13,8 +13,8 @@ android {
         applicationId = "com.wly.beansprout"
         minSdk = 24
         targetSdk = 34
-        versionCode = 160
-        versionName = "1.6.0"
+        versionCode = 161
+        versionName = "1.6.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -109,6 +109,10 @@ android {
             //SP文件名称
             buildConfigField("String", "SHARED_NAME_INVEST", "\"sharedAssistantTest\"")
 
+            //服务器地址（debug环境使用测试地址）
+            buildConfigField("String", "BASE_URL", "\"http://192.168.1.128:7777/\"")
+//            buildConfigField("String", "BASE_URL", "\"http://www.dagongji.xin/\"")
+
             //AndroidManifest中用到的配置
             manifestPlaceholders["UM_APP_KEY"] = "@string/um_app_key_manifest_debug"
         }
@@ -129,6 +133,9 @@ android {
 
             //SP文件名称
             buildConfigField("String", "SHARED_NAME_INVEST", "\"sharedAssistantTest\"")
+
+            //服务器地址（release环境使用正式地址）
+            buildConfigField("String", "BASE_URL", "\"http://www.dagongji.xin/\"")
 
             //AndroidManifest中用到的配置
             manifestPlaceholders["UM_APP_KEY"] = "@string/um_app_key_manifest"

@@ -2,6 +2,7 @@ package com.wly.beansprout.core.network
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.wly.beansprout.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -15,8 +16,9 @@ import javax.inject.Singleton
  */
 @Singleton
 class RetrofitClient @Inject constructor() {
-//    private val BASE_URL = "http://www.dagongji.xin/"
-    private val BASE_URL = "http://192.168.1.128:7777/"
+
+    // 从 BuildConfig 中读取当前构建类型对应的服务器地址
+    private val BASE_URL = BuildConfig.BASE_URL
 
     private val gson: Gson by lazy {
         GsonBuilder()
