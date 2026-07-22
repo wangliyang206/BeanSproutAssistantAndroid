@@ -286,6 +286,7 @@ fun HomeBottom(
     onTutorialClick: () -> Unit = {},
     onServiceAgreementClick: () -> Unit = {},
     onPrivacyPolicyClick: () -> Unit = {},
+    onFeedbackClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -302,7 +303,7 @@ fun HomeBottom(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        // 底部链接栏：服务协议 | 使用教程 | 隐私政策
+        // 底部链接栏：服务协议 | 使用教程 | 咨询反馈 | 隐私政策
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
@@ -326,6 +327,15 @@ fun HomeBottom(
             )
             Text(text = "|", fontSize = 12.sp, color = Color(0xFFCCCCCC))
             Text(
+                text = "咨询反馈",
+                fontSize = 12.sp,
+                color = Color(0xFF1E88E5),
+                modifier = Modifier
+                    .clickable { onFeedbackClick() }
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+            Text(text = "|", fontSize = 12.sp, color = Color(0xFFCCCCCC))
+            Text(
                 text = "隐私政策",
                 fontSize = 12.sp,
                 color = Color(0xFF666666),
@@ -333,6 +343,7 @@ fun HomeBottom(
                     .clickable { onPrivacyPolicyClick() }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             )
+
         }
     }
 }

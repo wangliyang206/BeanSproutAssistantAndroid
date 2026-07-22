@@ -13,8 +13,8 @@ android {
         applicationId = "com.wly.beansprout"
         minSdk = 24
         targetSdk = 34
-        versionCode = 157
-        versionName = "1.5.7"
+        versionCode = 161
+        versionName = "1.6.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -109,6 +109,10 @@ android {
             //SP文件名称
             buildConfigField("String", "SHARED_NAME_INVEST", "\"sharedAssistantTest\"")
 
+            //服务器地址（debug环境使用测试地址）
+//            buildConfigField("String", "BASE_URL", "\"http://192.168.1.128:7777/app/\"")
+            buildConfigField("String", "BASE_URL", "\"http://www.dagongji.xin/app/\"")
+
             //AndroidManifest中用到的配置
             manifestPlaceholders["UM_APP_KEY"] = "@string/um_app_key_manifest_debug"
         }
@@ -130,8 +134,25 @@ android {
             //SP文件名称
             buildConfigField("String", "SHARED_NAME_INVEST", "\"sharedAssistantTest\"")
 
+            //服务器地址（release环境使用正式地址）
+            buildConfigField("String", "BASE_URL", "\"http://www.dagongji.xin/app/\"")
+
             //AndroidManifest中用到的配置
             manifestPlaceholders["UM_APP_KEY"] = "@string/um_app_key_manifest"
+        }
+    }
+
+    // 自定义打包后的 APK 文件名
+    applicationVariants.all {
+        val variant = this
+        variant.outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val buildType = variant.buildType.name
+            if (buildType == "release") {
+                output.outputFileName = "豆芽助手.apk"
+            } else {
+                output.outputFileName = "豆芽助手-测试版.apk"
+            }
         }
     }
 
@@ -186,6 +207,9 @@ dependencies {
     implementation(libs.umeng.asms)
     implementation(libs.umeng.apm)
     implementation(libs.androidx.recyclerview)
+
+    // 图片加载
+    implementation(libs.coil.compose)
 
     // 测试
     testImplementation(libs.junit)

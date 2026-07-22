@@ -1,5 +1,8 @@
 package com.wly.beansprout.core.network
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.wly.beansprout.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,13 +16,23 @@ import javax.inject.Singleton
  */
 @Singleton
 class RetrofitClient @Inject constructor() {
-    private val BASE_URL = "http://www.dagongji.xin/" // 替换为真实BaseUrl
+
+    // 从 BuildConfig 中读取当前构建类型对应的服务器地址
+    private val BASE_URL = BuildConfig.BASE_URL
+
+    private val gson: Gson by lazy {
+        GsonBuilder()
+            .disableHtmlEscaping()
+            .setLenient()
+            .serializeNulls()
+            .create()
+    }
 
     val apiService: ApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(ApiService::class.java)
     }
@@ -27,7 +40,7 @@ class RetrofitClient @Inject constructor() {
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY // 打印请求日志
+                level = HttpLoggingInterceptor.Level.BODY
             })
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)

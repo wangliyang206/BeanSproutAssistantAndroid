@@ -60,6 +60,9 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
     private lateinit var btScheme3: Button
     private var currentSchemeId: Int = 0
 
+    // 自定义序列当前选中的序列 ID
+    private var currentSequenceId: Int = 0
+
     private val touchPointAdapter = TouchPointAdapter()
     private val repository = TouchPointRepository(context)
 
@@ -134,6 +137,11 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
                         ToastUtils.showToast(context, "请点击下方「开始抢福袋」按钮启动")
                         return@setOnItemClickListener
                     }
+                    // 自定义模式：点击列表项不启动，提示使用开始按钮
+                    if (isCustomMode()) {
+                        ToastUtils.showToast(context, "请点击下方「开始执行序列」按钮启动")
+                        return@setOnItemClickListener
+                    }
 
                     // 其他模式：点击即开始触控动作
                     startNonLuckyBagTouch(position)
@@ -152,7 +160,11 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
         btAdd.setOnClickListener {
             if (isDoubleClick()) return@setOnClickListener
             dismiss()
-            showAddPointDialog()
+            if (isCustomMode()) {
+                showAddCustomActionDialog()
+            } else {
+                showAddPointDialog()
+            }
         }
 
         btStop.setOnClickListener {
@@ -172,10 +184,14 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
             listener?.onExitService()
         }
 
-        // 福袋专属：开始按钮
+        // 福袋/自定义序列：开始按钮
         btLuckyBagStart.setOnClickListener {
             if (isDoubleClick()) return@setOnClickListener
-            startLuckyBagTouch()
+            if (isCustomMode()) {
+                startCustomSequenceTouch()
+            } else {
+                startLuckyBagTouch()
+            }
         }
 
         // 弹窗关闭时：如果没有专属包名且之前暂停，则继续触控
@@ -205,10 +221,42 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
         if (TouchEventManager.appPackageName.value.isBlank()) {
             AutoTouchService.instance?.handleTouchAction(TouchAction.PAUSE)
         }
-        // 福袋模式始终显示方案选择器
-        llSchemeRow.visibility = if (isLuckyBagMode()) View.VISIBLE else View.GONE
-        // 按功能类型过滤触点列表
+
+        // ── 关键：切换模式前先保存当前 adapter 状态，防止数据交叉覆盖 ──
+        saveAdapterToRepo()
+
+        // 福袋模式和自定义模式都显示方案选择器行
+        llSchemeRow.visibility = if (isLuckyBagMode() || isCustomMode()) View.VISIBLE else View.GONE
+
+        if (isCustomMode()) {
+            // 自定义模式：恢复上次选中的序列，更新序列按钮
+            currentSequenceId = repository.getCurrentCustomSequenceId()
+            ensureThreeSequences()
+            updateSequenceButtons()
+        } else if (isLuckyBagMode()) {
+            // 福袋模式：恢复上次选中的方案，更新方案按钮
+            currentSchemeId = repository.getCurrentSchemeId()
+            TouchEventManager.currentLuckyBagSchemeId = currentSchemeId
+            ensureThreeSchemes()
+            updateSchemeButtons()
+        }
+
+        // 按功能类型过滤触点列表（从仓库重新加载，确保数据隔离）
         loadFilteredList()
+    }
+
+    /**
+     * 安全地将 adapter 当前数据保存回仓库
+     * 仅在 adapter 有数据且处于需要隔离的模式时才保存，
+     * 避免切换模式时旧 adapter 数据覆盖新模式的存储
+     */
+    private fun saveAdapterToRepo() {
+        if (touchPointAdapter.itemCount == 0) return
+        try {
+            mergeAndSavePoints()
+        } catch (_: Exception) {
+            // 首次打开时可能还没设 functionType，忽略
+        }
     }
 
     /**
@@ -225,6 +273,9 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
                 btReply.visibility = if (functionType == TYPE_AUTO_REPLY) View.VISIBLE else View.GONE
             }
         }
+        if (::btAdd.isInitialized) {
+            btAdd.text = if (isCustomMode()) "添加动作" else "添加触控点"
+        }
         if (::btLuckyBagStart.isInitialized) {
             updateLuckyBagButtonVisibility()
         }
@@ -240,28 +291,44 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
 
     private fun isLuckyBagMode(): Boolean = functionType == TYPE_LUCKY_BAG
 
+    private fun isCustomMode(): Boolean = functionType == TYPE_CUSTOM
+
     // ─────────────────────────────────────────────────
     //  列表加载（按功能类型过滤）
     // ─────────────────────────────────────────────────
 
     /** 根据当前功能类型加载过滤后的触点列表 */
     private fun loadFilteredList() {
-        val points = if (isLuckyBagMode()) {
-            repository.getTouchPointsByScheme(currentSchemeId)
-        } else {
-            repository.getNonLuckyBagTouchPoints()
+        val points = when {
+            isLuckyBagMode() -> repository.getTouchPointsByScheme(currentSchemeId)
+            isCustomMode() -> repository.getTouchPointsBySequence(currentSequenceId)
+            else -> repository.getNonLuckyBagTouchPoints()
         }
         touchPointAdapter.setTouchPointList(points)
         updateLuckyBagButtonVisibility()
+        updateCustomStartButtonVisibility()
     }
 
-    /** 更新福袋开始按钮的可见性 */
+    /** 更新福袋/自定义序列开始按钮的可见性和文字 */
     private fun updateLuckyBagButtonVisibility() {
         if (!::btLuckyBagStart.isInitialized) return
-        val showButton = isLuckyBagMode()
-                && !TouchEventManager.isTouching()
-                && touchPointAdapter.itemCount > 0
-        btLuckyBagStart.visibility = if (showButton) View.VISIBLE else View.GONE
+        val isLuckyBag = isLuckyBagMode() && !TouchEventManager.isTouching() && touchPointAdapter.itemCount > 0
+        val isCustom = isCustomMode() && !TouchEventManager.isTouching() && touchPointAdapter.itemCount > 0
+
+        if (isLuckyBag) {
+            btLuckyBagStart.text = "开始抢福袋"
+            btLuckyBagStart.visibility = View.VISIBLE
+        } else if (isCustom) {
+            btLuckyBagStart.text = "开始执行序列"
+            btLuckyBagStart.visibility = View.VISIBLE
+        } else {
+            btLuckyBagStart.visibility = View.GONE
+        }
+    }
+
+    /** 自定义序列模式：更新开始按钮可见性 */
+    private fun updateCustomStartButtonVisibility() {
+        updateLuckyBagButtonVisibility()
     }
 
     // ─────────────────────────────────────────────────
@@ -271,19 +338,30 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
     /**
      * 将适配器中的过滤后列表合并回完整存储：
      * - 福袋模式：保留非当前方案的福袋点 + 非福袋点 + 替换当前方案的福袋点
-     * - 非福袋模式：保留福袋点 + 替换非福袋点
+     * - 自定义模式：保留福袋点 + 其他序列的自定义点 + 非自定义非福袋点 + 替换当前序列的点
+     * - 其他模式：保留福袋点 + 自定义点 + 替换非福袋非自定义点
      */
     private fun mergeAndSavePoints() {
         val allPoints = repository.getTouchPoints()
-        val mergedList = if (isLuckyBagMode()) {
-            // 保留：非福袋点 + 其他方案的福袋点
-            val otherPoints = allPoints.filter {
-                it.functionType != TouchPoint.TYPE_LUCKY_BAG || it.schemeId != currentSchemeId
+        val mergedList = when {
+            isLuckyBagMode() -> {
+                val otherPoints = allPoints.filter {
+                    it.functionType != TouchPoint.TYPE_LUCKY_BAG || it.schemeId != currentSchemeId
+                }
+                otherPoints + touchPointAdapter.getTouchPointList()
             }
-            otherPoints + touchPointAdapter.getTouchPointList()
-        } else {
-            val luckyBag = allPoints.filter { it.functionType == TouchPoint.TYPE_LUCKY_BAG }
-            touchPointAdapter.getTouchPointList() + luckyBag
+            isCustomMode() -> {
+                val otherPoints = allPoints.filter {
+                    it.functionType != TouchPoint.TYPE_CUSTOM || it.sequenceId != currentSequenceId
+                }
+                otherPoints + touchPointAdapter.getTouchPointList()
+            }
+            else -> {
+                val special = allPoints.filter {
+                    it.functionType == TouchPoint.TYPE_LUCKY_BAG || it.functionType == TouchPoint.TYPE_CUSTOM
+                }
+                touchPointAdapter.getTouchPointList() + special
+            }
         }
         repository.saveTouchPoints(mergedList)
     }
@@ -354,6 +432,9 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
         btStop.visibility = View.GONE
 
         ToastUtils.showToast(context, "已停止触控")
+
+        // 重置自定义序列模式标记
+        TouchEventManager.isCustomSequenceMode = false
 
         // 通知无障碍服务停止触控
         AutoTouchService.instance?.handleTouchAction(TouchAction.STOP)
@@ -506,6 +587,11 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
                 btn.visibility = View.GONE
             }
         }
+
+        // 重新绑定点击事件（福袋方案模式），防止自定义模式的监听器残留
+        btScheme1.setOnClickListener { selectSchemeByIndex(0) }
+        btScheme2.setOnClickListener { selectSchemeByIndex(1) }
+        btScheme3.setOnClickListener { selectSchemeByIndex(2) }
     }
 
     /** 确保至少有三个方案存在（不足则自动创建） */
@@ -518,8 +604,105 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
         }
     }
 
+    // ─────────────────────────────────────────────────
+    //  自定义序列管理（三个固定按钮，复用福袋方案按钮行）
+    // ─────────────────────────────────────────────────
+
+    /** 确保至少有三个自定义序列存在 */
+    private fun ensureThreeSequences() {
+        val defaultNames = arrayOf("序列一", "序列二", "序列三")
+        val sequences = repository.getCustomSequences().toMutableList()
+        while (sequences.size < 3) {
+            val newSeq = repository.addCustomSequence(defaultNames[sequences.size])
+            sequences.add(newSeq)
+        }
+    }
+
+    /** 刷新自定义序列按钮的选中状态 */
+    private fun updateSequenceButtons() {
+        val sequences = repository.getCustomSequences()
+        val buttons = listOf(btScheme1, btScheme2, btScheme3)
+
+        for (i in buttons.indices) {
+            val btn = buttons[i]
+            if (i < sequences.size) {
+                btn.text = sequences[i].name
+                btn.visibility = View.VISIBLE
+                if (sequences[i].id == currentSequenceId) {
+                    btn.setBackgroundColor(0xFF008577.toInt())
+                    btn.setTypeface(null, Typeface.BOLD)
+                } else {
+                    btn.setBackgroundColor(0xFF666666.toInt())
+                    btn.setTypeface(null, Typeface.NORMAL)
+                }
+            } else {
+                btn.visibility = View.GONE
+            }
+        }
+
+        // 重新绑定点击事件（自定义序列模式）
+        btScheme1.setOnClickListener { selectSequenceByIndex(0) }
+        btScheme2.setOnClickListener { selectSequenceByIndex(1) }
+        btScheme3.setOnClickListener { selectSequenceByIndex(2) }
+    }
+
+    /** 选中指定索引的序列 */
+    private fun selectSequenceByIndex(index: Int) {
+        if (isDoubleClick()) return
+        val sequences = repository.getCustomSequences()
+        if (index >= sequences.size) return
+        val selectedSeq = sequences[index]
+        currentSequenceId = selectedSeq.id
+        repository.setCurrentCustomSequenceId(currentSequenceId)
+        TouchEventManager.currentCustomSequenceId = currentSequenceId
+        updateSequenceButtons()
+        loadFilteredList()
+    }
+
+    /**
+     * 启动自定义序列执行
+     */
+    private fun startCustomSequenceTouch() {
+        val sequencePoints = repository.getTouchPointsBySequence(currentSequenceId)
+        if (sequencePoints.isEmpty()) {
+            ToastUtils.showToast(context, "请先添加动作")
+            return
+        }
+
+        btStop.visibility = View.VISIBLE
+        btLuckyBagStart.visibility = View.GONE
+        dismiss()
+
+        // 设置自定义序列模式标记
+        TouchEventManager.isCustomSequenceMode = true
+        TouchEventManager.currentCustomSequenceId = currentSequenceId
+
+        // 通知无障碍服务启动自定义序列循环
+        AutoTouchService.instance?.handleTouchAction(TouchAction.START)
+
+        // 通知悬浮窗开始跳绳动画
+        val firstPoint = sequencePoints.first()
+        listener?.onStartTouch(firstPoint.x, firstPoint.y)
+    }
+
+    /**
+     * 弹出自定义动作录制弹窗（三步：选手势→采坐标→设间隔）
+     */
+    private fun showAddCustomActionDialog() {
+        val addDialog = AddCustomActionDialog(context, currentSequenceId) { touchPoint ->
+            val allPoints = repository.getTouchPoints().toMutableList()
+            allPoints.add(touchPoint)
+            repository.saveTouchPoints(allPoints)
+        }
+        addDialog.setOnDismissListener {
+            show()
+        }
+        addDialog.show()
+    }
+
     companion object {
         private const val TYPE_AUTO_REPLY = 7
         private const val TYPE_LUCKY_BAG = 8
+        private const val TYPE_CUSTOM = 9
     }
 }

@@ -72,6 +72,12 @@ class AutoTouchService : AccessibilityService() {
     private val CYCLE_RESET_DELAY_MS = 10_000L   // 每轮结束后等待（给开奖倒计时留时间）
     private val RESULT_CHECK_THROTTLE_MS = 1000L  // 结果弹窗检测节流（避免频繁扫描）
 
+    // ======================== 自定义序列循环 ========================
+
+    private var customSequencePoints: List<TouchPoint> = emptyList()
+    private var customSequenceActive = false
+    private var customSequenceIndex = 0
+
     // ======================== 生命周期 ========================
 
     override fun onServiceConnected() {
@@ -92,6 +98,7 @@ class AutoTouchService : AccessibilityService() {
         findNodeUtil?.onDestroy()
         serviceScope.cancel()
         touchPointRepo = null
+        customSequenceActive = false
         Log.d(TAG, "###无障碍服务已销毁")
     }
 
@@ -113,6 +120,9 @@ class AutoTouchService : AccessibilityService() {
                         // 常规模式：使用指定触点
                         autoTouchPoint = touchPoint
                         scheduleAutoTouch()
+                    } else if (TouchEventManager.isCustomSequenceMode) {
+                        // 自定义序列模式
+                        startCustomSequenceExecution()
                     } else {
                         // 福袋模式：启动坐标循环自动抢夺
                         startLuckyBagAutoGrab()
@@ -123,14 +133,21 @@ class AutoTouchService : AccessibilityService() {
                     if (luckyBagCycleActive) {
                         Log.d(TAG, "###福袋坐标循环恢复: index=$luckyBagCurrentIndex")
                     }
+                    if (customSequenceActive) {
+                        Log.d(TAG, "###自定义序列循环恢复: index=$customSequenceIndex")
+                        scheduleNextCustomSequencePoint()
+                    }
                 }
                 TouchAction.PAUSE -> {
                     handler.removeCallbacks(autoTouchRunnable)
+                    handler.removeCallbacks(customSequenceRunnable)
                 }
                 TouchAction.STOP -> {
                     handler.removeCallbacks(autoTouchRunnable)
+                    handler.removeCallbacks(customSequenceRunnable)
                     autoTouchPoint = null
                     stopLuckyBagAutoGrab()
+                    stopCustomSequence()
                 }
                 else -> Unit
             }
@@ -263,10 +280,11 @@ class AutoTouchService : AccessibilityService() {
     private fun onWindowContentChanged(packageName: String, functionType: Int) {
         val targetPkg = TouchEventManager.getTargetPackage()
 
-        // 自动暂停/恢复（排除自动回复和福袋模式）
+        // 自动暂停/恢复（排除自动回复、福袋模式和自定义序列模式）
         if (targetPkg.isNotEmpty()
             && functionType != TouchPoint.TYPE_AUTO_REPLY
             && !luckyBagCycleActive
+            && !customSequenceActive
         ) {
             if (packageName.contains(targetPkg)) {
                 if (TouchEventManager.isPaused()) {
@@ -655,6 +673,52 @@ class AutoTouchService : AccessibilityService() {
         }
     }
 
+    // ======================== 自定义序列：循环执行 ========================
+
+    private lateinit var customSequenceRunnable: Runnable
+
+    /**
+     * 启动自定义序列循环执行
+     */
+    private fun startCustomSequenceExecution() {
+        val sequenceId = TouchEventManager.currentCustomSequenceId
+        customSequencePoints = touchPointRepo?.getTouchPointsBySequence(sequenceId) ?: emptyList()
+
+        if (customSequencePoints.isEmpty()) {
+            Log.w(TAG, "###自定义序列启动失败：序列[$sequenceId]无动作")
+            return
+        }
+
+        customSequenceActive = true
+        customSequenceIndex = 0
+
+        Log.d(TAG, "###自定义序列启动：${customSequencePoints.size}个动作, sequenceId=$sequenceId")
+
+        // 首次执行使用第一个动作的 delay 作为延迟
+        val firstDelay = customSequencePoints[0].delay.toLong()
+        handler.postDelayed(customSequenceRunnable, firstDelay)
+    }
+
+    /**
+     * 停止自定义序列循环
+     */
+    private fun stopCustomSequence() {
+        customSequenceActive = false
+        customSequenceIndex = 0
+        customSequencePoints = emptyList()
+        handler.removeCallbacks(customSequenceRunnable)
+        Log.d(TAG, "###自定义序列已停止")
+    }
+
+    /**
+     * 调度下一个自定义序列动作（用于 CONTINUE 恢复）
+     */
+    private fun scheduleNextCustomSequencePoint() {
+        if (!customSequenceActive || customSequencePoints.isEmpty()) return
+        val point = customSequencePoints[customSequenceIndex]
+        handler.postDelayed(customSequenceRunnable, point.delay.toLong())
+    }
+
     /**
      * 快速手势点击（50ms，用于福袋抢夺场景）
      */
@@ -716,5 +780,44 @@ class AutoTouchService : AccessibilityService() {
 
     init {
         instance = this
+        customSequenceRunnable = Runnable {
+            if (!customSequenceActive) return@Runnable
+            if (customSequencePoints.isEmpty()) return@Runnable
+
+            val point = customSequencePoints[customSequenceIndex]
+            Log.d(TAG, "###自定义序列执行 [${customSequenceIndex}]: " +
+                    "${TouchPoint.getGestureName(point.sequenceType)} (${point.x},${point.y}) delay=${point.delay}ms")
+
+            val builder = GestureDescription.Builder()
+            when (point.sequenceType) {
+                TouchPoint.TYPE_SINGLE_CLICK -> builder.addStroke(singleClickStroke(point))
+                TouchPoint.TYPE_DOUBLE_CLICK -> {
+                    builder.addStroke(singleClickStroke(point))
+                    builder.addStroke(doubleClickStroke(point))
+                }
+                TouchPoint.TYPE_SLIDE_DOWN -> builder.addStroke(slideStroke(point, 1))
+                TouchPoint.TYPE_SLIDE_UP -> builder.addStroke(slideStroke(point, 2))
+                TouchPoint.TYPE_SLIDE_LEFT -> builder.addStroke(slideStroke(point, 3))
+                TouchPoint.TYPE_SLIDE_RIGHT -> builder.addStroke(slideStroke(point, 4))
+            }
+
+            dispatchGesture(
+                builder.build(),
+                object : GestureResultCallback() {
+                    override fun onCompleted(gestureDescription: GestureDescription?) {
+                        customSequenceIndex = (customSequenceIndex + 1) % customSequencePoints.size
+                        if (customSequenceIndex == 0) {
+                            Log.d(TAG, "###自定义序列一轮完成(${customSequencePoints.size}个动作)，进入下一轮")
+                        }
+                        handler.postDelayed(customSequenceRunnable, point.delay.toLong())
+                    }
+                    override fun onCancelled(gestureDescription: GestureDescription?) {
+                        customSequenceIndex = (customSequenceIndex + 1) % customSequencePoints.size
+                        handler.postDelayed(customSequenceRunnable, point.delay.toLong())
+                    }
+                },
+                null
+            )
+        }
     }
 }

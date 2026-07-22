@@ -1,4 +1,4 @@
-package com.wly.beansprout.presentation.navigation
+﻿package com.wly.beansprout.presentation.navigation
 
 import java.net.URLEncoder
 
@@ -44,4 +44,19 @@ sealed class NavRoutes(val route: String) {
             return "webview/$encodedTitle/$encodedUrl"
         }
     }
+
+    // ==================== 咨询反馈 ====================
+    // 反馈列表
+    object FeedbackList : NavRoutes("feedback_list")
+    // 提交反馈
+    object SubmitFeedback : NavRoutes("submit_feedback")
+    // 反馈详情
+    object FeedbackDetail : NavRoutes("feedback_detail/{feedbackId}") {
+        fun withArgs(feedbackId: Long): String {
+            return "feedback_detail/$feedbackId"
+        }
+    }
+
+    // 开通会员
+    object MemberConsult : NavRoutes("member_consult")
 }

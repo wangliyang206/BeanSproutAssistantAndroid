@@ -49,6 +49,7 @@ sealed class HomeEvent {
     object NavigateToServiceAgreement : HomeEvent()
     object NavigateToPrivacyPolicy : HomeEvent()
     object NavigateToTutorial : HomeEvent()
+    object NavigateToFeedback : HomeEvent()
     object NavigateToAccessibilitySettings : HomeEvent()
     object NavigateToOverlaySettings : HomeEvent()
     object ShowExitAppDialog : HomeEvent()
@@ -71,7 +72,8 @@ object HomeFunctionOptions {
         "向上滑动",
         "向左滑动",
         "向右滑动",
-        "自动回复"
+        "自动回复",
+        "自定义"
     )
 
     // 抖音专属功能

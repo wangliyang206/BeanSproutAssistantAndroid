@@ -47,8 +47,14 @@ class TouchPointAdapter : RecyclerView.Adapter<TouchPointAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val point = touchPoints[position]
 
-        holder.tvName.text = point.name
-        holder.tvInfo.text = "坐标(${point.x}, ${point.y})  间隔${point.delay}ms"
+        if (point.functionType == TouchPoint.TYPE_CUSTOM) {
+            // 自定义序列模式：显示序号、手势类型、坐标和间隔
+            holder.tvName.text = "#${position + 1} ${TouchPoint.getGestureName(point.sequenceType)}"
+            holder.tvInfo.text = "坐标(${point.x}, ${point.y})  间隔${point.delay}ms"
+        } else {
+            holder.tvName.text = point.name
+            holder.tvInfo.text = "坐标(${point.x}, ${point.y})  间隔${point.delay}ms"
+        }
         holder.tvStatus.text = if (point.isStartClick) "运行中" else ""
         holder.tvStatus.setTextColor(
             if (point.isStartClick) 0xFF4CAF50.toInt() else 0xFF999999.toInt()

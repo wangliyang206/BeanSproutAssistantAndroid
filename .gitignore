@@ -41,3 +41,7 @@ captures/
 
 # MacOS
 .DS_Store
+
+# Mapping files
+app/mapping.txt
+app/seeds.txt

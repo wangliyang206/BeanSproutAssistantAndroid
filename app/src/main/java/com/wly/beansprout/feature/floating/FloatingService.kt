@@ -461,5 +461,6 @@ class FloatingService : Service() {
         const val TYPE_SLIDE_RIGHT = 6
         const val TYPE_AUTO_REPLY = 7
         const val TYPE_LUCKY_BAG = 8
+        const val TYPE_CUSTOM = 9
     }
 }

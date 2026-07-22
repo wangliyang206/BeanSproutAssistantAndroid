@@ -55,6 +55,10 @@ fun HomeDialogHandlers(
                     navController.navigate(NavRoutes.TutorialList.route)
                 }
 
+                is HomeEvent.NavigateToFeedback -> {
+                    navController.navigate(NavRoutes.FeedbackList.route)
+                }
+
                 is HomeEvent.NavigateToAccessibilitySettings -> {
                     val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

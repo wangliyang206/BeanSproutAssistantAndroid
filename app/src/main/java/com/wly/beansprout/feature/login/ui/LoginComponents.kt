@@ -1,5 +1,6 @@
 package com.wly.beansprout.feature.login.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -309,19 +310,16 @@ fun RegisterLink(
     )
 }
 
-
 /**
- * 协议文本（带可点击的服务协议和隐私协议）
+ * 登录页协议文本（带可点击链接）
  */
 @Composable
 fun ProtocolText(
     onServiceAgreementClick: () -> Unit,
     onPrivacyAgreementClick: () -> Unit
 ) {
-    // 构建带点击事件的注解文本
     val annotatedText = buildAnnotatedString {
         append("我已经认真阅读、理解并同意")
-        // 服务协议（可点击）
         withStyle(style = SpanStyle(color = BtnColor)) {
             append("《服务协议》")
             addStringAnnotation(
@@ -332,9 +330,8 @@ fun ProtocolText(
             )
         }
         append("和")
-        // 隐私协议（可点击）
         withStyle(style = SpanStyle(color = BtnColor)) {
-            append("《隐私协议》")
+            append("《隐私政策》")
             addStringAnnotation(
                 tag = "privacy",
                 annotation = "privacy_agreement",
@@ -346,19 +343,60 @@ fun ProtocolText(
 
     ClickableText(
         text = annotatedText,
-//        fontSize = 14.sp,
-//        color = Color.Gray,
         onClick = { offset ->
-            // 处理服务协议点击
             annotatedText.getStringAnnotations(tag = "service", start = offset, end = offset)
                 .firstOrNull()?.let {
                     onServiceAgreementClick()
+                    return@ClickableText
                 }
-            // 处理隐私协议点击
             annotatedText.getStringAnnotations(tag = "privacy", start = offset, end = offset)
                 .firstOrNull()?.let {
                     onPrivacyAgreementClick()
                 }
-        }
+        },
+        style = TextStyle(
+            fontSize = 12.sp,
+            color = Color.Gray
+        ),
+        modifier = Modifier.padding(start = 8.dp)
     )
+}
+
+
+/**
+ * 协议文本（带可点击的服务协议和隐私协议）
+ */
+@Composable
+fun BottomActionLinks(
+    onRegisterClick: () -> Unit,
+    onMemberConsultClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.padding(bottom = 30.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "用户注册",
+            fontSize = 16.sp,
+            color = BtnColor,
+            modifier = Modifier.clickable(onClick = onRegisterClick)
+        )
+
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .height(16.dp)
+                .width(1.dp)
+                .background(Color.LightGray)
+        )
+
+        Text(
+            text = "开通会员",
+            fontSize = 16.sp,
+            color = BtnColor,
+            modifier = Modifier.clickable(onClick = onMemberConsultClick)
+        )
+    }
 }

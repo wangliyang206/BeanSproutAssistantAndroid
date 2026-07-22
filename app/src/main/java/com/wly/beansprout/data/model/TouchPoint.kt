@@ -19,7 +19,9 @@ data class TouchPoint(
     val isStartClick: Boolean = false,
     val functionType: Int = 0,
     val luckyBagTime: Int = -1,
-    val schemeId: Int = 0  // 福袋方案 ID，0 = 默认方案
+    val schemeId: Int = 0,  // 福袋方案 ID，0 = 默认方案
+    val sequenceType: Int = 0,  // 自定义序列内的动作类型（仅 TYPE_CUSTOM 时使用）
+    val sequenceId: Int = 0     // 所属自定义序列 ID
 ) {
     companion object {
         const val TYPE_OTHER = 0
@@ -31,5 +33,18 @@ data class TouchPoint(
         const val TYPE_SLIDE_RIGHT = 6
         const val TYPE_AUTO_REPLY = 7
         const val TYPE_LUCKY_BAG = 8
+        const val TYPE_CUSTOM = 9       // 自定义序列标记
+        const val TYPE_DOUBLE_CLICK = 10 // 双击
+
+        /** 获取手势类型的可读名称 */
+        fun getGestureName(type: Int): String = when (type) {
+            TYPE_SINGLE_CLICK -> "单击"
+            TYPE_DOUBLE_CLICK -> "双击"
+            TYPE_SLIDE_DOWN -> "向下滑"
+            TYPE_SLIDE_UP -> "向上滑"
+            TYPE_SLIDE_LEFT -> "向左滑"
+            TYPE_SLIDE_RIGHT -> "向右滑"
+            else -> "未知"
+        }
     }
 }

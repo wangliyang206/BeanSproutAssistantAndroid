@@ -2,6 +2,7 @@ package com.wly.beansprout.data.repository
 
 import com.wly.beansprout.core.network.RequestHelper
 import com.wly.beansprout.core.network.RetrofitClient
+import com.wly.beansprout.core.utils.MD5
 import com.wly.beansprout.data.model.UserInfo
 import javax.inject.Inject
 
@@ -22,7 +23,7 @@ class RegisterRepository @Inject constructor(
     suspend fun register(mobile: String, password: String): UserInfo {
         val requestData = mutableMapOf<String, String>()
         requestData["mobile"] = mobile
-        requestData["password"] = password
+        requestData["password"] = MD5.getMD5Code(password)
 
         return requestNetwork {
             retrofitClient.apiService.register(

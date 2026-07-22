@@ -1,12 +1,15 @@
-package com.wly.beansprout.core.network
+﻿package com.wly.beansprout.core.network
 
 import android.app.Application
+import android.content.Context
 import android.content.pm.PackageManager
+import android.provider.Settings
 import android.util.DisplayMetrics
 import com.wly.beansprout.core.datastore.LoginPreferences
 import com.wly.beansprout.data.model.BaseRequest
 import com.wly.beansprout.data.model.ClientInfo
 import kotlinx.coroutines.flow.first
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,6 +23,30 @@ class RequestHelper @Inject constructor(
     private val application: Application,
     private val userPrefs: LoginPreferences
 ) {
+
+    /**
+     * 设备唯一标识（懒加载，整个进程生命周期内只算一次）
+     *
+     * 优先使用 ANDROID_ID（无需权限、重装不变），
+     * 如果拿到 null 或者是已知 bug 值，则生成一个 UUID 持久化存储。
+     */
+    private val deviceId: String by lazy {
+        val androidId = Settings.Secure.getString(
+            application.contentResolver,
+            Settings.Secure.ANDROID_ID
+        )
+        if (!androidId.isNullOrBlank() && androidId != BUGGY_ANDROID_ID) {
+            androidId
+        } else {
+            val prefs = application.getSharedPreferences("device_info", Context.MODE_PRIVATE)
+            var id = prefs.getString("device_id", null)
+            if (id.isNullOrBlank()) {
+                id = UUID.randomUUID().toString().replace("-", "")
+                prefs.edit().putString("device_id", id).apply()
+            }
+            id
+        }
+    }
 
     /**
      * 构建完整的 BaseRequest（包含所有信封字段）
@@ -64,7 +91,8 @@ class RequestHelper @Inject constructor(
             vercode = verCode,
             vername = verName,
             ppiheight = screenMetrics.first,
-            ppiwidth = screenMetrics.second
+            ppiwidth = screenMetrics.second,
+            deviceid = deviceId
         )
     }
 
@@ -98,5 +126,7 @@ class RequestHelper @Inject constructor(
         // 接口版本号（与旧项目 Constant.version = 1 一致）
         private const val API_VERSION = 1
         private const val LANGUAGE_ZH = "ZH"
+        // ANDROID_ID 经典 bug 值，很多设备会返回这个固定值
+        private const val BUGGY_ANDROID_ID = "9774d56d682e549c"
     }
 }

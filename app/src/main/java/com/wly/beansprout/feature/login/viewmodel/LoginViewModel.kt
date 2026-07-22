@@ -1,4 +1,4 @@
-package com.wly.beansprout.feature.login.viewmodel
+﻿package com.wly.beansprout.feature.login.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -222,6 +222,15 @@ class LoginViewModel @Inject constructor(
                 isAgreeProtocol = it.isAgreeProtocol, // 保留协议状态
                 showExitDialog = it.showExitDialog // 保留对话框状态
             )
+        }
+    }
+
+    /**
+     * 导航到开通会员页
+     */
+    fun navigateToMemberConsult() {
+        viewModelScope.launch {
+            _events.emit(LoginEvent.NavigateToMemberConsult)
         }
     }
 }

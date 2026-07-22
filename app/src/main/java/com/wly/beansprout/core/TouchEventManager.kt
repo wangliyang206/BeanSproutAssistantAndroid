@@ -32,6 +32,12 @@ object TouchEventManager {
     /** 当前选中的福袋方案 ID（由 FloatingMenuDialog 写入，AutoTouchService 读取） */
     var currentLuckyBagSchemeId: Int = 0
 
+    /** 当前选中的自定义序列 ID（由 FloatingMenuDialog 写入，AutoTouchService 读取） */
+    var currentCustomSequenceId: Int = 0
+
+    /** 是否处于自定义序列模式 */
+    var isCustomSequenceMode: Boolean = false
+
     fun setTouchAction(action: TouchAction) {
         _touchAction.value = action
     }

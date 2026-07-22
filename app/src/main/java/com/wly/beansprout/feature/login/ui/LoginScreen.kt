@@ -1,4 +1,4 @@
-package com.wly.beansprout.feature.login.ui
+﻿package com.wly.beansprout.feature.login.ui
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
@@ -66,6 +66,10 @@ fun LoginScreen(
                     val activity = context as? Activity
                     activity?.finishAffinity()
                 }
+
+                is LoginEvent.NavigateToMemberConsult -> {
+                    navController.navigate(NavRoutes.MemberConsult.route)
+                }
             }
         }
     }
@@ -81,7 +85,8 @@ fun LoginScreen(
         onRegisterClick = viewModel::navigateToRegister,
         onServiceAgreementClick = viewModel::navigateToServiceAgreement,
         onPrivacyAgreementClick = viewModel::navigateToPrivacyAgreement,
-        onCloseClick = { viewModel.setExitDialogVisibility(true) }
+        onCloseClick = { viewModel.setExitDialogVisibility(true) },
+        onMemberConsultClick = viewModel::navigateToMemberConsult
     )
 
     // 退出确认对话框
