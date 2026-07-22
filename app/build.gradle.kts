@@ -110,8 +110,8 @@ android {
             buildConfigField("String", "SHARED_NAME_INVEST", "\"sharedAssistantTest\"")
 
             //服务器地址（debug环境使用测试地址）
-            buildConfigField("String", "BASE_URL", "\"http://192.168.1.128:7777/\"")
-//            buildConfigField("String", "BASE_URL", "\"http://www.dagongji.xin/\"")
+//            buildConfigField("String", "BASE_URL", "\"http://192.168.1.128:7777/app/\"")
+            buildConfigField("String", "BASE_URL", "\"http://www.dagongji.xin/app/\"")
 
             //AndroidManifest中用到的配置
             manifestPlaceholders["UM_APP_KEY"] = "@string/um_app_key_manifest_debug"
@@ -135,7 +135,7 @@ android {
             buildConfigField("String", "SHARED_NAME_INVEST", "\"sharedAssistantTest\"")
 
             //服务器地址（release环境使用正式地址）
-            buildConfigField("String", "BASE_URL", "\"http://www.dagongji.xin/\"")
+            buildConfigField("String", "BASE_URL", "\"http://www.dagongji.xin/app/\"")
 
             //AndroidManifest中用到的配置
             manifestPlaceholders["UM_APP_KEY"] = "@string/um_app_key_manifest"
