@@ -10,9 +10,14 @@ import com.wly.beansprout.data.model.ReplyFeedbackRequest
 import com.wly.beansprout.data.model.ReplyFeedbackResponse
 import com.wly.beansprout.data.model.SubmitFeedbackRequest
 import com.wly.beansprout.data.model.SubmitFeedbackResponse
+import com.wly.beansprout.data.model.UploadFileResponse
 import com.wly.beansprout.data.model.UserInfo
+import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface ApiService {
     @POST("member/login")
@@ -32,8 +37,24 @@ interface ApiService {
     @POST("feedback/list")
     suspend fun getFeedbackList(@Body request: BaseRequest<FeedbackListRequest>): BaseResponse<FeedbackListResponse>
 
+    /**
+     * 上传反馈附件（图片/视频）
+     * token 通过 Query 传递，避免 multipart 请求时服务端拦截器无法解析
+     */
+    @Multipart
+    @POST("feedback/upload")
+    suspend fun uploadFeedbackFiles(
+        @Part files: List<MultipartBody.Part>,
+        @Query("token") token: String
+    ): BaseResponse<UploadFileResponse>
+
+    /**
+     * 提交反馈（包含附件URL）
+     */
     @POST("feedback/submit")
-    suspend fun submitFeedback(@Body request: BaseRequest<SubmitFeedbackRequest>): BaseResponse<SubmitFeedbackResponse>
+    suspend fun submitFeedback(
+        @Body request: BaseRequest<SubmitFeedbackRequest>
+    ): BaseResponse<SubmitFeedbackResponse>
 
     @POST("feedback/detail")
     suspend fun getFeedbackDetail(@Body request: BaseRequest<Map<String, String>>): BaseResponse<FeedbackDetailResponse>

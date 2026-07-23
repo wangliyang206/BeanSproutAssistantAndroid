@@ -110,8 +110,8 @@ android {
             buildConfigField("String", "SHARED_NAME_INVEST", "\"sharedAssistantTest\"")
 
             //服务器地址（debug环境使用测试地址）
-//            buildConfigField("String", "BASE_URL", "\"http://192.168.1.128:7777/app/\"")
-            buildConfigField("String", "BASE_URL", "\"http://www.dagongji.xin/app/\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.1.128:7777/app/\"")
+//            buildConfigField("String", "BASE_URL", "\"http://www.dagongji.xin/app/\"")
 
             //AndroidManifest中用到的配置
             manifestPlaceholders["UM_APP_KEY"] = "@string/um_app_key_manifest_debug"
@@ -210,6 +210,13 @@ dependencies {
 
     // 图片加载
     implementation(libs.coil.compose)
+
+    // 相册选择器
+    implementation("io.trtc.uikit:albumpicker:1.0.0.+") {
+        exclude(group = "com.google.android.material", module = "material")
+    }
+    // albumpicker 依赖的 IM SDK
+    implementation("com.tencent.imsdk:imsdk-plus:8.9.7511")
 
     // 测试
     testImplementation(libs.junit)

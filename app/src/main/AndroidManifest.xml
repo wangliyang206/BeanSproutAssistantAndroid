@@ -51,6 +51,12 @@
             </intent-filter>
         </activity>
 
+        <!-- 相册选择器 -->
+        <activity
+            android:name=".feature.feedback.AlbumPickerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AlbumPicker" />
+
         <!-- 无障碍服务 -->
         <service
             android:name=".feature.accessibility.AutoTouchService"

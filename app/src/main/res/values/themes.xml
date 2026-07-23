@@ -4,6 +4,9 @@
     <!-- 主应用主题 -->
     <style name="Theme.MyApplication" parent="android:Theme.Material.Light.NoActionBar" />
 
+    <!-- 相册选择器主题 -->
+    <style name="Theme.AlbumPicker" parent="Theme.AppCompat.Light.NoActionBar" />
+
     <!-- 从 Service 上下文弹出的 Dialog 主题：无标题栏、透明背景、悬浮窗口 -->
     <style name="NoTitleDialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>

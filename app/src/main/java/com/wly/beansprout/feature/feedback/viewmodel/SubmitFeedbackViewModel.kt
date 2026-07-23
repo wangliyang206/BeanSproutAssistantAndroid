@@ -3,6 +3,7 @@ package com.wly.beansprout.feature.feedback.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.wly.beansprout.core.base.BaseViewModel
 import com.wly.beansprout.data.repository.FeedbackRepository
+import com.wly.beansprout.feature.feedback.ui.SelectedMedia
 import com.wly.beansprout.feature.feedback.ui.SubmitFeedbackEvent
 import com.wly.beansprout.feature.feedback.ui.SubmitFeedbackUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,6 +46,26 @@ class SubmitFeedbackViewModel @Inject constructor(
     }
 
     /**
+     * 添加选中的媒体文件
+     */
+    fun addFiles(medias: List<SelectedMedia>) {
+        _uiState.update {
+            val currentFiles = it.selectedFiles.toMutableList()
+            currentFiles.addAll(medias)
+            it.copy(selectedFiles = currentFiles)
+        }
+    }
+
+    /**
+     * 移除文件
+     */
+    fun removeFile(media: SelectedMedia) {
+        _uiState.update {
+            it.copy(selectedFiles = it.selectedFiles.filter { m -> m != media })
+        }
+    }
+
+    /**
      * 提交反馈
      */
     fun submitFeedback() {
@@ -70,7 +91,8 @@ class SubmitFeedbackViewModel @Inject constructor(
             try {
                 val result = feedbackRepository.submitFeedback(
                     title = currentState.title,
-                    content = currentState.content
+                    content = currentState.content,
+                    mediaFiles = if (currentState.selectedFiles.isNotEmpty()) currentState.selectedFiles else null
                 )
 
                 if (result.success) {

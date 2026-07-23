@@ -1,16 +1,16 @@
 package com.wly.beansprout.feature.feedback.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -20,9 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.clip
+import coil.compose.rememberAsyncImagePainter
 import com.wly.beansprout.presentation.theme.BtnColor
 import com.wly.beansprout.presentation.theme.HomeBackground
 
@@ -34,6 +38,8 @@ fun SubmitFeedbackContent(
     uiState: SubmitFeedbackUiState,
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
+    onFileSelect: () -> Unit,
+    onFileRemove: (SelectedMedia) -> Unit,
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -101,6 +107,34 @@ fun SubmitFeedbackContent(
                 maxLines = 10
             )
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 文件选择区域
+            Text(
+                text = "图片/视频（可选）",
+                fontSize = 16.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(4),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(uiState.selectedFiles) { media ->
+                    FilePreviewItem(
+                        media = media,
+                        onRemove = { onFileRemove(media) }
+                    )
+                }
+
+                item {
+                    AddFileItem(onClick = onFileSelect)
+                }
+            }
+
             Spacer(modifier = Modifier.weight(1f))
 
             // 提交按钮
@@ -137,6 +171,95 @@ fun SubmitFeedbackContent(
     }
 }
 
+/**
+ * 文件预览项
+ */
+@Composable
+private fun FilePreviewItem(
+    media: SelectedMedia,
+    onRemove: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color.LightGray)
+    ) {
+        Image(
+            painter = rememberAsyncImagePainter(model = media.uri),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        // 视频标识
+        if (media.isVideo) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    imageVector = Icons.Default.VideoLibrary,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+            }
+        }
+
+        // 删除按钮
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(2.dp)
+        ) {
+            Surface(
+                onClick = onRemove,
+                modifier = Modifier.size(20.dp),
+                shape = RoundedCornerShape(10.dp),
+                color = Color.Black.copy(alpha = 0.6f)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Image(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = null,
+                        modifier = Modifier.size(12.dp),
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 添加文件项
+ */
+@Composable
+private fun AddFileItem(onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(8.dp)),
+        color = Color.LightGray.copy(alpha = 0.3f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color.Gray.copy(alpha = 0.3f))
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    colorFilter = ColorFilter.tint(Color.Gray)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text("添加", fontSize = 12.sp, color = Color.Gray)
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun SubmitFeedbackContentPreview() {
@@ -148,6 +271,8 @@ fun SubmitFeedbackContentPreview() {
         uiState = uiState,
         onTitleChange = {},
         onContentChange = {},
+        onFileSelect = {},
+        onFileRemove = {},
         onSubmit = {}
     )
 }

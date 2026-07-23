@@ -26,6 +26,7 @@ data class FeedbackReply(
     val replyUserName: String? = null,
     val replyContent: String? = null,
     val replyType: String? = null, // "1"用户 "2"管理员
+    val mediaUrls: List<MediaUrl>? = null,
     val createTime: String? = null
 )
 
@@ -60,6 +61,7 @@ data class Feedback(
     val replyUserName: String? = null,
     val createTime: String? = null,
     val updateTime: String? = null,
+    val mediaUrls: List<MediaUrl>? = null,
     val replies: List<FeedbackReply>? = null
 )
 
@@ -91,11 +93,28 @@ data class FeedbackDetailResponse(
 )
 
 /**
+ * 媒体文件URL
+ */
+data class MediaUrl(
+    val url: String = "",
+    val type: String = "", // "1"图片 "2"视频
+    val name: String = ""
+)
+
+/**
+ * 文件上传响应
+ */
+data class UploadFileResponse(
+    val urls: List<MediaUrl> = emptyList()
+)
+
+/**
  * 提交反馈请求
  */
 data class SubmitFeedbackRequest(
     val title: String = "",
-    val content: String = ""
+    val content: String = "",
+    val mediaUrls: List<MediaUrl>? = null
 )
 
 /**
