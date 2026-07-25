@@ -29,6 +29,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
@@ -60,7 +62,7 @@ import coil.compose.AsyncImage
 import com.wly.beansprout.data.model.Feedback
 import com.wly.beansprout.data.model.FeedbackReply
 import com.wly.beansprout.data.model.FeedbackStatus
-import com.wly.beansprout.data.model.MediaUrl
+import com.wly.beansprout.data.model.FeedbackMedia
 import com.wly.beansprout.data.model.ReplyType
 import com.wly.beansprout.presentation.theme.BtnColor
 import com.wly.beansprout.presentation.theme.HomeBackground
@@ -74,6 +76,9 @@ fun FeedbackDetailContent(
     onRetry: () -> Unit,
     onInputChange: (String) -> Unit,
     onSend: () -> Unit,
+    onFileSelect: () -> Unit,
+    onFileRemove: (SelectedMedia) -> Unit,
+    onPreview: (FeedbackMedia) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -172,7 +177,7 @@ fun FeedbackDetailContent(
                     ) {
                         // 反馈信息卡片
                         item {
-                            FeedbackInfoCard(feedback = feedback)
+                            FeedbackInfoCard(feedback = feedback, onPreview = onPreview)
                         }
 
                         // 回复列表（对话流，时间正序）
@@ -187,7 +192,7 @@ fun FeedbackDetailContent(
                             }
 
                             items(uiState.replies, key = { it.replyId }) { reply ->
-                                ReplyBubble(reply = reply)
+                                ReplyBubble(reply = reply, onPreview = onPreview)
                             }
                         } else {
                             item {
@@ -212,8 +217,11 @@ fun FeedbackDetailContent(
                         text = uiState.inputText,
                         isSending = uiState.isSending,
                         canReply = uiState.canReply,
+                        selectedFiles = uiState.selectedFiles,
                         onInputChange = onInputChange,
-                        onSend = onSend
+                        onSend = onSend,
+                        onFileSelect = onFileSelect,
+                        onFileRemove = onFileRemove
                     )
                 }
             }
@@ -225,7 +233,10 @@ fun FeedbackDetailContent(
  * 反馈信息卡片
  */
 @Composable
-fun FeedbackInfoCard(feedback: Feedback) {
+fun FeedbackInfoCard(
+    feedback: Feedback,
+    onPreview: (FeedbackMedia) -> Unit
+) {
     val status = FeedbackStatus.fromValue(feedback.status)
 
     Card(
@@ -291,9 +302,9 @@ fun FeedbackInfoCard(feedback: Feedback) {
             )
 
             // 图片/视频
-            if (!feedback.mediaUrls.isNullOrEmpty()) {
+            if (!feedback.mediaList.isNullOrEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
-                MediaGrid(mediaUrls = feedback.mediaUrls)
+                MediaGrid(mediaList = feedback.mediaList, onPreview = onPreview)
             }
         }
     }
@@ -305,11 +316,12 @@ fun FeedbackInfoCard(feedback: Feedback) {
  */
 @Composable
 fun MediaGrid(
-    mediaUrls: List<MediaUrl>,
+    mediaList: List<FeedbackMedia>,
+    onPreview: (FeedbackMedia) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val columns = 3
-    val rows = (mediaUrls.size + columns - 1) / columns
+    val rows = (mediaList.size + columns - 1) / columns
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -322,9 +334,10 @@ fun MediaGrid(
             ) {
                 for (colIndex in 0 until columns) {
                     val index = rowIndex * columns + colIndex
-                    if (index < mediaUrls.size) {
+                    if (index < mediaList.size) {
                         MediaThumb(
-                            media = mediaUrls[index],
+                            media = mediaList[index],
+                            onPreview = onPreview,
                             modifier = Modifier.weight(1f)
                         )
                     } else {
@@ -341,19 +354,21 @@ fun MediaGrid(
  */
 @Composable
 fun MediaThumb(
-    media: MediaUrl,
+    media: FeedbackMedia,
+    onPreview: (FeedbackMedia) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isVideo = media.type == "2"
+    val isVideo = media.mediaType == "2"
 
     Box(
         modifier = modifier
             .aspectRatio(1f)
             .clip(RoundedCornerShape(8.dp))
             .background(Color(0xFFF5F5F5))
+            .clickable { onPreview(media) }
     ) {
         AsyncImage(
-            model = media.url,
+            model = media.filePath,
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -380,7 +395,10 @@ fun MediaThumb(
  * 回复气泡（用户在右，管理员在左）
  */
 @Composable
-fun ReplyBubble(reply: FeedbackReply) {
+fun ReplyBubble(
+    reply: FeedbackReply,
+    onPreview: (FeedbackMedia) -> Unit
+) {
     val replyType = ReplyType.fromValue(reply.replyType)
     val isAdminByName = reply.replyUserName?.contains("管理员") == true
     val isAdmin = replyType == ReplyType.ADMIN || isAdminByName
@@ -473,12 +491,13 @@ fun ReplyBubble(reply: FeedbackReply) {
                     }
 
                     // 图片/视频
-                    if (!reply.mediaUrls.isNullOrEmpty()) {
+                    if (!reply.mediaList.isNullOrEmpty()) {
                         if (!reply.replyContent.isNullOrBlank()) {
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                         MediaGrid(
-                            mediaUrls = reply.mediaUrls,
+                            mediaList = reply.mediaList,
+                            onPreview = onPreview,
                             modifier = Modifier.widthIn(max = 200.dp)
                         )
                     }
@@ -517,8 +536,11 @@ fun ReplyInputBar(
     text: String,
     isSending: Boolean,
     canReply: Boolean,
+    selectedFiles: List<SelectedMedia>,
     onInputChange: (String) -> Unit,
-    onSend: () -> Unit
+    onSend: () -> Unit,
+    onFileSelect: () -> Unit,
+    onFileRemove: (SelectedMedia) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -530,59 +552,117 @@ fun ReplyInputBar(
         shadowElevation = 4.dp
     ) {
         if (canReply) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = onInputChange,
-                    modifier = Modifier.weight(1f),
-                    placeholder = { Text("输入追问内容...", fontSize = 14.sp, color = Color.Gray) },
-                    maxLines = 4,
-                    shape = RoundedCornerShape(20.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BtnColor,
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        cursorColor = BtnColor
-                    ),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                    keyboardActions = KeyboardActions(
-                        onSend = {
-                            if (text.isNotBlank() && !isSending) {
+            Column {
+                // 已选文件预览
+                if (selectedFiles.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 12.dp, top = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        selectedFiles.forEach { media ->
+                            Box(
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(Color(0xFFF5F5F5))
+                            ) {
+                                AsyncImage(
+                                    model = media.uri,
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+
+                                // 删除按钮
+                                Surface(
+                                    onClick = { onFileRemove(media) },
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .size(18.dp),
+                                    shape = CircleShape,
+                                    color = Color.Black.copy(alpha = 0.6f)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(10.dp),
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 输入框 + 按钮
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 图片选择按钮
+                    IconButton(
+                        onClick = onFileSelect,
+                        modifier = Modifier.size(44.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "添加图片",
+                            tint = BtnColor
+                        )
+                    }
+
+                    OutlinedTextField(
+                        value = text,
+                        onValueChange = onInputChange,
+                        modifier = Modifier.weight(1f),
+                        placeholder = { Text("输入追问内容...", fontSize = 14.sp, color = Color.Gray) },
+                        maxLines = 4,
+                        shape = RoundedCornerShape(20.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = BtnColor,
+                            unfocusedBorderColor = Color(0xFFE0E0E0),
+                            cursorColor = BtnColor
+                        ),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                        keyboardActions = KeyboardActions(
+                            onSend = {
+                                if ((text.isNotBlank() || selectedFiles.isNotEmpty()) && !isSending) {
+                                    onSend()
+                                    keyboardController?.hide()
+                                }
+                            }
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    IconButton(
+                        onClick = {
+                            if ((text.isNotBlank() || selectedFiles.isNotEmpty()) && !isSending) {
                                 onSend()
                                 keyboardController?.hide()
                             }
+                        },
+                        enabled = (text.isNotBlank() || selectedFiles.isNotEmpty()) && !isSending,
+                        modifier = Modifier.size(44.dp)
+                    ) {
+                        if (isSending) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = BtnColor,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "发送",
+                                tint = if (text.isNotBlank() || selectedFiles.isNotEmpty()) BtnColor else Color.Gray
+                            )
                         }
-                    )
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                IconButton(
-                    onClick = {
-                        if (text.isNotBlank() && !isSending) {
-                            onSend()
-                            keyboardController?.hide()
-                        }
-                    },
-                    enabled = text.isNotBlank() && !isSending,
-                    modifier = Modifier.size(44.dp)
-                ) {
-                    if (isSending) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = BtnColor,
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "发送",
-                            tint = if (text.isNotBlank()) BtnColor else Color.Gray
-                        )
                     }
                 }
             }
@@ -644,6 +724,9 @@ fun FeedbackDetailContentPreview() {
         uiState = uiState,
         onRetry = {},
         onInputChange = {},
-        onSend = {}
+        onSend = {},
+        onFileSelect = {},
+        onFileRemove = {},
+        onPreview = {}
     )
 }

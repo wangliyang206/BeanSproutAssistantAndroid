@@ -122,12 +122,23 @@ class FeedbackRepository @Inject constructor(
     }
 
     /**
-     * 继续追问
+     * 继续追问（支持文件上传）
      */
-    suspend fun replyFeedback(feedbackId: Long, replyContent: String): ReplyFeedbackResponse {
+    suspend fun replyFeedback(
+        feedbackId: Long,
+        replyContent: String,
+        mediaFiles: List<SelectedMedia>? = null
+    ): ReplyFeedbackResponse {
+        val mediaUrls = if (!mediaFiles.isNullOrEmpty()) {
+            uploadFiles(mediaFiles)
+        } else {
+            null
+        }
+
         val request = ReplyFeedbackRequest(
             feedbackId = feedbackId,
-            replyContent = replyContent
+            replyContent = replyContent,
+            mediaUrls = mediaUrls
         )
 
         return requestNetwork {

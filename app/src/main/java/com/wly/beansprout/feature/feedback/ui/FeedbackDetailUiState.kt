@@ -1,6 +1,7 @@
 package com.wly.beansprout.feature.feedback.ui
 
 import com.wly.beansprout.data.model.Feedback
+import com.wly.beansprout.data.model.FeedbackMedia
 import com.wly.beansprout.data.model.FeedbackReply
 
 /**
@@ -13,7 +14,9 @@ data class FeedbackDetailUiState(
     val errorMessage: String? = null,
     val inputText: String = "",
     val isSending: Boolean = false,
-    val canReply: Boolean = true
+    val canReply: Boolean = true,
+    val selectedFiles: List<SelectedMedia> = emptyList(),
+    val previewMedia: FeedbackMedia? = null
 )
 
 /**
