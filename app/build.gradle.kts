@@ -13,8 +13,8 @@ android {
         applicationId = "com.wly.beansprout"
         minSdk = 24
         targetSdk = 34
-        versionCode = 162
-        versionName = "1.6.2"
+        versionCode = 163
+        versionName = "1.6.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -149,9 +149,9 @@ android {
             val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
             val buildType = variant.buildType.name
             if (buildType == "release") {
-                output.outputFileName = "豆芽助手.apk"
+                output.outputFileName = "打工鸡.apk"
             } else {
-                output.outputFileName = "豆芽助手-测试版.apk"
+                output.outputFileName = "打工鸡-测试版.apk"
             }
         }
     }
