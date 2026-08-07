@@ -76,9 +76,16 @@ fun SplashScreen(
         }
     }
 
-    // 导航逻辑
+    // 导航逻辑：先导航，再处理闪屏退出动画
+    // 注意：不能把导航放在 setOnExitAnimationListener 回调里，
+    // 因为在部分设备（如小米 HyperOS / Android 15）上，
+    // 系统可能在监听器注册前就已移除闪屏，导致回调永不触发 → 白屏
     LaunchedEffect(viewModel.navigateToHome) {
         if (viewModel.navigateToHome != null && !viewModel.isLoading) {
+            // 1. 先执行导航，确保 UI 立即切换到目标页面
+            navigateBasedOnCondition(navController, viewModel.navigateToHome)
+
+            // 2. 再设置闪屏退出动画（仅做视觉过渡，不影响导航逻辑）
             splashScreen.setOnExitAnimationListener { splashScreenView ->
                 val icon = splashScreenView.iconView
                 icon.animate()
@@ -87,7 +94,6 @@ fun SplashScreen(
                     ?.scaleY(0.5f)
                     ?.alpha(0f)
                     ?.withEndAction {
-                        navigateBasedOnCondition(navController, viewModel.navigateToHome)
                         splashScreenView.remove()
                     }
                     ?.start()
