@@ -540,6 +540,10 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
             val allPoints = repository.getTouchPoints().toMutableList()
             allPoints.add(touchPoint)
             repository.saveTouchPoints(allPoints)
+            // 同步更新 adapter，防止 onStart 中 mergeAndSavePoints 用旧列表覆盖新数据
+            val currentList = touchPointAdapter.getTouchPointList().toMutableList()
+            currentList.add(touchPoint)
+            touchPointAdapter.setTouchPointList(currentList)
         }
         addDialog.setOnDismissListener {
             show()
@@ -693,6 +697,10 @@ class FloatingMenuDialog(context: Context) : Dialog(context, R.style.NoTitleDial
             val allPoints = repository.getTouchPoints().toMutableList()
             allPoints.add(touchPoint)
             repository.saveTouchPoints(allPoints)
+            // 同步更新 adapter，防止 onStart 中 mergeAndSavePoints 用旧列表覆盖新数据
+            val currentList = touchPointAdapter.getTouchPointList().toMutableList()
+            currentList.add(touchPoint)
+            touchPointAdapter.setTouchPointList(currentList)
         }
         addDialog.setOnDismissListener {
             show()
