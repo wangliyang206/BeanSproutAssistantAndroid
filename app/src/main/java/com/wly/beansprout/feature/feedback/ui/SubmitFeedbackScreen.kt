@@ -1,6 +1,9 @@
-﻿package com.wly.beansprout.feature.feedback.ui
+package com.wly.beansprout.feature.feedback.ui
 
-import android.widget.Toast
+import android.app.Activity
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.wly.beansprout.core.utils.ToastUtils
+import com.wly.beansprout.feature.feedback.AlbumPickerActivity
 import com.wly.beansprout.feature.feedback.viewmodel.SubmitFeedbackViewModel
 import com.wly.beansprout.presentation.CommTopBar
 import kotlinx.coroutines.flow.collectLatest
@@ -25,6 +29,24 @@ fun SubmitFeedbackScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+
+    // 相册选择器
+    val albumPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            val uris = data?.getParcelableArrayListExtra<android.net.Uri>(AlbumPickerActivity.EXTRA_URIS)
+            val isVideoFlags = data?.getIntegerArrayListExtra(AlbumPickerActivity.EXTRA_IS_VIDEO)
+
+            if (!uris.isNullOrEmpty() && !isVideoFlags.isNullOrEmpty()) {
+                val medias = uris.mapIndexed { index, uri ->
+                    SelectedMedia(uri = uri, isVideo = isVideoFlags[index] == 1)
+                }
+                viewModel.addFiles(medias)
+            }
+        }
+    }
 
     // 处理事件
     LaunchedEffect(Unit) {
@@ -51,6 +73,13 @@ fun SubmitFeedbackScreen(
             uiState = uiState,
             onTitleChange = viewModel::updateTitle,
             onContentChange = viewModel::updateContent,
+            onFileSelect = {
+                val intent = Intent(context, AlbumPickerActivity::class.java).apply {
+                    putExtra(AlbumPickerActivity.EXTRA_MAX_COUNT, 9)
+                }
+                albumPickerLauncher.launch(intent)
+            },
+            onFileRemove = viewModel::removeFile,
             onSubmit = viewModel::submitFeedback,
             modifier = modifier
         )

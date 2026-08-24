@@ -13,8 +13,8 @@ android {
         applicationId = "com.wly.beansprout"
         minSdk = 24
         targetSdk = 34
-        versionCode = 161
-        versionName = "1.6.1"
+        versionCode = 165
+        versionName = "1.6.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -149,9 +149,9 @@ android {
             val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
             val buildType = variant.buildType.name
             if (buildType == "release") {
-                output.outputFileName = "豆芽助手.apk"
+                output.outputFileName = "打工鸡.apk"
             } else {
-                output.outputFileName = "豆芽助手-测试版.apk"
+                output.outputFileName = "打工鸡-测试版.apk"
             }
         }
     }
@@ -210,6 +210,13 @@ dependencies {
 
     // 图片加载
     implementation(libs.coil.compose)
+
+    // 相册选择器
+    implementation("io.trtc.uikit:albumpicker:1.0.0.+") {
+        exclude(group = "com.google.android.material", module = "material")
+    }
+    // albumpicker 依赖的 IM SDK
+    implementation("com.tencent.imsdk:imsdk-plus:8.9.7511")
 
     // 测试
     testImplementation(libs.junit)

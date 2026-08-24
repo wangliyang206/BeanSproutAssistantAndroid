@@ -15,14 +15,23 @@ import com.wly.beansprout.R
  */
 object UMengManager {
 
-    private const val CHANNEL = "test_channel"
+    private val CHANNEL = if (BuildConfig.DEBUG) "debug" else "official"
+
+    private fun getAppKey(context: Context): String {
+        return if (BuildConfig.DEBUG) {
+            context.getString(R.string.um_app_key_debug)
+        } else {
+            context.getString(R.string.um_app_key)
+        }
+    }
 
     /**
      * 预初始化（在用户同意隐私政策之前调用）
-     * 仅开启日志，不调用 preInit 以避免合规问题
+     * 调用 UMConfigure.preInit() 进行合规预初始化
      */
     fun preInit(context: Context) {
-        UMConfigure.setLogEnabled(true)
+        UMConfigure.setLogEnabled(BuildConfig.DEBUG)
+        UMConfigure.preInit(context.applicationContext, getAppKey(context), CHANNEL)
     }
 
     /**
@@ -35,14 +44,9 @@ object UMengManager {
         UMConfigure.submitPolicyGrantResult(appContext, true)
 
         // 2. 初始化 SDK
-        val appKey = if (BuildConfig.DEBUG) {
-            context.getString(R.string.um_app_key_debug)
-        } else {
-            context.getString(R.string.um_app_key)
-        }
         UMConfigure.init(
             appContext,
-            appKey,
+            getAppKey(context),
             CHANNEL,
             UMConfigure.DEVICE_TYPE_PHONE,
             ""

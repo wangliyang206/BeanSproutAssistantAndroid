@@ -48,7 +48,10 @@ class SplashViewModel @Inject constructor(
                     return@launch
                 }
 
-                // 2. 已同意，执行 Token 校验流程
+                // 2. 已同意，初始化友盟SDK（每次启动都需要）
+                UMengManager.init(getApplication())
+
+                // 3. 执行 Token 校验流程
                 validateTokenAndNavigate()
             } catch (e: Exception) {
                 e.printStackTrace()
